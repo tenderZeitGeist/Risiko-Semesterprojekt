@@ -1,0 +1,45 @@
+Alaska
+1
+1
+1
+2, 6, 32
+Alberta
+2
+1
+1
+1, 6, 7, 9
+Central America
+3
+1
+1
+4, 9, 13
+Eastern United States
+4
+1
+1
+3, 7, 8, 9
+Greenland
+5
+1
+1
+6, 7, 8, 15
+Northwest Territory
+6
+1
+1
+1, 2, 5, 7
+Ontario
+7
+1
+1
+2, 6, 4, 5, 7, 9
+Quebec
+8
+1
+1
+4, 5, 7
+Western United States
+9
+1
+1
+2, 3, 4, 7
