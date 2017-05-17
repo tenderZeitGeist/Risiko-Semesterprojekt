@@ -55,4 +55,5 @@ public interface PersistenceManager {
 	public boolean speichereKunde(Kunde k) throws IOException;
 
 	*/
+
 }

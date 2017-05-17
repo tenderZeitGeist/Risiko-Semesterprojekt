@@ -75,16 +75,13 @@ public class WorldVerwaltung {
         // PersistenzManager für Schreibvorgänge öffnen
         pm.openForWriting ( file );
 
-        if ( ! countryList.isEmpty ( ) ) {
-            Iterator iter = countryList.iterator ( );
-            while ( iter.hasNext ( ) ) {
-                Country country = ( Country ) iter.next ( );
+        for ( Continent continent : continentList ) {
+            for ( Country country : continent.getContinentCountries ( ) ) {
                 pm.saveCountry ( country );
             }
-        }
 
-        // Persistenz-Schnittstelle wieder schließen
-        pm.close ( );
+            pm.close ( );
+        }
     }
 
     public Vector < Country > getCountryList ( ) {
@@ -95,26 +92,19 @@ public class WorldVerwaltung {
 
     public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
         //TODO proper distribution with randomisation etc
-        Vector < Continent > tempContinentList = new Vector < Continent > ( continentList );
         int index = 0;
-        int rollContinent = ( int ) ( Math.random ( ) * tempContinentList.size ( ) );
-        Vector < Country > tempCountryList = new Vector < Country > ( tempContinentList.get ( rollContinent ).getContinentCountries ( ) );
+        Vector < Country > tempCountryList;
 
-        while ( ! ( tempContinentList.isEmpty ( ) ) ) {
-            if ( tempCountryList.isEmpty ( ) ) {
-                tempContinentList.remove ( rollContinent );
-                if ( tempContinentList.isEmpty ( ) ) {
-                    break;
+        for ( Continent continent : continentList ) {
+            tempCountryList = new Vector <> ( continent.getContinentCountries ( ) );
+            while ( ! tempCountryList.isEmpty ( ) ) {
+                if ( ! ( index < playerList.size ( ) ) ) {
+                    index = 0;
                 }
-                rollContinent = ( int ) ( Math.random ( ) * tempContinentList.size ( ) );
-                tempCountryList = new Vector <> ( tempContinentList.get ( rollContinent ).getContinentCountries ( ) );
+                int rollCountry = ( int ) ( Math.random ( ) * tempCountryList.size ( ) );
+                tempCountryList.get ( rollCountry ).setOwningPlayer ( playerList.get ( index++ ) );
+                tempCountryList.remove ( rollCountry );
             }
-            if ( ( ! ( index < playerList.size ( ) ) ) ) {
-                index = 0;
-            }
-            int rollCountry = ( int ) ( Math.random ( ) * tempCountryList.size ( ) );
-            tempCountryList.get ( rollCountry ).setOwningPlayer ( ( playerList.get ( index++ ) ) );
-            tempCountryList.remove ( rollCountry );
         }
     }
 
@@ -338,8 +328,8 @@ public class WorldVerwaltung {
 
         } else {
             for ( int k = 0 ; k < defenderDice.length ; k++ ) {
-                System.out.println ( "Attacker rolls " + attackerDice[ k ] + " with the " + k + " roll"
-                        + " while Defender rolls a " + defenderDice[ k ] + "." );
+                System.out.println ( "Attacker rolls " + attackerDice[ k + 1 ] + " with the " + k + " roll"
+                        + " while Defender rolls a " + defenderDice[ k + 1 ] + "." );
                 if ( attackerDice[ k ] <= defenderDice[ k ] ) {
                     forcesArray[ 0 ]++;
                 } else {

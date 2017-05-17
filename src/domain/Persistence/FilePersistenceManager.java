@@ -124,7 +124,9 @@ public class FilePersistenceManager implements PersistenceManager {
         writeLine ( country.getCountryID ( ) + "" );
         writeLine ( country.getLocalForces ( ) + "" );
         writeLine ( country.getContinentID ( ) + "" );
-        writeLine ( Arrays.toString ( country.getNeighbouringCountries ( ) ) + "" );
+        writeLine ( Arrays.toString ( country.getNeighbouringCountries ( ) )
+                .replace ( "[", "" )
+                .replace ( "]", "" ) );
 
         // schreibeZeile(Integer.valueOf(b.getNummer()).toString());
 

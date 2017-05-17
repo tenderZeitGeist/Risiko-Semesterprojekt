@@ -22,7 +22,6 @@ import java.util.Vector;
  */
 public class PlayGroundCUI {
     private BufferedReader in;
-    private WorldVerwaltung worldManager;
 
     private Player nextPlayer;
 
@@ -40,8 +39,8 @@ public class PlayGroundCUI {
     public PlayGroundCUI(String file) throws IOException {
 
         risiko = new Risiko(file);
-
         risiko.createGameFile ( );
+        risiko.writeData ( "countryListTest.txt" );
         in = new BufferedReader(new InputStreamReader(System.in));
     }
 

@@ -1,5 +1,5 @@
 Alaska
-12
+1
 1
 1
 2, 6, 32
@@ -8,3 +8,8 @@ Alberta
 1
 1
 1, 6, 7, 9
+Central America
+3
+1
+1
+4, 9, 13

@@ -1,5 +1,6 @@
 package domain;
 
+import domain.Persistence.PersistenceManager;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
 import domain.exceptions.CountryAlreadyExistsException;
@@ -59,6 +60,10 @@ public class Risiko {
 
     public void createGameFile() {
         worldManager.createGameFile();
+    }
+
+    public void writeData( String file ) throws IOException{
+        worldManager.writeData( file );
     }
 
 
