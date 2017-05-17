@@ -41,7 +41,7 @@ public class PlayGroundCUI {
 
         risiko = new Risiko(file);
 
-       // risiko.createGameFile();
+        risiko.createGameFile ( );
         in = new BufferedReader(new InputStreamReader(System.in));
     }
 

@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.FileNotFoundException;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Intersection on 08/05/2017.
@@ -17,17 +18,7 @@ import java.io.IOException;
 public class FilePersistenceManager implements PersistenceManager {
 
 
-    String name ;
-    String IDString;
-    String forcesString;
-    String continentIDString;
-    String[] integersInString;
-    int ID;
-    int forces;
-    int continentID;
     /**
-     *
-     *
      * @author teschke
      * <p>
      * Realisierung einer Schnittstelle zur persistenten Speicherung von
@@ -39,24 +30,24 @@ public class FilePersistenceManager implements PersistenceManager {
     private BufferedReader reader = null;
     private PrintWriter writer = null;
 
-    public void openForReading(String file) throws FileNotFoundException {
-        reader = new BufferedReader(new FileReader(file));
+    public void openForReading ( String file ) throws FileNotFoundException {
+        reader = new BufferedReader ( new FileReader ( file ) );
     }
 
-    public void openForWriting(String file) throws IOException {
-        writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+    public void openForWriting ( String file ) throws IOException {
+        writer = new PrintWriter ( new BufferedWriter ( new FileWriter ( file ) ) );
     }
 
-    public boolean close() {
-        if (writer != null)
-            writer.close();
+    public boolean close ( ) {
+        if ( writer != null )
+            writer.close ( );
 
-        if (reader != null) {
+        if ( reader != null ) {
             try {
-                reader.close();
-            } catch (IOException e) {
+                reader.close ( );
+            } catch ( IOException e ) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace ( );
 
                 return false;
             }
@@ -72,39 +63,48 @@ public class FilePersistenceManager implements PersistenceManager {
      *
      * @return Buch-Objekt, wenn Einlesen erfolgreich, false null
      */
-    public Country loadCountry() throws IOException {
+    public Country loadCountry ( ) throws IOException {
+        String name;
+        String IDString;
+        String forcesString;
+        String continentIDString;
+        String[] integersInString;
+        int ID;
+        int forces;
+        int continentID;
+
         // read country name
-         name = readLine();
-        if (name == null) {
+        name = readLine ( );
+        if ( name == null ) {
             // keine Daten mehr vorhanden
             return null;
         }
         // read country ID
-        IDString = readLine();
+        IDString = readLine ( );
         //Integer id = Integer.valueOf(IDString);
         // ... und von String in int konvertieren
-         ID = Integer.parseInt(IDString);
+        ID = Integer.parseInt ( IDString );
 
         // read forces
-         forcesString = readLine();
+        forcesString = readLine ( );
         // ... und von String in int konvertieren
-         forces = Integer.parseInt(forcesString);
+        forces = Integer.parseInt ( forcesString );
 
         // read continentID
-         continentIDString = readLine();
+        continentIDString = readLine ( );
         // ... und von String in int konvertieren
-         continentID = Integer.parseInt(continentIDString);
+        continentID = Integer.parseInt ( continentIDString );
 
         // read neighbours array
-         integersInString = readLine().split(" ");
-        int a[] = new int[integersInString.length];
-        for (int i = 0; i < integersInString.length; i++) {
-            a[i] = Integer.parseInt(integersInString[i]);
+        integersInString = readLine ( ).split ( ", " );
+        int a[] = new int[ integersInString.length ];
+        for ( int i = 0 ; i < integersInString.length ; i++ ) {
+            a[ i ] = Integer.parseInt ( integersInString[ i ] );
         }
 
         // create new country object and return it
 
-        return new Country(name, ID, forces, null, continentID, a);
+        return new Country ( name, ID, forces, null, continentID, a );
     }
 
 
@@ -114,17 +114,17 @@ public class FilePersistenceManager implements PersistenceManager {
      * codiert abgelegt.
      *
      * @param b Buch-Objekt, das gespeichert werden soll
-     * @return true, wenn Schreibvorgang erfolgreich, false sonst
+     * @return true , wenn Schreibvorgang erfolgreich, false sonst
      */
-    public boolean saveCountry(Country country) throws IOException {
+    public boolean saveCountry ( Country country ) throws IOException {
 
         // Titel, Nummer und Verfügbarkeit schreiben
 
-        writeLine(country.getCountryName());
-        writeLine(country.getCountryID() + "");
-        writeLine(country.getLocalForces() + "");
-        writeLine(country.getContinentID() + "");
-        writeLine(country.getNeighbouringCountries() + "");
+        writeLine ( country.getCountryName ( ) );
+        writeLine ( country.getCountryID ( ) + "" );
+        writeLine ( country.getLocalForces ( ) + "" );
+        writeLine ( country.getContinentID ( ) + "" );
+        writeLine ( Arrays.toString ( country.getNeighbouringCountries ( ) ) + "" );
 
         // schreibeZeile(Integer.valueOf(b.getNummer()).toString());
 
@@ -132,16 +132,16 @@ public class FilePersistenceManager implements PersistenceManager {
     }
 
 
-    private String readLine() throws IOException {
-        if (reader != null)
-            return reader.readLine();
+    private String readLine ( ) throws IOException {
+        if ( reader != null )
+            return reader.readLine ( );
         else
             return "";
     }
 
-    private void writeLine(String daten) {
-        if (writer != null)
-            writer.println(daten);
+    private void writeLine ( String daten ) {
+        if ( writer != null )
+            writer.println ( daten );
     }
 }
 

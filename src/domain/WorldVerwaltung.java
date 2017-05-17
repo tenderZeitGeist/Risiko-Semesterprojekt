@@ -12,26 +12,17 @@ import java.util.*;
 import java.io.IOException;
 
 
-
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 30.03.2017.
  */
 
 public class WorldVerwaltung {
 
-    private PersistenceManager pm = new FilePersistenceManager();
-
-
     public int countryCount = 42;
+    private PersistenceManager pm = new FilePersistenceManager ( );
     private Vector < Country > countryList = new Vector < Country > ( );
     private Vector < Continent > continentList = new Vector < Continent > ( );
     private Vector < Integer > randomList = new Vector < Integer > ( );
-    private List < Integer > player1Array = new ArrayList <> ( );
-    private List < Integer > player2Array = new ArrayList <> ( );
-    private List < Integer > player3Array = new ArrayList <> ( );
-    private List < Integer > player4Array = new ArrayList <> ( );
-    private List < Integer > player5Array = new ArrayList <> ( );
-    private List < Integer > player6Array = new ArrayList <> ( );
 
     private Vector < Country > ownedCountriesList = new Vector <> ( );
     private Vector < Country > neighbouringCountriesList = new Vector <> ( );
@@ -50,53 +41,53 @@ public class WorldVerwaltung {
 
     //---------------------------------------------------------------------------------
 
-    public void readData(String file) throws IOException {
+    public void readData ( String file ) throws IOException {
         // PersistenzManager für Lesevorgänge öffnen
-        pm.openForReading(file);
+        pm.openForReading ( file );
 
         Country oneCountry;
         do {
-            // Buch-Objekt einlesen
-            oneCountry = pm.loadCountry();
-            if (oneCountry != null) {
+            // Objekt einlesen
+            oneCountry = pm.loadCountry ( );
+            if ( oneCountry != null ) {
                 // Buch in Liste einfügen
                 try {
-                    addCountry(oneCountry);
-                } catch (CountryAlreadyExistsException e1) {
+                    addCountry ( oneCountry );
+                } catch ( CountryAlreadyExistsException e1 ) {
                     // Kann hier eigentlich nicht auftreten,
                     // daher auch keine Fehlerbehandlung...
                 }
             }
-        } while (oneCountry != null);
+        } while ( oneCountry != null );
 
         // Persistenz-Schnittstelle wieder schließen
-        pm.close();
+        pm.close ( );
     }
 
-    public void addCountry(Country country) throws CountryAlreadyExistsException {
-        if (!countryList.contains(country))
-            countryList.add(country);
+    public void addCountry ( Country country ) throws CountryAlreadyExistsException {
+        if ( ! countryList.contains ( country ) )
+            countryList.add ( country );
         else
-            throw new CountryAlreadyExistsException(country, " - in 'einfuegen()'");
+            throw new CountryAlreadyExistsException ( country, " - in 'einfuegen()'" );
     }
 
-    public void writeData(String file) throws IOException  {
+    public void writeData ( String file ) throws IOException {
         // PersistenzManager für Schreibvorgänge öffnen
-        pm.openForWriting(file);
+        pm.openForWriting ( file );
 
-        if (!countryList.isEmpty()) {
-            Iterator iter = countryList.iterator();
-            while (iter.hasNext()) {
-                Country country = (Country) iter.next();
-                pm.saveCountry(country);
+        if ( ! countryList.isEmpty ( ) ) {
+            Iterator iter = countryList.iterator ( );
+            while ( iter.hasNext ( ) ) {
+                Country country = ( Country ) iter.next ( );
+                pm.saveCountry ( country );
             }
         }
 
         // Persistenz-Schnittstelle wieder schließen
-        pm.close();
+        pm.close ( );
     }
 
-    public Vector<Country> getCountryList() {
+    public Vector < Country > getCountryList ( ) {
         // Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors
         // mit Kopien der Buch-Objekte zurückzugeben
         return countryList;
@@ -104,61 +95,26 @@ public class WorldVerwaltung {
 
     public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
         //TODO proper distribution with randomisation etc
-
         Vector < Continent > tempContinentList = new Vector < Continent > ( continentList );
         int index = 0;
+        int rollContinent = ( int ) ( Math.random ( ) * tempContinentList.size ( ) );
+        Vector < Country > tempCountryList = new Vector < Country > ( tempContinentList.get ( rollContinent ).getContinentCountries ( ) );
 
-        while ( ! tempContinentList.isEmpty ( ) ) {
-            int rollContinent = ( int ) ( Math.random ( ) * tempContinentList.size ( ) );
-            Vector < Country > tempCountryList = new Vector < Country > ( tempContinentList.get ( rollContinent ).getContinentCountries ( ) );
-            tempContinentList.remove ( rollContinent );
-            while ( ! tempCountryList.isEmpty ( ) ) {
-                if ( ! ( index < playerList.size ( ) ) ) {
-                    index = 0;
+        while ( ! ( tempContinentList.isEmpty ( ) ) ) {
+            if ( tempCountryList.isEmpty ( ) ) {
+                tempContinentList.remove ( rollContinent );
+                if ( tempContinentList.isEmpty ( ) ) {
+                    break;
                 }
-                int rollCountry = ( int ) ( Math.random ( ) * tempCountryList.size ( ) );
-                tempCountryList.get ( rollCountry ).setOwningPlayer ( playerList.get ( index++ ) );
-                tempCountryList.remove ( rollCountry );
-
+                rollContinent = ( int ) ( Math.random ( ) * tempContinentList.size ( ) );
+                tempCountryList = new Vector <> ( tempContinentList.get ( rollContinent ).getContinentCountries ( ) );
             }
-        }
-    }
-
-
-    public void incrementPlayerArray ( int number ) {
-
-        if ( number == 1 ) {
-            player1Array.add ( 1 );
-        } else if ( number == 2 ) {
-            player2Array.add ( 1 );
-        } else if ( number == 3 ) {
-            player3Array.add ( 1 );
-        } else if ( number == 4 ) {
-            player4Array.add ( 1 );
-        } else if ( number == 5 ) {
-            player5Array.add ( 1 );
-        } else if ( number == 6 ) {
-            player6Array.add ( 1 );
-        }
-    }
-
-
-    public int returnPlayerArraySize ( int number ) {
-
-        if ( number == 1 ) {
-            return player1Array.size ( );
-        } else if ( number == 2 ) {
-            return player2Array.size ( );
-        } else if ( number == 3 ) {
-            return player3Array.size ( );
-        } else if ( number == 4 ) {
-            return player4Array.size ( );
-        } else if ( number == 5 ) {
-            return player5Array.size ( );
-        } else if ( number == 6 ) {
-            return player6Array.size ( );
-        } else {
-            return 0;
+            if ( ( ! ( index < playerList.size ( ) ) ) ) {
+                index = 0;
+            }
+            int rollCountry = ( int ) ( Math.random ( ) * tempCountryList.size ( ) );
+            tempCountryList.get ( rollCountry ).setOwningPlayer ( ( playerList.get ( index++ ) ) );
+            tempCountryList.remove ( rollCountry );
         }
     }
 
@@ -267,7 +223,7 @@ public class WorldVerwaltung {
         // Adds NA countries into a list
         countryListNAmerica.add ( new Country ( "Alaska", 1, 1, null, 1, new int[] { 2 , 6 , 32 } ) );
         countryListNAmerica.add ( new Country ( "Alberta", 2, 1, null, 1, new int[] { 1 , 6 , 7 , 9 } ) );
-        countryListNAmerica.add ( new Country ( "Central America", 3, 1, null,  1, new int[] { 4 , 9 , 13 } ) );
+        countryListNAmerica.add ( new Country ( "Central America", 3, 1, null, 1, new int[] { 4 , 9 , 13 } ) );
         countryListNAmerica.add ( new Country ( "Eastern United States", 4, 1, null, 1, new int[] { 3 , 7 , 8 , 9 } ) );
         countryListNAmerica.add ( new Country ( "Greenland", 5, 1, null, 1, new int[] { 6 , 7 , 8 , 15 } ) );
         countryListNAmerica.add ( new Country ( "Northwest Territory", 6, 1, null, 1, new int[] { 1 , 2 , 5 , 7 } ) );
@@ -277,46 +233,46 @@ public class WorldVerwaltung {
 
         // Adds SA countries into a list
         countryListSAmerica.add ( new Country ( "Argentina", 10, 1, null, 2, new int[] { 11 , 12 } ) );
-        countryListSAmerica.add ( new Country ( "Brazil", 11, 1, null,  2, new int[] { 10 , 12 , 13 , 25 } ) );
-        countryListSAmerica.add ( new Country ( "Peru", 12, 1, null,  2, new int[] { 10 , 11 , 13 } ) );
-        countryListSAmerica.add ( new Country ( "Venezuela", 13, 1, null,  2, new int[] { 3 , 12 , 11 } ) );
+        countryListSAmerica.add ( new Country ( "Brazil", 11, 1, null, 2, new int[] { 10 , 12 , 13 , 25 } ) );
+        countryListSAmerica.add ( new Country ( "Peru", 12, 1, null, 2, new int[] { 10 , 11 , 13 } ) );
+        countryListSAmerica.add ( new Country ( "Venezuela", 13, 1, null, 2, new int[] { 3 , 12 , 11 } ) );
 
         // Adds EU countries into a list
-        countryListEurope.add ( new Country ( "Great Britain", 14, 1, null,  3, new int[] { 15 , 17 , 16 } ) );
+        countryListEurope.add ( new Country ( "Great Britain", 14, 1, null, 3, new int[] { 15 , 17 , 16 } ) );
         countryListEurope.add ( new Country ( "Iceland", 15, 1, null, 3, new int[] { 14 , 16 } ) );
-        countryListEurope.add ( new Country ( "Northern Europe", 16, 1, null,  3, new int[] { 14 , 17 , 18 , 19 , 20 } ) );
-        countryListEurope.add ( new Country ( "Scandinavia", 17, 1, null,  3, new int[] { 14 , 15 , 16 , 19 } ) );
-        countryListEurope.add ( new Country ( "Southern Europe", 18, 1, null,  3, new int[] { 16 , 19 , 20 , 23 } ) );
-        countryListEurope.add ( new Country ( "Ukraine", 19, 1, null,  3, new int[] { 16 , 17 , 18 , 27 , 33 , 37 } ) );
-        countryListEurope.add ( new Country ( "Western Europe", 20, 1, null,  3, new int[] { 16 , 18 , 25 } ) );
+        countryListEurope.add ( new Country ( "Northern Europe", 16, 1, null, 3, new int[] { 14 , 17 , 18 , 19 , 20 } ) );
+        countryListEurope.add ( new Country ( "Scandinavia", 17, 1, null, 3, new int[] { 14 , 15 , 16 , 19 } ) );
+        countryListEurope.add ( new Country ( "Southern Europe", 18, 1, null, 3, new int[] { 16 , 19 , 20 , 23 } ) );
+        countryListEurope.add ( new Country ( "Ukraine", 19, 1, null, 3, new int[] { 16 , 17 , 18 , 27 , 33 , 37 } ) );
+        countryListEurope.add ( new Country ( "Western Europe", 20, 1, null, 3, new int[] { 16 , 18 , 25 } ) );
 
         // Adds Africa countries into a list
-        countryListAfrica.add ( new Country ( "Congo", 21, 1, null,  4, new int[] { 22 , 23 , 25 , 26 } ) );
-        countryListAfrica.add ( new Country ( "East Africa", 22, 1, null,  4, new int[] { 21 , 23 , 24 , 25 , 26 , 33 } ) );
-        countryListAfrica.add ( new Country ( "Egypt", 23, 1, null,  4, new int[] { 18 , 22 , 25 , 33 } ) );
-        countryListAfrica.add ( new Country ( "Madagascar", 24, 1, null,  4, new int[] { 22 , 26 } ) );
-        countryListAfrica.add ( new Country ( "North Africa", 25, 1, null,  4, new int[] { 20 , 21 , 22 , 23 } ) );
-        countryListAfrica.add ( new Country ( "South Africa", 26, 1, null,  4, new int[] { 21 , 22 , 24 } ) );
+        countryListAfrica.add ( new Country ( "Congo", 21, 1, null, 4, new int[] { 22 , 23 , 25 , 26 } ) );
+        countryListAfrica.add ( new Country ( "East Africa", 22, 1, null, 4, new int[] { 21 , 23 , 24 , 25 , 26 , 33 } ) );
+        countryListAfrica.add ( new Country ( "Egypt", 23, 1, null, 4, new int[] { 18 , 22 , 25 , 33 } ) );
+        countryListAfrica.add ( new Country ( "Madagascar", 24, 1, null, 4, new int[] { 22 , 26 } ) );
+        countryListAfrica.add ( new Country ( "North Africa", 25, 1, null, 4, new int[] { 20 , 21 , 22 , 23 } ) );
+        countryListAfrica.add ( new Country ( "South Africa", 26, 1, null, 4, new int[] { 21 , 22 , 24 } ) );
 
         // Adds Asia countries into a list
-        countryListAsia.add ( new Country ( "Afghanistan", 27, 1, null,  5, new int[] { 19 , 28 , 29 , 33 , 37 } ) );
-        countryListAsia.add ( new Country ( "China", 28, 1, null,  5, new int[] { 27 , 29 , 34 , 35 , 36 , 37 } ) );
-        countryListAsia.add ( new Country ( "India", 29, 1, null,  5, new int[] { 27 , 28 , 33 , 35 } ) );
-        countryListAsia.add ( new Country ( "Irkutsk", 30, 1, null,  5, new int[] { 32 , 34 , 36 , 38 } ) );
-        countryListAsia.add ( new Country ( "Japan", 31, 1, null,  5, new int[] { 32 , 34 } ) );
-        countryListAsia.add ( new Country ( "Kamchatka", 32, 1, null,  5, new int[] { 30 , 31 , 34 , 38 } ) );
-        countryListAsia.add ( new Country ( "Middle East", 33, 1, null,  5, new int[] { 18 , 19 , 22 , 23 , 27 , 29 } ) );
-        countryListAsia.add ( new Country ( "Mongolia", 34, 1, null,  5, new int[] { 28 , 30 , 31 , 32 , 36 } ) );
-        countryListAsia.add ( new Country ( "Siam", 35, 1, null,  5, new int[] { 28 , 29 , 40 } ) );
-        countryListAsia.add ( new Country ( "Siberia", 36, 1, null,  5, new int[] { 30 , 34 , 37 , 38 } ) );
-        countryListAsia.add ( new Country ( "Ural", 37, 1, null,  5, new int[] { 19 , 27 , 28 , 36 } ) );
-        countryListAsia.add ( new Country ( "Yakutsk", 38, 1, null,  5, new int[] { 30 , 32 , 36 } ) );
+        countryListAsia.add ( new Country ( "Afghanistan", 27, 1, null, 5, new int[] { 19 , 28 , 29 , 33 , 37 } ) );
+        countryListAsia.add ( new Country ( "China", 28, 1, null, 5, new int[] { 27 , 29 , 34 , 35 , 36 , 37 } ) );
+        countryListAsia.add ( new Country ( "India", 29, 1, null, 5, new int[] { 27 , 28 , 33 , 35 } ) );
+        countryListAsia.add ( new Country ( "Irkutsk", 30, 1, null, 5, new int[] { 32 , 34 , 36 , 38 } ) );
+        countryListAsia.add ( new Country ( "Japan", 31, 1, null, 5, new int[] { 32 , 34 } ) );
+        countryListAsia.add ( new Country ( "Kamchatka", 32, 1, null, 5, new int[] { 30 , 31 , 34 , 38 } ) );
+        countryListAsia.add ( new Country ( "Middle East", 33, 1, null, 5, new int[] { 18 , 19 , 22 , 23 , 27 , 29 } ) );
+        countryListAsia.add ( new Country ( "Mongolia", 34, 1, null, 5, new int[] { 28 , 30 , 31 , 32 , 36 } ) );
+        countryListAsia.add ( new Country ( "Siam", 35, 1, null, 5, new int[] { 28 , 29 , 40 } ) );
+        countryListAsia.add ( new Country ( "Siberia", 36, 1, null, 5, new int[] { 30 , 34 , 37 , 38 } ) );
+        countryListAsia.add ( new Country ( "Ural", 37, 1, null, 5, new int[] { 19 , 27 , 28 , 36 } ) );
+        countryListAsia.add ( new Country ( "Yakutsk", 38, 1, null, 5, new int[] { 30 , 32 , 36 } ) );
 
         // Adds AUS countries into a list
-        countryListAustralia.add ( new Country ( "Eastern Australia", 39, 1, null,  6, new int[] { 41 , 42 } ) );
-        countryListAustralia.add ( new Country ( "Indonesia", 40, 1, null,  6, new int[] { 35 , 41 , 42 } ) );
-        countryListAustralia.add ( new Country ( "New Guinea", 41, 1, null,  6, new int[] { 40 , 42 } ) );
-        countryListAustralia.add ( new Country ( "Western Australia", 42, 1, null,  6, new int[] { 39 , 41 } ) );
+        countryListAustralia.add ( new Country ( "Eastern Australia", 39, 1, null, 6, new int[] { 41 , 42 } ) );
+        countryListAustralia.add ( new Country ( "Indonesia", 40, 1, null, 6, new int[] { 35 , 41 , 42 } ) );
+        countryListAustralia.add ( new Country ( "New Guinea", 41, 1, null, 6, new int[] { 40 , 42 } ) );
+        countryListAustralia.add ( new Country ( "Western Australia", 42, 1, null, 6, new int[] { 39 , 41 } ) );
 
         // Adds all countryLists into a whole continentList
         continentList.add ( new Continent ( "North America", 5, 1, countryListNAmerica ) );  //Id 0
