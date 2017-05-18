@@ -79,11 +79,53 @@ public class WorldVerwaltung {
      * @throws CountryAlreadyExistsException
      */
     // TODO Switch case for adding the countries into the correct countrylists
-    public void addCountry ( Country country ) throws CountryAlreadyExistsException {
-        if ( ! countryList.contains ( country ) )
+    public void addCountry(Country country) throws CountryAlreadyExistsException {
+        // Adds countries to continent countries lists
+
+        switch (country.getContinentID()) {
+            case 1:
+                countryListNAmerica.add(country);
+                break;
+            case 2:
+                countryListSAmerica.add(country);
+                break;
+            case 3:
+                countryListEurope.add(country);
+                break;
+            case 4:
+                countryListAfrica.add(country);
+                break;
+            case 5:
+                countryListAsia.add(country);
+                break;
+            case 6:
+                countryListAustralia.add(country);
+                break;
+            default:
+                break;
+        }
+
+                  /*if ( ! countryList.contains ( country ) )
             countryList.add ( country );
         else
             throw new CountryAlreadyExistsException ( country, " - in 'einfuegen()'" );
+    }*/
+    }
+
+    public void addCountriesListsToContinentList() {
+
+        continentList.add(new Continent("North America", 5, 1, countryListNAmerica));  //Id 0
+        continentList.add(new Continent("South America", 2, 2, countryListSAmerica));  //Id 1
+        continentList.add(new Continent("Europe", 5, 3, countryListEurope));           //Id 2
+        continentList.add(new Continent("Africa", 3, 4, countryListAfrica));           //Id 3
+        continentList.add(new Continent("Asia", 7, 5, countryListAsia));               //Id 4
+        continentList.add(new Continent("Australia", 2, 6, countryListAustralia));     //Id 5
+    }
+
+    public void getCountryListNames() {
+        for (Country c : countryList) {
+            System.out.println(c.getCountryName());
+        }
     }
 
     /**
