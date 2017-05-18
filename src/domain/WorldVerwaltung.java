@@ -1,11 +1,13 @@
 package domain;
 
+
 import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Player;
 import valueobjects.Card;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.CountryAlreadyExistsException;
+import domain.exceptions.NoAlliedCountriesNearException;
 import domain.Persistence.*;
 
 import java.util.*;
@@ -41,6 +43,12 @@ public class WorldVerwaltung {
 
     //---------------------------------------------------------------------------------
 
+    /**
+     * Reads the Data from a .txt file in to load countries
+     *
+     * @param file
+     * @throws IOException
+     */
     public void readData ( String file ) throws IOException {
         // PersistenzManager für Lesevorgänge öffnen
         pm.openForReading ( file );
@@ -64,6 +72,13 @@ public class WorldVerwaltung {
         pm.close ( );
     }
 
+    /**
+     * Adds the amount of countries from the .txt into the a countryList
+     *
+     * @param country
+     * @throws CountryAlreadyExistsException
+     */
+    // TODO Switch case for adding the countries into the correct countrylists
     public void addCountry ( Country country ) throws CountryAlreadyExistsException {
         if ( ! countryList.contains ( country ) )
             countryList.add ( country );
@@ -71,6 +86,12 @@ public class WorldVerwaltung {
             throw new CountryAlreadyExistsException ( country, " - in 'einfuegen()'" );
     }
 
+    /**
+     * Saves the date into a .txt file
+     *
+     * @param file
+     * @throws IOException
+     */
     public void writeData ( String file ) throws IOException {
         // PersistenzManager für Schreibvorgänge öffnen
         pm.openForWriting ( file );
@@ -84,11 +105,110 @@ public class WorldVerwaltung {
         }
     }
 
+    /**
+     * Logical part of WorldVerwaltung to retrieve and set information of continents/countries
+     */
+
+    public void resetOwnedCountriesList ( ) {
+        ownedCountriesList.removeAllElements ( );
+    }
+
+    public void resetAttackingCountriesList ( ) {
+        attackingCountriesList.removeAllElements ( );
+    }
+
+    public void resetNeighbouringCountriesList ( ) {
+        neighbouringCountriesList.removeAllElements ( );
+    }
+
+    public Country selectNeighbouringCountriesListByNumber ( int selectedCountryNumber ) {
+        return neighbouringCountriesList.get ( selectedCountryNumber - 1 );
+    }
+
+    public Country selectAttackingCountriesListByNumber ( int selectedCountryNumber ) {
+        return attackingCountriesList.get ( selectedCountryNumber - 1 );
+    }
+
+    /**
+     * @param attackingCountry
+     * @param conqueredCountry
+     * @param newForces
+     */
+
+
+    public void conquerCountry ( Country attackingCountry, Country conqueredCountry, int newForces ) {
+
+        conqueredCountry.setOwningPlayer ( attackingCountry.getOwningPlayer ( ) );
+        moveForces ( attackingCountry, conqueredCountry, newForces );
+
+        loadOwnedCountryList ( attackingCountry.getOwningPlayer ( ) );
+    }
+
+    public void moveForces ( Country oldCountry, Country newCountry, int forces ) {
+        newCountry.setLocalForces ( forces + newCountry.getLocalForces ( ) );
+        oldCountry.setLocalForces ( oldCountry.getLocalForces ( ) - forces );
+    }
+
+    public Country getCountryByID ( int countryID ) {
+        Country c = null;
+
+        for ( Continent continent : continentList ) {
+            for ( Country country : continent.getContinentCountries ( ) ) {
+                if ( country.getCountryID ( ) == countryID ) {
+                    c = country;
+                }
+            }
+        }
+        return c;
+    }
+
+    public Vector < Continent > getContinentList ( ) {
+        return continentList;
+    }
+
     public Vector < Country > getCountryList ( ) {
-        // Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors
-        // mit Kopien der Buch-Objekte zurückzugeben
         return countryList;
     }
+
+    public void setForcesToCountry ( Country country, int forces ) {
+        int n = country.getLocalForces ( );
+        country.setLocalForces ( n + forces );
+    }
+
+    public int returnForcesPerRoundsPerPlayer ( Player player ) {
+        int forcesCount = 0;
+
+        if ( getNumberOfCountriesOfPlayer ( player ) < 9 ) {
+            forcesCount += 3;
+        } else {
+            forcesCount = getNumberOfCountriesOfPlayer ( player ) / 3;
+        }
+
+        //Check if continent is completely occupied and add forces accordingly
+        if ( isContinentOccupied ( player, 1 ) ) {
+            forcesCount += continentList.get ( 0 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 2 ) ) {
+            forcesCount += continentList.get ( 1 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 3 ) ) {
+            forcesCount += continentList.get ( 2 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 4 ) ) {
+            forcesCount += continentList.get ( 3 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 5 ) ) {
+            forcesCount += continentList.get ( 4 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 6 ) ) {
+            forcesCount += continentList.get ( 5 ).getValue ( );
+        }
+        return forcesCount;
+    }
+
+    /**
+     * Part of the code, mainly for iteration of various queries
+     */
 
     public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
         //TODO proper distribution with randomisation etc
@@ -109,94 +229,145 @@ public class WorldVerwaltung {
     }
 
 
-    public int getNumberOfCountriesPerPlayer ( Player player ) {
+    public int getNumberOfCountriesOfPlayer ( Player player ) {
         //checks every Country in every Continent for its owner
         int numberOfCountries = 0;
 
-        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
-            for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
-
-                if ( continentList.get ( i ).getContinentCountries ( ).get ( j ).getOwningPlayer ( ).equals ( player ) ) {
+        for ( Continent continent : continentList ) {
+            for ( Country country : continent.getContinentCountries ( ) ) {
+                if ( country.getOwningPlayer ( ).equals ( player ) ) {
                     numberOfCountries++;
-
                 }
             }
         }
         return numberOfCountries;
     }
 
+    //OWNED
+    public Vector < Country > loadOwnedCountryList ( Player player ) {
 
-    public Country getCountryByID ( int countryID ) {
-
-        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
-            for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
-
-                if ( continentList.get ( i ).getContinentCountries ( ).get ( j ).getCountryID ( ) == countryID ) {
-                    return continentList.get ( i ).getContinentCountries ( ).get ( j );
-
+        resetOwnedCountriesList ( );
+        for ( Continent continent : continentList ) {
+            for ( Country country : continent.getContinentCountries ( ) ) {
+                if ( country.getOwningPlayer ( ).equals ( player ) ) {
+                    ownedCountriesList.add ( country );
                 }
             }
         }
-        return null;
+        return ownedCountriesList;
+    }
+
+    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
+        resetOwnedCountriesList ( );
+
+        Vector < Country > currentCountries = loadOwnedCountryList ( player );
+        for ( Country country : currentCountries ) {
+            if ( ! ( country.getLocalForces ( ) >= 2 ) )
+                currentCountries.remove ( country );
+        }
+        return currentCountries;
+    }
+
+    public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws NoAlliedCountriesNearException {
+        resetNeighbouringCountriesList ( );
+
+        int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
+        for ( int n : neighbouringCountriesListIDs ) {
+            if ( getCountryByID ( n ).getOwningPlayer ( ).equals ( country.getOwningPlayer ( ) ) ) {
+                neighbouringCountriesList.add ( getCountryByID ( n ) );
+            }
+        }
+        if ( neighbouringCountriesList.isEmpty ( ) ) {
+            throw new NoAlliedCountriesNearException ( );
+        }
+        return neighbouringCountriesList;
     }
 
 
-    public void setForcesToCountry ( Country country, int forces ) {
-        int t = country.getLocalForces ( );
-        country.setLocalForces ( t + forces );
+    //NEIGHBOUR
+    public Vector < Country > loadNeighbouringCountryListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {
+        resetNeighbouringCountriesList ( );
+
+        int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
+        for ( int n : neighbouringCountriesListIDs ) {
+            if ( ! ( getCountryByID ( n ).getOwningPlayer ( ) ).equals ( country.getOwningPlayer ( ) ) ) {
+                neighbouringCountriesList.add ( getCountryByID ( n ) );
+            }
+        }
+        if ( neighbouringCountriesList.size ( ) == 0 ) {
+            throw new NoEnemyCountriesNearException ( );
+        }
+        return neighbouringCountriesList;
+
     }
 
-
-    public int returnForcesPerRoundsPerPlayer ( Player player ) {
-        int forcesCount = 0;
-
-        if ( getNumberOfCountriesPerPlayer ( player ) < 9 ) {
-            forcesCount += 3;
-        } else {
-            forcesCount = getNumberOfCountriesPerPlayer ( player ) / 3;
-        }
-
-        //Check if continent is completely occupied and add forces accordingly
-        if ( isContinentOccupied ( player, 0 ) ) {
-            forcesCount += continentList.get ( 0 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 1 ) ) {
-            forcesCount += continentList.get ( 1 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 2 ) ) {
-            forcesCount += continentList.get ( 2 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 3 ) ) {
-            forcesCount += continentList.get ( 3 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 4 ) ) {
-            forcesCount += continentList.get ( 4 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 5 ) ) {
-            forcesCount += continentList.get ( 5 ).getValue ( );
-        }
-        return forcesCount;
-    }
+    //ATTACKING
+    //1
+    public Vector < Country > loadAttackingCountriesList ( Player player ) throws NoEnemyCountriesNearException {
+        loadOwnedCountryList ( player );
+        resetAttackingCountriesList ( );
 
 
-    public boolean isContinentOccupied ( Player p, int continentNumber ) {
+        for ( int i = 0 ; i < ownedCountriesList.size ( ) ; i++ ) {
 
-        int continentsSize = continentList.get ( continentNumber ).getContinentCountries ( ).size ( );
-        int index = 0;
-        int isOccupied = 0;
+            try {
+                loadNeighbouringCountryListForAttackingPhase ( ownedCountriesList.get ( i ) );
+            } catch ( NoEnemyCountriesNearException e ) {
 
-        for ( int i = 0 ; i < continentsSize ; i++ ) {
-            if ( continentList.get ( continentNumber ).getContinentCountries ( ).get ( i ).getOwningPlayer ( ).equals ( p ) ) {
-                index++;
+
+            }
+            if ( ownedCountriesList.get ( i ).getLocalForces ( ) > 1 && ( neighbouringCountriesList.size ( ) > 0 ) ) {
+                attackingCountriesList.add ( ownedCountriesList.get ( i ) );
             }
         }
 
-        if ( index == continentsSize ) {
+        if ( attackingCountriesList.size ( ) == 0 ) {
+            throw new NoEnemyCountriesNearException ( );
+
+        }
+        return attackingCountriesList;
+
+
+    }
+
+    // Checks if the continent ist occupied by the player
+    public boolean isContinentOccupied ( Player player, int continentNumber ) {
+        int countryIndex = 0;
+        Continent continent = getContinentByID ( continentNumber );
+        for ( Country country : continent.getContinentCountries ( ) ) {
+            if ( country.getOwningPlayer ( ).equals ( player ) )
+                countryIndex++;
+        }
+        // If the countryIndex has the same value as the amount of countries of this continent
+        // the continent is completely dominated by the handed over player
+        if ( countryIndex == continent.getContinentCountries ( ).size ( ) ) {
             return true;
 
         } else {
             return false;
         }
+/*
+        int continentsSize = continentList.get ( continentNumber ).getContinentCountries ( ).size ( );
+        int index = 0;
+        int isOccupied = 0;
+
+        for ( int i = 0 ; i < continentsSize ; i++ ) {
+            if ( continentList.get ( continentNumber ).getContinentCountries ( ).get ( i ).getOwningPlayer ( ).equals ( player ) ) {
+                index++;
+            }
+        }
+*/
+    }
+
+    // Iterates the continentList and compares value n with the continentID of each continent
+    public Continent getContinentByID ( int n ) {
+        Continent continent = null;
+        for ( Continent c : continentList ) {
+            if ( c.getContinentID ( ) == n ) {
+                continent = c;
+            }
+        }
+        return continent;
     }
 
 
@@ -402,8 +573,7 @@ public class WorldVerwaltung {
         //TODO: implement this to also ask if player achieved his goal
         //TODO split Method to fill hte ownedCountrieslist and seperate the printing from the filling
 
-        ownedCountriesList.removeAllElements ( );
-        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
+/*        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
 
             for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
 
@@ -413,179 +583,15 @@ public class WorldVerwaltung {
 
             }
 
-        }
+        }*/
+        int n = getNumberOfCountriesOfPlayer ( p );
 
-        if ( ownedCountriesList.size ( ) == 42 || b ) {
+        if ( n == 42 || b ) {
             return true;
         }
         return false;
 
     }
-
-
-    public void conquerCountry ( Country attackingCountry, Country conqueredCountry, int newForces ) {
-
-        conqueredCountry.setOwningPlayer ( attackingCountry.getOwningPlayer ( ) );
-        moveForces ( attackingCountry, conqueredCountry, newForces );
-
-        loadOwnedCountryList ( attackingCountry.getOwningPlayer ( ) );
-    }
-
-
-    public void moveForces ( Country oldCountry, Country newCountry, int forces ) {
-        newCountry.setLocalForces ( forces + newCountry.getLocalForces ( ) );
-        oldCountry.setLocalForces ( oldCountry.getLocalForces ( ) - forces );
-    }
-
-
-    //OWNED
-    public Vector < Country > loadOwnedCountryList ( Player player ) {
-
-        resetOwnedCountriesList ( );
-
-        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
-            for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
-                if ( continentList.get ( i ).getContinentCountries ( ).get ( j ).getOwningPlayer ( ).equals ( player ) ) {
-
-                    ownedCountriesList.add ( continentList.get ( i ).getContinentCountries ( ).get ( j ) );
-
-
-                }
-            }
-        }
-
-        return ownedCountriesList;
-    }
-
-    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
-
-        resetOwnedCountriesList ( );
-
-        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
-            for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
-                if ( continentList.get ( i ).getContinentCountries ( ).get ( j ).getOwningPlayer ( ).equals ( player )
-                        && continentList.get ( i ).getContinentCountries ( ).get ( j ).getLocalForces ( ) > 1 ) {
-
-                    ownedCountriesList.add ( continentList.get ( i ).getContinentCountries ( ).get ( j ) );
-
-
-                }
-            }
-        }
-
-        return ownedCountriesList;
-    }
-
-    public void resetOwnedCountriesList ( ) {
-        ownedCountriesList.removeAllElements ( );
-    }
-
-
-    public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) {
-        resetNeighbouringCountriesList ( );
-
-        int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
-
-
-        for ( int i = 0 ; i < neighbouringCountriesListIDs.length ; i++ ) {
-
-            if ( getCountryByID ( neighbouringCountriesListIDs[ i ] ).getOwningPlayer ( ).equals ( country.getOwningPlayer ( ) ) ) {
-
-                neighbouringCountriesList.add ( getCountryByID ( neighbouringCountriesListIDs[ i ] ) );
-
-            }
-        }
-        return neighbouringCountriesList;
-    }
-
-    public Vector < Continent > getContinentList ( ) {
-        return continentList;
-    }
-
-
-    //NEIGHBOUR
-    public Vector < Country > loadNeighbouringCountryListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {
-        resetNeighbouringCountriesList ( );
-
-        int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
-
-
-        for ( int i = 0 ; i < neighbouringCountriesListIDs.length ; i++ ) {
-
-            if ( ! getCountryByID ( neighbouringCountriesListIDs[ i ] ).getOwningPlayer ( ).equals ( country.getOwningPlayer ( ) ) ) {
-
-                neighbouringCountriesList.add ( getCountryByID ( neighbouringCountriesListIDs[ i ] ) );
-
-            }
-
-
-        }
-        if ( neighbouringCountriesList.size ( ) == 0 ) {
-            throw new NoEnemyCountriesNearException ( );
-        }
-        return neighbouringCountriesList;
-
-    }
-
-    public void resetNeighbouringCountriesList ( ) {
-        neighbouringCountriesList.removeAllElements ( );
-    }
-
-
-    //2
-
-
-    public Country selectNeighbouringCountriesListByNumber ( int selectedCountryNumber ) {
-        return neighbouringCountriesList.get ( selectedCountryNumber - 1 );
-    }
-
-
-    //ATTACKING
-    //1
-    public Vector < Country > loadAttackingCountriesList ( Player player ) throws NoEnemyCountriesNearException {
-        loadOwnedCountryList ( player );
-        resetAttackingCountriesList ( );
-
-
-        for ( int i = 0 ; i < ownedCountriesList.size ( ) ; i++ ) {
-
-            try {
-                loadNeighbouringCountryListForAttackingPhase ( ownedCountriesList.get ( i ) );
-            } catch ( NoEnemyCountriesNearException e ) {
-
-
-            }
-            if ( ownedCountriesList.get ( i ).getLocalForces ( ) > 1 && ( neighbouringCountriesList.size ( ) > 0 ) ) {
-                attackingCountriesList.add ( ownedCountriesList.get ( i ) );
-            }
-        }
-
-        if ( attackingCountriesList.size ( ) == 0 ) {
-            throw new NoEnemyCountriesNearException ( );
-
-        }
-        return attackingCountriesList;
-
-
-    }
-
-    public void resetAttackingCountriesList ( ) {
-        attackingCountriesList.removeAllElements ( );
-    }
-
-
-    public Country selectAttackingCountriesListByNumber ( int selectedCountryNumber ) {
-        return attackingCountriesList.get ( selectedCountryNumber - 1 );
-    }
-
-
-    /*public void moveForcesEndOfRound(Player player) {
-        printOwnedCountriesList(player);
-
-
-    }*/
-
-
 }
 
 

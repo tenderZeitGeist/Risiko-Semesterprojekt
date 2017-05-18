@@ -1,6 +1,7 @@
 package domain;
 
 import domain.Persistence.PersistenceManager;
+import domain.exceptions.NoAlliedCountriesNearException;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
 import domain.exceptions.CountryAlreadyExistsException;
@@ -22,98 +23,98 @@ public class Risiko {
     private String file = "";
 
 
-    public Risiko(String file) throws IOException {
+    public Risiko ( String file ) throws IOException {
 
         this.file = file;
 
-        playerManager = new PlayerVerwaltung();
-        worldManager = new WorldVerwaltung();
-        missionVerwaltung = new MissionVerwaltung();
+        playerManager = new PlayerVerwaltung ( );
+        worldManager = new WorldVerwaltung ( );
+        missionVerwaltung = new MissionVerwaltung ( );
 
-        worldManager.readData(file + ".txt");
+        worldManager.readData ( file + ".txt" );
     }
 
-    public void createPlayer(int newPlayerID, String newPlayerName, boolean newTurn) throws PlayerAlreadyExistsException {
-        playerManager.createPlayer(newPlayerID, newPlayerName, newTurn);
+    public void createPlayer ( int newPlayerID, String newPlayerName ) throws PlayerAlreadyExistsException {
+        playerManager.createPlayer ( newPlayerID, newPlayerName );
     }
 
-    public List<Player> getPlayerList() {
-        return playerManager.getPlayerList();
-    }
-
-
-    public void distributeCountries() {
-        worldManager.distributeCountries(playerManager.getPlayerList());
-    }
-
-    public Vector<Country> loadOwnedCountryList(Player player) {
-        return worldManager.loadOwnedCountryList(player);
-    }
-
-    public Vector<Country> loadOwnedCountryListWithMoreThanOneForce(Player player) {
-        return worldManager.loadOwnedCountryListWithMoreThanOneForce(player);
-    }
-
-    public Vector<Country> loadNeighbouringCountriesListForDistributionPhase(Country country) {
-        return worldManager.loadNeighbouringCountriesListForDistributionPhase(country);
-    }
-
-    public void createGameFile() {
-        worldManager.createGameFile();
-    }
-
-    public void writeData( String file ) throws IOException{
-        worldManager.writeData( file );
+    public List < Player > getPlayerList ( ) {
+        return playerManager.getPlayerList ( );
     }
 
 
-    public int returnForcesPerRoundsPerPlayer(Player player) {
-        return worldManager.returnForcesPerRoundsPerPlayer(player);
+    public void distributeCountries ( ) {
+        worldManager.distributeCountries ( playerManager.getPlayerList ( ) );
+    }
+
+    public Vector < Country > loadOwnedCountryList ( Player player ) {
+        return worldManager.loadOwnedCountryList ( player );
+    }
+
+    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
+        return worldManager.loadOwnedCountryListWithMoreThanOneForce ( player );
+    }
+
+    public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws NoAlliedCountriesNearException {
+        return worldManager.loadNeighbouringCountriesListForDistributionPhase ( country );
+    }
+
+    public void createGameFile ( ) {
+        worldManager.createGameFile ( );
+    }
+
+    public void writeData ( String file ) throws IOException {
+        worldManager.writeData ( file );
     }
 
 
-    public void setForcesToCountry(Country country, int forces) {
-        worldManager.setForcesToCountry(country, forces);
+    public int returnForcesPerRoundsPerPlayer ( Player player ) {
+        return worldManager.returnForcesPerRoundsPerPlayer ( player );
     }
 
 
-    public Country selectNeighbouringCountriesListByNumber(int i) {
-        return worldManager.selectNeighbouringCountriesListByNumber(i);
-    }
-
-    public Vector<Country> loadNeighbouringCountriesList(Country country) throws NoEnemyCountriesNearException {
-        return worldManager.loadNeighbouringCountryListForAttackingPhase(country);
-    }
-
-    public Vector<Country> loadAttackingCountriesList(Player player) throws NoEnemyCountriesNearException {
-        return worldManager.loadAttackingCountriesList(player);
-    }
-
-    public void battle(Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces) {
-        worldManager.battle(attackingCountry, defendingCountry, attackerForces, defenderForces);
-
-    }
-
-    public void moveForces(Country oldCountry, Country newCountry, int forces) {
-        worldManager.moveForces(oldCountry, newCountry, forces);
+    public void setForcesToCountry ( Country country, int forces ) {
+        worldManager.setForcesToCountry ( country, forces );
     }
 
 
-    public boolean playerWon(Player p, boolean b) {
-        return worldManager.playerWon(p, b);
+    public Country selectNeighbouringCountriesListByNumber ( int i ) {
+        return worldManager.selectNeighbouringCountriesListByNumber ( i );
+    }
+
+    public Vector < Country > loadNeighbouringCountriesList ( Country country ) throws NoEnemyCountriesNearException {
+        return worldManager.loadNeighbouringCountryListForAttackingPhase ( country );
+    }
+
+    public Vector < Country > loadAttackingCountriesList ( Player player ) throws NoEnemyCountriesNearException {
+        return worldManager.loadAttackingCountriesList ( player );
+    }
+
+    public void battle ( Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces ) {
+        worldManager.battle ( attackingCountry, defendingCountry, attackerForces, defenderForces );
+
+    }
+
+    public void moveForces ( Country oldCountry, Country newCountry, int forces ) {
+        worldManager.moveForces ( oldCountry, newCountry, forces );
     }
 
 
-    public boolean missionFulfilled(Player player) {
-        return missionVerwaltung.missionFullfilled(player, playerManager.getPlayerList(), worldManager.getContinentList());
+    public boolean playerWon ( Player p, boolean b ) {
+        return worldManager.playerWon ( p, b );
     }
 
-    public void distributeMissions() {
-        missionVerwaltung.distributeMissions(playerManager.getPlayerList());
+
+    public boolean missionFulfilled ( Player player ) {
+        return missionVerwaltung.missionFullfilled ( player, playerManager.getPlayerList ( ), worldManager.getContinentList ( ) );
     }
 
-    public Mission getMissionPerPlayer(Player player) {
-        return missionVerwaltung.getMissionPerPlayer(player);
+    public void distributeMissions ( ) {
+        missionVerwaltung.distributeMissions ( playerManager.getPlayerList ( ) );
+    }
+
+    public Mission getMissionPerPlayer ( Player player ) {
+        return missionVerwaltung.getMissionPerPlayer ( player );
     }
 
 }
