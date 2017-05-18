@@ -186,22 +186,22 @@ public class WorldVerwaltung {
 
         //Check if continent is completely occupied and add forces accordingly
         if ( isContinentOccupied ( player, 1 ) ) {
-            forcesCount += continentList.get ( 0 ).getValue ( );
-        }
-        if ( isContinentOccupied ( player, 2 ) ) {
             forcesCount += continentList.get ( 1 ).getValue ( );
         }
-        if ( isContinentOccupied ( player, 3 ) ) {
+        if ( isContinentOccupied ( player, 2 ) ) {
             forcesCount += continentList.get ( 2 ).getValue ( );
         }
-        if ( isContinentOccupied ( player, 4 ) ) {
+        if ( isContinentOccupied ( player, 3 ) ) {
             forcesCount += continentList.get ( 3 ).getValue ( );
         }
-        if ( isContinentOccupied ( player, 5 ) ) {
+        if ( isContinentOccupied ( player, 4 ) ) {
             forcesCount += continentList.get ( 4 ).getValue ( );
         }
-        if ( isContinentOccupied ( player, 6 ) ) {
+        if ( isContinentOccupied ( player, 5 ) ) {
             forcesCount += continentList.get ( 5 ).getValue ( );
+        }
+        if ( isContinentOccupied ( player, 6 ) ) {
+            forcesCount += continentList.get ( 6 ).getValue ( );
         }
         return forcesCount;
     }
@@ -212,18 +212,16 @@ public class WorldVerwaltung {
 
     public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
         //TODO proper distribution with randomisation etc
-        int index = 0;
+        int playerIndex = 0;
         Vector < Country > tempCountryList;
 
         for ( Continent continent : continentList ) {
             tempCountryList = new Vector <> ( continent.getContinentCountries ( ) );
             while ( ! tempCountryList.isEmpty ( ) ) {
-                if ( ! ( index < playerList.size ( ) ) ) {
-                    index = 0;
-                }
                 int rollCountry = ( int ) ( Math.random ( ) * tempCountryList.size ( ) );
-                tempCountryList.get ( rollCountry ).setOwningPlayer ( playerList.get ( index++ ) );
+                tempCountryList.get ( rollCountry ).setOwningPlayer ( playerList.get ( playerIndex++ ) );
                 tempCountryList.remove ( rollCountry );
+                playerIndex = playerIndex % playerList.size ( );
             }
         }
     }
@@ -268,7 +266,34 @@ public class WorldVerwaltung {
         return currentCountries;
     }
 
-    public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws NoAlliedCountriesNearException {
+    //ATTACKING
+    //1
+    public Vector < Country > loadAttackingCountriesList ( Player player ) throws NoEnemyCountriesNearException {
+
+        loadOwnedCountryList ( player );
+        resetAttackingCountriesList ( );
+
+        for ( Country c : ownedCountriesList ) {
+            try {
+                loadNeighbouringCountryListForAttackingPhase ( c );
+            } catch ( NoEnemyCountriesNearException e ) {
+
+            }
+            if ( c.getLocalForces ( ) > 1 && ! ( neighbouringCountriesList.isEmpty ( ) ) ) {
+                attackingCountriesList.add ( c );
+            }
+        }
+        if ( attackingCountriesList.isEmpty ( ) ) {
+            throw new NoEnemyCountriesNearException ( );
+        }
+        return attackingCountriesList;
+
+
+    }
+
+
+    public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws
+            NoAlliedCountriesNearException {
         resetNeighbouringCountriesList ( );
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
@@ -285,7 +310,8 @@ public class WorldVerwaltung {
 
 
     //NEIGHBOUR
-    public Vector < Country > loadNeighbouringCountryListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {
+    public Vector < Country > loadNeighbouringCountryListForAttackingPhase ( Country country ) throws
+            NoEnemyCountriesNearException {
         resetNeighbouringCountriesList ( );
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
@@ -301,36 +327,9 @@ public class WorldVerwaltung {
 
     }
 
-    //ATTACKING
-    //1
-    public Vector < Country > loadAttackingCountriesList ( Player player ) throws NoEnemyCountriesNearException {
-        loadOwnedCountryList ( player );
-        resetAttackingCountriesList ( );
-
-
-        for ( int i = 0 ; i < ownedCountriesList.size ( ) ; i++ ) {
-
-            try {
-                loadNeighbouringCountryListForAttackingPhase ( ownedCountriesList.get ( i ) );
-            } catch ( NoEnemyCountriesNearException e ) {
-
-
-            }
-            if ( ownedCountriesList.get ( i ).getLocalForces ( ) > 1 && ( neighbouringCountriesList.size ( ) > 0 ) ) {
-                attackingCountriesList.add ( ownedCountriesList.get ( i ) );
-            }
-        }
-
-        if ( attackingCountriesList.size ( ) == 0 ) {
-            throw new NoEnemyCountriesNearException ( );
-
-        }
-        return attackingCountriesList;
-
-
-    }
 
     // Checks if the continent ist occupied by the player
+
     public boolean isContinentOccupied ( Player player, int continentNumber ) {
         int countryIndex = 0;
         Continent continent = getContinentByID ( continentNumber );
@@ -466,7 +465,7 @@ public class WorldVerwaltung {
 
     //TODO PUT THE LOGIC SHIT INTO THE PLAYGROUND CLASS!!!!!!!
     //--------------------------------------------------------
-
+/*
 
     public int[] compareDice ( int attackerRolls, int defenderRolls ) {
 
@@ -519,7 +518,7 @@ public class WorldVerwaltung {
     public void battle ( Country attackingCountry, Country defendingCountry, int attackerRolls, int defenderRolls ) {
 // KLasse BattleResult (C1, C2, W1, W2, Winner, ...)
         //TODO attacker can use more then 3 forces to attack, but only 3 dices(maybe!)
-        /*if ( ! ( attackerRolls < attackingCountry.getLocalForces ( ) && attackerRolls < 4 && attackerRolls > 0 ) ) {
+        *//*if ( ! ( attackerRolls < attackingCountry.getLocalForces ( ) && attackerRolls < 4 && attackerRolls > 0 ) ) {
             System.out.println ( "- Attacker may use only up to 3 forces, and keep at least 1 on the country he is attacking from" );
             return false;
         }
@@ -528,7 +527,7 @@ public class WorldVerwaltung {
         if ( ! ( defenderRolls >= 1 && defenderRolls <= 2 ) ) {
             System.out.println ( "- Defender may use up to 2 forces" );
             return false;
-        }*/
+        }*//*
 
         int[] forcesLosses = compareDice ( attackerRolls, defenderRolls );
 
@@ -540,7 +539,7 @@ public class WorldVerwaltung {
         System.out.println ( "Defending country loses " + forcesLosses[ 1 ] + " and has "
                 + defendingCountry.getLocalForces ( ) + " forces remaining." );
 
-       /*
+       *//*
         int defenderLosses = defenderRolls;
 
         if (attackerRolls < defenderRolls) {
@@ -556,7 +555,7 @@ public class WorldVerwaltung {
             attackingCountry.setLocalForces(attackingCountry.getLocalForces() - defenderRolls);
             System.out.println(defender.getPlayerName() + " wins!");
         }
-*/
+*//*
         if ( defendingCountry.getLocalForces ( ) < 1 ) {
             //defending Country is conquered
             System.out.println ( "The defending Country " + defendingCountry.getCountryName ( ) + " has lost all its forces." );
@@ -567,7 +566,7 @@ public class WorldVerwaltung {
         }
 
         //return true;
-    }
+    }*/
 
     public boolean playerWon ( Player p, boolean b ) {
         //TODO: implement this to also ask if player achieved his goal

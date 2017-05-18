@@ -521,17 +521,19 @@ public class PlayGroundCUI {
 
                         int defendingForces = selectedDefenderCountryTemp.getLocalForces ( );
 
-                        if ( defendingForces > 2 ) {
+                        if ( defendingForces < 2 ) {
+                            defendingForces = 1;
+                        } else {
                             defendingForces = 2;
                         }
 
                         risiko.battle ( selectedAttackerCountryTemp, selectedDefenderCountryTemp, attackingForces, defendingForces );
 
-
                         bool3 = false;
 
                     } catch ( NumberFormatException | ArrayIndexOutOfBoundsException e ) {
                         System.out.println ( "Please enter the correct number333333!" );
+                        System.out.println ( e.getMessage ( ) );
                         System.out.println ( "" );
                     }
                 }

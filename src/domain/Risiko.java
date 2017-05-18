@@ -19,7 +19,7 @@ public class Risiko {
     private WorldVerwaltung worldManager;
     private PlayerVerwaltung playerManager;
     private MissionVerwaltung missionVerwaltung;
-
+    private PlayGround playGround;
     private String file = "";
 
 
@@ -30,7 +30,7 @@ public class Risiko {
         playerManager = new PlayerVerwaltung ( );
         worldManager = new WorldVerwaltung ( );
         missionVerwaltung = new MissionVerwaltung ( );
-
+        playGround = new PlayGround ();
         worldManager.readData ( file + ".txt" );
     }
 
@@ -91,7 +91,7 @@ public class Risiko {
     }
 
     public void battle ( Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces ) {
-        worldManager.battle ( attackingCountry, defendingCountry, attackerForces, defenderForces );
+        playGround.battle ( attackingCountry, defendingCountry, attackerForces, defenderForces );
 
     }
 
