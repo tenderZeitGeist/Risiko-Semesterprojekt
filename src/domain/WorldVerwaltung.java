@@ -55,7 +55,7 @@ public class WorldVerwaltung {
 
         Country oneCountry;
         do {
-            // Objekt einlesen
+            // Reads in every country, line by line, from the given file
             oneCountry = pm.loadCountry ( );
             if ( oneCountry != null ) {
                 // Buch in Liste einfügen
@@ -67,8 +67,10 @@ public class WorldVerwaltung {
                 }
             }
         } while ( oneCountry != null );
-
+        // Adding the read in countries into the continentList
+        addCountriesListsToContinentList ();
         // Persistenz-Schnittstelle wieder schließen
+        //Closes the interface to persistence
         pm.close ( );
     }
 
@@ -79,27 +81,27 @@ public class WorldVerwaltung {
      * @throws CountryAlreadyExistsException
      */
     // TODO Switch case for adding the countries into the correct countrylists
-    public void addCountry(Country country) throws CountryAlreadyExistsException {
+    public void addCountry ( Country country ) throws CountryAlreadyExistsException {
         // Adds countries to continent countries lists
 
-        switch (country.getContinentID()) {
+        switch ( country.getContinentID ( ) ) {
             case 1:
-                countryListNAmerica.add(country);
+                countryListNAmerica.add ( country );
                 break;
             case 2:
-                countryListSAmerica.add(country);
+                countryListSAmerica.add ( country );
                 break;
             case 3:
-                countryListEurope.add(country);
+                countryListEurope.add ( country );
                 break;
             case 4:
-                countryListAfrica.add(country);
+                countryListAfrica.add ( country );
                 break;
             case 5:
-                countryListAsia.add(country);
+                countryListAsia.add ( country );
                 break;
             case 6:
-                countryListAustralia.add(country);
+                countryListAustralia.add ( country );
                 break;
             default:
                 break;
@@ -112,19 +114,19 @@ public class WorldVerwaltung {
     }*/
     }
 
-    public void addCountriesListsToContinentList() {
+    public void addCountriesListsToContinentList ( ) {
 
-        continentList.add(new Continent("North America", 5, 1, countryListNAmerica));  //Id 0
-        continentList.add(new Continent("South America", 2, 2, countryListSAmerica));  //Id 1
-        continentList.add(new Continent("Europe", 5, 3, countryListEurope));           //Id 2
-        continentList.add(new Continent("Africa", 3, 4, countryListAfrica));           //Id 3
-        continentList.add(new Continent("Asia", 7, 5, countryListAsia));               //Id 4
-        continentList.add(new Continent("Australia", 2, 6, countryListAustralia));     //Id 5
+        continentList.add ( new Continent ( "North America", 5, 1, countryListNAmerica ) );  //Id 0
+        continentList.add ( new Continent ( "South America", 2, 2, countryListSAmerica ) );  //Id 1
+        continentList.add ( new Continent ( "Europe", 5, 3, countryListEurope ) );           //Id 2
+        continentList.add ( new Continent ( "Africa", 3, 4, countryListAfrica ) );           //Id 3
+        continentList.add ( new Continent ( "Asia", 7, 5, countryListAsia ) );               //Id 4
+        continentList.add ( new Continent ( "Australia", 2, 6, countryListAustralia ) );     //Id 5
     }
 
-    public void getCountryListNames() {
-        for (Country c : countryList) {
-            System.out.println(c.getCountryName());
+    public void getCountryListNames ( ) {
+        for ( Country c : countryList ) {
+            System.out.println ( c.getCountryName ( ) );
         }
     }
 
@@ -142,9 +144,8 @@ public class WorldVerwaltung {
             for ( Country country : continent.getContinentCountries ( ) ) {
                 pm.saveCountry ( country );
             }
-
-            pm.close ( );
         }
+        pm.close ( );
     }
 
     /**
@@ -252,7 +253,7 @@ public class WorldVerwaltung {
      * Part of the code, mainly for iteration of various queries
      */
 
-    public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
+/*    public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
         //TODO proper distribution with randomisation etc
         int playerIndex = 0;
         Vector < Country > tempCountryList;
@@ -264,6 +265,19 @@ public class WorldVerwaltung {
                 tempCountryList.get ( rollCountry ).setOwningPlayer ( playerList.get ( playerIndex++ ) );
                 tempCountryList.remove ( rollCountry );
                 playerIndex = playerIndex % playerList.size ( );
+            }
+        }
+    }*/
+
+    public void distributeCountries ( List < Player > playerList ) throws ArithmeticException {
+        //Thanks to nox
+        int counter = 0;
+        for ( Continent continent : continentList ) {
+            Vector < Country > tempCountryList = new Vector <> (  continent.getContinentCountries ( ) );
+            Collections.shuffle(tempCountryList);
+
+            for ( Country country : tempCountryList ) {
+                country.setOwningPlayer( playerList.get ( counter++ % playerList.size ( ) ) );
             }
         }
     }

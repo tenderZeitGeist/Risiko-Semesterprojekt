@@ -31,7 +31,8 @@ public class Risiko {
         worldManager = new WorldVerwaltung ( );
         missionVerwaltung = new MissionVerwaltung ( );
         playGround = new PlayGround ();
-        worldManager.readData ( file + ".txt" );
+        //worldManager.writeData ( "CountryListTest.txt" );
+        worldManager.readData ( file );
     }
 
     public void createPlayer ( int newPlayerID, String newPlayerName ) throws PlayerAlreadyExistsException {

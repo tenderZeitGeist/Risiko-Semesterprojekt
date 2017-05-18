@@ -40,14 +40,11 @@ public class PlayGroundCUI {
     public PlayGroundCUI ( String file ) throws IOException {
 
         risiko = new Risiko ( file );
-
-        risiko.createGameFile ( );
-        //worldManager.writeData ( "countriesListTest" );
         in = new BufferedReader ( new InputStreamReader ( System.in ) );
     }
 
     public static void main ( String[] args ) throws IOException {
-        PlayGroundCUI pCUI = new PlayGroundCUI ( "countryList" );
+        PlayGroundCUI pCUI = new PlayGroundCUI ( "countryList.txt" );
         IO io = new IO ( );
         pCUI.run ( );
 
