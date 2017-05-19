@@ -314,12 +314,25 @@ public class WorldVerwaltung {
     public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
         resetOwnedCountriesList ( );
 
-        Vector < Country > currentCountries = loadOwnedCountryList ( player );
+        // ConcurrentModificationException
+
+        /*Vector < Country > currentCountries = loadOwnedCountryList ( player );
         for ( Country country : currentCountries ) {
             if ( ! ( country.getLocalForces ( ) >= 2 ) )
                 currentCountries.remove ( country );
         }
-        return currentCountries;
+        return currentCountries;*/
+
+        for (Continent c : continentList) {
+            for (int j = 0; j < c.getContinentCountries().size(); j++) {
+                if (c.getContinentCountries().get(j).getOwningPlayer().equals(player)
+                        && c.getContinentCountries().get(j).getLocalForces() > 1) {
+
+                    ownedCountriesList.add(c.getContinentCountries().get(j));
+                }
+            }
+        }
+        return ownedCountriesList;
     }
 
     //ATTACKING

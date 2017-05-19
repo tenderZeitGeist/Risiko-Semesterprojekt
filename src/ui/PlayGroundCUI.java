@@ -261,9 +261,9 @@ public class PlayGroundCUI {
         }
 
 
-        if ( risiko.missionFulfilled ( currentPlayer ) ) {
+        /*if ( risiko.missionFulfilled ( currentPlayer ) ) {
             endGameBIGBOSS ( );
-        }
+        }*/
     }
 
 

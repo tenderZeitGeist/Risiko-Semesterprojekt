@@ -16,7 +16,7 @@ public class MissionVerwaltung {
 
     public MissionVerwaltung() {
         missionList.removeAllElements();
-        missionList.add(new CountryMissions(null,"Conquer 24 Countries of your choice.", 1, 10, 0 ));
+        missionList.add(new CountryMissions(null,"Conquer 24 Countries of your choice.", 1, 24, 0 ));
         missionList.add(new CountryMissions(null,"Conquer 18 Countries of your choice with at least 2 forces on each one", 2, 18, 2));
         /*missionList.add(new ContinentMissions(null,"Conquer Asia and Africa!", 3, 5,4));
         missionList.add(new ContinentMissions(null,"Conquer Asia and South-America!", 3, 5,2));

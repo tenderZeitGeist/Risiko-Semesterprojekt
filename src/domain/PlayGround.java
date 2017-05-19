@@ -108,8 +108,8 @@ public class PlayGround {
             System.out.println ( "The defending Country " + defendingCountry.getCountryName ( ) + " has lost all its forces." );
             System.out.println ( attackingCountry.getOwningPlayer ( ).getPlayerName ( ) + " is the new owner." );
             defendingCountry.setOwningPlayer ( attackingCountry.getOwningPlayer ( ) );
-            defendingCountry.setLocalForces ( forcesLosses[ 0 ] );
-            attackingCountry.setLocalForces ( attackingCountry.getLocalForces ( ) - forcesLosses[ 0 ] );
+            defendingCountry.setLocalForces ( attackerRolls - forcesLosses[ 0 ] );
+            attackingCountry.setLocalForces ( attackingCountry.getLocalForces ( ) - attackerRolls - forcesLosses[ 0 ] );
             // conquerCountry ( attackingCountry, defendingCountry, attackerRolls );
 
         }
