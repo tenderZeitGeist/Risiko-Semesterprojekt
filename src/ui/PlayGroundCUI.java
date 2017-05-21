@@ -477,13 +477,13 @@ public class PlayGroundCUI {
 
                         //TODO: return neighbouring countries the right way!!!
                         printNeighbouringCountriesListForAttackingPhase ( selectedAttackerCountryTemp );
-
+                        Vector<Country> tempCountriesList = risiko.loadNeighbouringCountriesListForAttackingPhase ( selectedAttackerCountryTemp );
                         System.out.println ( "Please enter the number of the country you want to select." );
                         System.out.print ( "##>" );
 
 
                         selectedDefenderIDTemp = new Integer ( readInput ( ) );
-                        selectedDefenderCountryTemp = risiko.selectNeighbouringCountriesListByNumber ( selectedDefenderIDTemp );
+                        selectedDefenderCountryTemp = tempCountriesList.get ( selectedDefenderIDTemp - 1 );
 
 
                         System.out.println ( "" );
@@ -673,7 +673,7 @@ public class PlayGroundCUI {
     }
 
     public void printNeighbouringCountriesListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {
-        Vector < Country > neighbouringCountriesList = risiko.loadNeighbouringCountriesList ( country );
+        Vector < Country > neighbouringCountriesList = risiko.loadNeighbouringCountriesListForAttackingPhase ( country );
 
         int index = 1;
         System.out.format ( "%2s%21s%7s", "Number: ", "Country: ", "Forces: " );

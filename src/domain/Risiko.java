@@ -78,12 +78,7 @@ public class Risiko {
         worldManager.setForcesToCountry ( country, forces );
     }
 
-
-    public Country selectNeighbouringCountriesListByNumber ( int i ) {
-        return worldManager.selectNeighbouringCountriesListByNumber ( i );
-    }
-
-    public Vector < Country > loadNeighbouringCountriesList ( Country country ) throws NoEnemyCountriesNearException {
+    public Vector < Country > loadNeighbouringCountriesListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {
         return worldManager.loadNeighbouringCountryListForAttackingPhase ( country );
     }
 
