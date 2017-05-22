@@ -2,10 +2,12 @@ package domain;
 
 import domain.Persistence.FilePersistenceManager;
 import domain.Persistence.PersistenceManager;
+import valueobjects.Card;
 import valueobjects.Country;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Vector;
 
 public class PlayGround {
 
@@ -15,6 +17,8 @@ public class PlayGround {
     }
 
     // Logical part for attacking/defending and generate random values
+
+
     public int[] compareDice ( int attackerRolls, int defenderRolls ) {
 
         int[] forcesArray = new int[] { 0 , 0 };
@@ -115,6 +119,42 @@ public class PlayGround {
         }
 
         //return true;
+    }
+
+    public boolean isCardStackFulfilled ( Vector < Card > playerCards ) {
+        boolean isFulfilled = false;
+        int infantry = 0;
+        int cavalry = 0;
+        int artillery = 0;
+        int joker = 0;
+
+        if ( playerCards.size ( ) < 3 ) {
+            for ( Card currentCard : playerCards ) {
+                switch ( currentCard.getCardType ( ) ) {
+                    case 1:
+                        infantry++;
+                        break;
+                    case 2:
+                        cavalry++;
+                        break;
+                    case 3:
+                        artillery++;
+                        break;
+                    case 4:
+                        joker++;
+                        break;
+                }
+                if ( ( infantry > 2 || cavalry > 2 || artillery > 2 )
+                        || ( infantry >= 1 && cavalry >= 1 && artillery >= 1 )
+                        || ( ( joker >= 1 ) && ( infantry > 1 || cavalry > 1 || artillery > 1 ) )
+                        || ( ( joker > 0 ) && ( infantry > 1 || cavalry > 1 || artillery > 1 ) ) ) {
+                    isFulfilled = true;
+                }
+            }
+        } else {
+            isFulfilled = false;
+        }
+        return isFulfilled;
     }
 
 }

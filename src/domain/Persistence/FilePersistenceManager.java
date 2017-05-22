@@ -1,6 +1,9 @@
 package domain.Persistence;
 
 import valueobjects.Country;
+import valueobjects.Card;
+import valueobjects.Mission;
+import valueobjects.Player;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -132,6 +135,77 @@ public class FilePersistenceManager implements PersistenceManager {
 
         return true;
     }
+
+    public Card loadCard ( ) throws IOException {
+        String idString;
+        String typeString;
+        String cardName;
+        int id;
+        int type;
+
+        idString = readLine ( );
+        if ( idString == null ) {
+            return null;
+        } else {
+            id = Integer.parseInt ( idString );
+        }
+
+        typeString = readLine ( );
+        type = Integer.parseInt ( typeString );
+
+        cardName = readLine ( );
+
+        return new Card ( id, type, cardName );
+
+    }
+
+    public boolean saveCard ( Card card ) throws IOException {
+
+        writeLine ( card.getCardID ( ) + "" );
+        writeLine ( card.getCardType ( ) + "" );
+        writeLine ( card.getCardName ( ) );
+
+        return true;
+    }
+
+    public Player loadPlayer ( ) throws IOException {
+        String playerName;
+        String playerIDString;
+        int playerID;
+
+        playerIDString = readLine ( );
+        playerID = Integer.parseInt ( playerIDString );
+
+        playerName = readLine ( );
+
+        return new Player ( playerID, playerName );
+    }
+
+    public boolean savePlayer ( Player player ) throws IOException {
+        writeLine ( player.getPlayerID ( ) + "" );
+        writeLine ( player.getPlayerName ( ) );
+        return true;
+    }
+
+/*    public Mission loadMission ( ) throws IOException {
+
+        String missionDescription;
+        String missionIDString;
+        String player;
+        int missionID;
+
+        player = readLine ();
+
+        missionDescription = readLine ();
+
+        missionIDString = readLine ();
+        missionID = Integer.parseInt ( missionIDString );
+
+        if( missionDescription.contains ( "" ) ){
+
+        }
+        return new  ( player, missionDescription, missionID );
+    }*/
 
 
     private String readLine ( ) throws IOException {

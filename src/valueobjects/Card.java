@@ -13,7 +13,7 @@ public class Card {
         this.cardID = cardID;
         this.cardType = cardType;
         this.cardName = cardName;
-        owningPlayer = null;
+        this.owningPlayer = null;
     }
 
     public int getCardID( ){

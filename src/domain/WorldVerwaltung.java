@@ -12,6 +12,7 @@ import domain.Persistence.*;
 
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 
 /**
@@ -171,6 +172,7 @@ public class WorldVerwaltung {
         return attackingCountriesList.get ( selectedCountryNumber - 1 );
     }
 */
+
     /**
      * @param attackingCountry
      * @param conqueredCountry
@@ -280,6 +282,23 @@ public class WorldVerwaltung {
         }
     }
 
+    public void distributeCard ( Player player ) throws IllegalStateException {
+        Vector < Card > emptyCardList = new Vector <> ( cardList );
+        Random rng = new Random ( );
+        for ( Card currentCard : cardList ) {
+            if ( currentCard.getOwningPlayer ( ) == null ) {
+                emptyCardList.add ( currentCard );
+            }
+        }
+        if ( emptyCardList.isEmpty ( ) ) {
+            throw new IllegalStateException ( );
+        } else {
+            int draw = rng.nextInt ( emptyCardList.size ( ) - 1 );
+            emptyCardList.get ( draw ).setOwningPlayer ( player );
+        }
+
+    }
+
 
     public int getNumberOfCountriesOfPlayer ( Player player ) {
         //checks every Country in every Continent for its owner
@@ -311,27 +330,11 @@ public class WorldVerwaltung {
 
     public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
         // ConcurrentModificationException?
-
         Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
-        Vector < Country > currentCountriesList = new Vector <> ( );
+        ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) > 2 );
+        ownedCountriesList.trimToSize ();
 
-        Vector < Country > currentCountries = loadOwnedCountryList ( player );
-        for ( Country country : ownedCountriesList ) {
-            if ( ! ( country.getLocalForces ( ) < 1 ) )
-                currentCountries.add ( country );
-        }
-        return currentCountriesList;
-
-/*        for (Continent c : continentList) {
-            for (int j = 0; j < c.getContinentCountries().size(); j++) {
-                if (c.getContinentCountries().get(j).getOwningPlayer().equals(player)
-                        && c.getContinentCountries().get(j).getLocalForces() > 1) {
-
-                    ownedCountriesList.add(c.getContinentCountries().get(j));
-                }
-            }
-        }
-        return ownedCountriesList;*/
+        return ownedCountriesList;
     }
 
     //ATTACKING
@@ -402,31 +405,12 @@ public class WorldVerwaltung {
     // Checks if the continent ist occupied by the player
 
     public boolean isContinentOccupied ( Player player, int continentNumber ) {
-        int countryIndex = 0;
         Continent continent = getContinentByID ( continentNumber );
         for ( Country country : continent.getContinentCountries ( ) ) {
-            if ( country.getOwningPlayer ( ).equals ( player ) )
-                countryIndex++;
+            if ( ! country.getOwningPlayer ( ).equals ( player ) )
+                return false;
         }
-        // If the countryIndex has the same value as the amount of countries of this continent
-        // the continent is completely dominated by the handed over player
-        if ( countryIndex == continent.getContinentCountries ( ).size ( ) ) {
-            return true;
-
-        } else {
-            return false;
-        }
-/*
-        int continentsSize = continentList.get ( continentNumber ).getContinentCountries ( ).size ( );
-        int index = 0;
-        int isOccupied = 0;
-
-        for ( int i = 0 ; i < continentsSize ; i++ ) {
-            if ( continentList.get ( continentNumber ).getContinentCountries ( ).get ( i ).getOwningPlayer ( ).equals ( player ) ) {
-                index++;
-            }
-        }
-*/
+        return true;
     }
 
     // Iterates the continentList and compares value n with the continentID of each continent
@@ -440,6 +424,15 @@ public class WorldVerwaltung {
         return continent;
     }
 
+    public Vector < Card > getPlayersCardList ( Player player ) {
+        Vector < Card > playersCardList = new Vector <> ( );
+        for ( Card c : cardList ) {
+            if ( c.getOwningPlayer ( ).equals ( player ) ) {
+                playersCardList.add ( c );
+            }
+        }
+        return playersCardList;
+    }
 
     //_____________________________________________________________________________________________________________
 
@@ -534,110 +527,6 @@ public class WorldVerwaltung {
         }
     }
 
-    //TODO PUT THE LOGIC SHIT INTO THE PLAYGROUND CLASS!!!!!!!
-    //--------------------------------------------------------
-/*
-
-    public int[] compareDice ( int attackerRolls, int defenderRolls ) {
-
-        int[] forcesArray = new int[] { 0 , 0 };
-        Integer[] attackerDice = new Integer[ attackerRolls ];
-        Integer[] defenderDice = new Integer[ defenderRolls ];
-
-        for ( int i = 0 ; i < defenderDice.length ; i++ ) {
-            defenderDice[ i ] = rollDice ( );
-        }
-
-
-        for ( int i = 0 ; i < attackerDice.length ; i++ ) {
-            attackerDice[ i ] = rollDice ( );
-        }
-
-        Arrays.sort ( attackerDice, Collections.reverseOrder ( ) );
-        Arrays.sort ( defenderDice, Collections.reverseOrder ( ) );
-
-        if ( attackerDice.length < defenderDice.length ) {
-            for ( int i = 0 ; i < attackerDice.length ; i++ ) {
-                System.out.println ( "Attacker rolls " + attackerDice[ i + 1 ] + " with the " + i + " roll"
-                        + " while Defender rolls a " + defenderDice[ i + 1 ] + "." );
-                if ( attackerDice[ i ] <= defenderDice[ i ] ) {
-                    forcesArray[ 0 ]++;
-                } else {
-                    forcesArray[ 1 ]++;
-                }
-            }
-
-        } else {
-            for ( int k = 0 ; k < defenderDice.length ; k++ ) {
-                System.out.println ( "Attacker rolls " + attackerDice[ k + 1 ] + " with the " + k + " roll"
-                        + " while Defender rolls a " + defenderDice[ k + 1 ] + "." );
-                if ( attackerDice[ k ] <= defenderDice[ k ] ) {
-                    forcesArray[ 0 ]++;
-                } else {
-                    forcesArray[ 1 ]++;
-                }
-            }
-        }
-        return forcesArray;
-    }
-
-
-    public int rollDice ( ) {
-        return ( int ) ( Math.random ( ) * 6 + 1 );
-    }
-
-    public void battle ( Country attackingCountry, Country defendingCountry, int attackerRolls, int defenderRolls ) {
-// KLasse BattleResult (C1, C2, W1, W2, Winner, ...)
-        //TODO attacker can use more then 3 forces to attack, but only 3 dices(maybe!)
-        *//*if ( ! ( attackerRolls < attackingCountry.getLocalForces ( ) && attackerRolls < 4 && attackerRolls > 0 ) ) {
-            System.out.println ( "- Attacker may use only up to 3 forces, and keep at least 1 on the country he is attacking from" );
-            return false;
-        }
-
-
-        if ( ! ( defenderRolls >= 1 && defenderRolls <= 2 ) ) {
-            System.out.println ( "- Defender may use up to 2 forces" );
-            return false;
-        }*//*
-
-        int[] forcesLosses = compareDice ( attackerRolls, defenderRolls );
-
-        attackingCountry.setLocalForces ( attackingCountry.getLocalForces ( ) - forcesLosses[ 0 ] );
-        System.out.println ( "Attacking country loses " + forcesLosses[ 0 ] + " and has "
-                + attackingCountry.getLocalForces ( ) + " forces remaining." );
-
-        defendingCountry.setLocalForces ( defendingCountry.getLocalForces ( ) - forcesLosses[ 1 ] );
-        System.out.println ( "Defending country loses " + forcesLosses[ 1 ] + " and has "
-                + defendingCountry.getLocalForces ( ) + " forces remaining." );
-
-       *//*
-        int defenderLosses = defenderRolls;
-
-        if (attackerRolls < defenderRolls) {
-            defenderLosses = attackerRolls;
-        }
-        if (attackerWins) {
-            //attacker wins
-            defendingCountry.setLocalForces(defendingCountry.getLocalForces() - defenderLosses);
-            System.out.println(attacker.getPlayerName() + " wins!");
-        } else if (!attackerWins) {
-            //defender Wins
-
-            attackingCountry.setLocalForces(attackingCountry.getLocalForces() - defenderRolls);
-            System.out.println(defender.getPlayerName() + " wins!");
-        }
-*//*
-        if ( defendingCountry.getLocalForces ( ) < 1 ) {
-            //defending Country is conquered
-            System.out.println ( "The defending Country " + defendingCountry.getCountryName ( ) + " has lost all its forces." );
-            System.out.println ( attackingCountry.getOwningPlayer ( ).getPlayerName ( ) + " is the new owner." );
-
-            conquerCountry ( attackingCountry, defendingCountry, attackerRolls );
-
-        }
-
-        //return true;
-    }*/
 
     public boolean playerWon ( Player p, boolean b ) {
         //TODO: implement this to also ask if player achieved his goal
