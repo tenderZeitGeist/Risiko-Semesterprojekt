@@ -6,6 +6,7 @@ import domain.WorldVerwaltung;
 import domain.exceptions.*;
 
 
+import valueobjects.Card;
 import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Player;
@@ -268,7 +269,8 @@ public class PlayGroundCUI {
 
 
     public void distributeForcesMenu ( Player currentPlayer, Vector < Country > ownedCountriesList ) {
-        int initForces = risiko.returnForcesPerRoundsPerPlayer ( currentPlayer );
+        boolean cards = risiko.isCardStackFulfilled ( worldManager.getPlayersCardList ( currentPlayer ) );
+        int initForces = risiko.returnForcesPerRoundsPerPlayer ( currentPlayer, cards );
         int forcesLeft = initForces;
         int selectedCountryIDTemp;
         int selectedForcesCountTemp = 0;
@@ -477,7 +479,7 @@ public class PlayGroundCUI {
 
                         //TODO: return neighbouring countries the right way!!!
                         printNeighbouringCountriesListForAttackingPhase ( selectedAttackerCountryTemp );
-                        Vector<Country> tempCountriesList = risiko.loadNeighbouringCountriesListForAttackingPhase ( selectedAttackerCountryTemp );
+                        Vector < Country > tempCountriesList = risiko.loadNeighbouringCountriesListForAttackingPhase ( selectedAttackerCountryTemp );
                         System.out.println ( "Please enter the number of the country you want to select." );
                         System.out.print ( "##>" );
 
@@ -706,6 +708,21 @@ public class PlayGroundCUI {
         System.out.println ( "----------------------------------------" );
     }
 
+    public void printPlayersCardList ( Player player ){
+        Vector< Card > playerCards = risiko.getPlayersCardList ( player );
+        int index = 1;
+
+        System.out.format( "%23s", "Card:" );
+        System.out.println ( "" );
+        System.out.println ( "----------------------------------------" );
+
+        for ( Card c : playerCards ){
+            System.out.printf ( "%2d%21s" , index++, c.getCardName () );
+        }
+        System.out.println ( "----------------------------------------" );
+    }
+
+
 
     public void endGameBIGBOSS ( ) {
         System.out.println ( "" );
@@ -718,5 +735,4 @@ public class PlayGroundCUI {
         System.out.println ( "" );
 
     }
-
 }

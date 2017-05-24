@@ -22,11 +22,8 @@ public class FilePersistenceManager implements PersistenceManager {
 
 
     /**
-     * @author teschke
-     * <p>
      * Realisierung einer Schnittstelle zur persistenten Speicherung von
      * Daten in Dateien.
-     * @see bib.local.persistence.PersistenceManager
      */
 
 
@@ -69,6 +66,7 @@ public class FilePersistenceManager implements PersistenceManager {
     public Country loadCountry ( ) throws IOException {
         String name;
         String IDString;
+        String playerNameString;
         String forcesString;
         String continentIDString;
         String[] integersInString;
@@ -88,6 +86,8 @@ public class FilePersistenceManager implements PersistenceManager {
         // ... und von String in int konvertieren
         ID = Integer.parseInt ( IDString );
 
+        // read player
+        playerNameString = readLine ( );
         // read forces
         forcesString = readLine ( );
         // ... und von String in int konvertieren
@@ -106,8 +106,11 @@ public class FilePersistenceManager implements PersistenceManager {
         }
 
         // create new country object and return it
-
-        return new Country ( name, ID, forces, null, continentID, a );
+        if ( playerNameString.contains ( "null" ) ) {
+            return new Country ( name, ID, forces, null, continentID, a );
+        } else {
+            return new Country ( name, ID, forces, new Player ( 0, playerNameString ), continentID, a );
+        }
     }
 
 
@@ -116,7 +119,7 @@ public class FilePersistenceManager implements PersistenceManager {
      * Das Verfügbarkeitsattribut wird in der Datenquelle (Datei) als "t" oder "f"
      * codiert abgelegt.
      *
-     * @param b Buch-Objekt, das gespeichert werden soll
+     * @param
      * @return true , wenn Schreibvorgang erfolgreich, false sonst
      */
     public boolean saveCountry ( Country country ) throws IOException {
@@ -125,6 +128,11 @@ public class FilePersistenceManager implements PersistenceManager {
 
         writeLine ( country.getCountryName ( ) );
         writeLine ( country.getCountryID ( ) + "" );
+        if ( country.getOwningPlayer ( ) != null ) {
+            writeLine ( country.getOwningPlayerName ( ) );
+        } else {
+            writeLine ( "null" );
+        }
         writeLine ( country.getLocalForces ( ) + "" );
         writeLine ( country.getContinentID ( ) + "" );
         writeLine ( Arrays.toString ( country.getNeighbouringCountries ( ) )

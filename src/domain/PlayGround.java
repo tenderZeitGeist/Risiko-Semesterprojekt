@@ -120,9 +120,12 @@ public class PlayGround {
 
         //return true;
     }
-
     public boolean isCardStackFulfilled ( Vector < Card > playerCards ) {
         boolean isFulfilled = false;
+        boolean checkInfantry = false;
+        boolean checkCavalry = false;
+        boolean checkArtillery = false;
+        boolean checkJoker = false;
         int infantry = 0;
         int cavalry = 0;
         int artillery = 0;
@@ -144,12 +147,35 @@ public class PlayGround {
                         joker++;
                         break;
                 }
-                if ( ( infantry > 2 || cavalry > 2 || artillery > 2 )
+                if ( infantry > 0 ) {
+                    checkInfantry = true;
+                }
+                if ( cavalry > 0 ) {
+                    checkCavalry = true;
+                }
+                if ( artillery > 0 ) {
+                    checkArtillery = true;
+                }
+                if ( joker > 0 ) {
+                    checkJoker = true;
+                }
+                if ( ( checkInfantry && checkCavalry && checkArtillery )
+                        || ( checkJoker && checkInfantry && checkCavalry )
+                        || ( checkJoker && checkCavalry && checkArtillery )
+                        || ( checkJoker && checkInfantry && checkArtillery )
+                        || ( checkJoker && ( infantry > 1 || cavalry > 1 || artillery > 1 ) )
+                        || ( joker > 1 && ( checkInfantry || checkCavalry || checkArtillery ) ) ){
+
+                    return isFulfilled = true;
+                } else {
+                    return isFulfilled = false;
+                }
+                /*if ( ( infantry > 2 || cavalry > 2 || artillery > 2 )
                         || ( infantry >= 1 && cavalry >= 1 && artillery >= 1 )
                         || ( ( joker >= 1 ) && ( infantry > 1 || cavalry > 1 || artillery > 1 ) )
-                        || ( ( joker > 0 ) && ( infantry > 1 || cavalry > 1 || artillery > 1 ) ) ) {
-                    isFulfilled = true;
-                }
+                        || ( ( joker > 0 ) && ( infantry > 0 && cavalry > 0 || artillery > 0 ) ) ) {
+                    isFulfilled = true;*/
+
             }
         } else {
             isFulfilled = false;

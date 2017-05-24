@@ -30,8 +30,10 @@ public class Risiko {
         playerManager = new PlayerVerwaltung ( );
         worldManager = new WorldVerwaltung ( );
         missionVerwaltung = new MissionVerwaltung ( );
-        playGround = new PlayGround ();
+        playGround = new PlayGround ( );
         //worldManager.writeData ( "CountryListTest.txt" );
+        worldManager.createGameFile ( );
+        worldManager.writeData ( );
         worldManager.readData ( file );
     }
 
@@ -64,13 +66,13 @@ public class Risiko {
         worldManager.createGameFile ( );
     }
 
-    public void writeData ( String file ) throws IOException {
-        worldManager.writeData ( file );
+    public void writeData ( ) throws IOException {
+        worldManager.writeData ( );
     }
 
 
-    public int returnForcesPerRoundsPerPlayer ( Player player ) {
-        return worldManager.returnForcesPerRoundsPerPlayer ( player );
+    public int returnForcesPerRoundsPerPlayer ( Player player, boolean cards ) {
+        return worldManager.returnForcesPerRoundsPerPlayer ( player, cards );
     }
 
 
@@ -113,4 +115,11 @@ public class Risiko {
         return missionVerwaltung.getMissionPerPlayer ( player );
     }
 
+    public Vector < Card > getPlayersCardList ( Player player ) {
+        return worldManager.getPlayersCardList ( player );
+    }
+
+    public boolean isCardStackFulfilled ( Vector < Card > playersCards ) {
+        return playGround.isCardStackFulfilled ( playersCards );
+    }
 }

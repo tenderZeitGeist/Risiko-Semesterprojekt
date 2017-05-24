@@ -23,7 +23,6 @@ public class WorldVerwaltung {
 
     public int countryCount = 42;
     private PersistenceManager pm = new FilePersistenceManager ( );
-    private Vector < Country > countryList = new Vector < Country > ( );
     private Vector < Continent > continentList = new Vector < Continent > ( );
     private Vector < Card > cardList = new Vector <> ( );
 
@@ -114,6 +113,20 @@ public class WorldVerwaltung {
     }*/
     }
 
+    public void checkCountriesForPlayer ( Vector < Player > playerList ) throws IllegalStateException {
+
+        for ( Player p : playerList ){
+            for ( Continent currentContinent : continentList ){
+                for( Country currentCountry : currentContinent.getContinentCountries () )
+                    if ( p.getPlayerName ().equals( currentCountry.getOwningPlayerName () ) ){
+                        currentCountry.setOwningPlayer ( p );
+                    } else {
+                        throw new IllegalStateException (  );
+                    }
+            }
+        }
+    }
+
     public void addCountriesListsToContinentList ( ) {
 
         continentList.add ( new Continent ( "North America", 5, 1, countryListNAmerica ) );  //Id 0
@@ -124,28 +137,32 @@ public class WorldVerwaltung {
         continentList.add ( new Continent ( "Australia", 2, 6, countryListAustralia ) );     //Id 5
     }
 
-    public void getCountryListNames ( ) {
-        for ( Country c : countryList ) {
-            System.out.println ( c.getCountryName ( ) );
-        }
-    }
-
     /**
      * Saves the date into a .txt file
      *
-     * @param file
+     * @param
      * @throws IOException
      */
-    public void writeData ( String file ) throws IOException {
+    public void writeData ( ) throws IOException {
         // PersistenzManager für Schreibvorgänge öffnen
-        pm.openForWriting ( file );
+        pm.openForWriting ( "CountryList.txt" );
 
         for ( Continent continent : continentList ) {
             for ( Country country : continent.getContinentCountries ( ) ) {
                 pm.saveCountry ( country );
             }
         }
+
         pm.close ( );
+
+        pm.openForWriting ( "CardList.txt" );
+
+        for ( Card c : cardList ) {
+            pm.saveCard ( c );
+        }
+
+        pm.close ( );
+
     }
 
     /**
@@ -199,7 +216,7 @@ public class WorldVerwaltung {
         for ( Continent continent : continentList ) {
             for ( Country country : continent.getContinentCountries ( ) ) {
                 if ( country.getCountryID ( ) == countryID ) {
-                    c = country;
+                    return c = country;
                 }
             }
         }
@@ -210,16 +227,12 @@ public class WorldVerwaltung {
         return continentList;
     }
 
-    public Vector < Country > getCountryList ( ) {
-        return countryList;
-    }
-
     public void setForcesToCountry ( Country country, int forces ) {
         int n = country.getLocalForces ( );
         country.setLocalForces ( n + forces );
     }
 
-    public int returnForcesPerRoundsPerPlayer ( Player player ) {
+    public int returnForcesPerRoundsPerPlayer ( Player player, boolean cards ) {
         int forcesCount = 0;
 
         if ( getNumberOfCountriesOfPlayer ( player ) < 9 ) {
@@ -246,6 +259,10 @@ public class WorldVerwaltung {
         }
         if ( isContinentOccupied ( player, 6 ) ) {
             forcesCount += continentList.get ( 6 ).getValue ( );
+        }
+        // TODO Finish if query for cards.
+        if ( cards ) {
+            getPlayersCardList ( player );
         }
         return forcesCount;
     }
@@ -332,7 +349,7 @@ public class WorldVerwaltung {
         // ConcurrentModificationException?
         Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
         ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) > 2 );
-        ownedCountriesList.trimToSize ();
+        ownedCountriesList.trimToSize ( );
 
         return ownedCountriesList;
     }
