@@ -52,8 +52,8 @@ public class Risiko {
         return worldManager.loadOwnedCountryList ( player );
     }
 
-    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
-        return worldManager.loadOwnedCountryListWithMoreThanOneForce ( player );
+    public Vector < Country > loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
+        return worldManager.loadDistributionCountriesList ( player );
     }
 
     public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws NoAlliedCountriesNearException {
@@ -86,9 +86,8 @@ public class Risiko {
         return worldManager.loadAttackingCountriesList ( player );
     }
 
-    public void battle ( Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces ) {
-        playGround.battle ( attackingCountry, defendingCountry, attackerForces, defenderForces );
-
+    public boolean battle ( Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces ) {
+        return playGround.battle ( attackingCountry, defendingCountry, attackerForces, defenderForces );
     }
 
     public void moveForces ( Country oldCountry, Country newCountry, int forces ) {

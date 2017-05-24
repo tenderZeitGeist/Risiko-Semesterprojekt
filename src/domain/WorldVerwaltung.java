@@ -328,13 +328,33 @@ public class WorldVerwaltung {
         return ownedCountriesList;
     }
 
-    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
+    public Vector < Country > loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
         // ConcurrentModificationException?
-        Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
-        ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) > 2 );
+        /*Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
+        ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) < 2 );
         ownedCountriesList.trimToSize ();
 
-        return ownedCountriesList;
+        return ownedCountriesList;*/
+        Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
+        Vector < Country > distributionCountriesList = new Vector <> ( );
+        Vector < Country > neighbouringCountriesList = new Vector <> ( );
+
+        for ( Country c : ownedCountriesList ) {
+            try {
+                neighbouringCountriesList = loadNeighbouringCountriesListForDistributionPhase ( c );
+            } catch ( NoAlliedCountriesNearException e ) {
+
+            }
+            if ( c.getLocalForces ( ) > 1 && ! ( neighbouringCountriesList.isEmpty ( ) ) ) {
+                distributionCountriesList.add ( c );
+            }
+        }
+        if ( distributionCountriesList.isEmpty ( ) ) {
+            throw new NoAlliedCountriesNearException ( );
+        }
+        return distributionCountriesList;
+
+
     }
 
     //ATTACKING
