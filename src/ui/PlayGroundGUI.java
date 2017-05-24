@@ -20,7 +20,6 @@ public class PlayGroundGUI {
 //        risiko = new Risiko(file);
 //        in = new BufferedReader(new InputStreamReader(System.in));
 //    }
-
     public static void main(String[] args) {
         JFrame meinFrame = new JFrame("Beispiel JFrame");
         /* Wir setzen die Breite und die Höhe
