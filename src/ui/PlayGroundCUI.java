@@ -172,9 +172,8 @@ public class PlayGroundCUI {
         System.out.println ( "" );
 
         List < Player > playerList = new Vector < Player > ( risiko.getPlayerList ( ) );
-        //System.out.println( risiko.getMissionList().toString());
-        // risiko.getMissionList().toString();
-//n        risiko.distributeMissions();
+
+        risiko.distributeMissions();
 
 
         for ( int p = 0 ; p < playerList.size ( ) ; p++ ) {
@@ -240,11 +239,7 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "<----------------------> " + currentPlayerName );
 
-        /*System.out.println("");
-        System.out.println("Your mission:");
-        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
-        System.out.println("");*/
 
 
         distributeForcesMenu ( currentPlayer, ownedCountriesList );
@@ -279,7 +274,7 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "Your mission for this game:" );
 
-//      System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
+        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
         System.out.println ( "" );
 
@@ -353,7 +348,7 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "Your mission for this game:" );
 
-//        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
+        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
         System.out.println ( "" );
 
@@ -531,7 +526,9 @@ public class PlayGroundCUI {
                         bool2 = false;
 
                         if (risiko.battle ( selectedAttackerCountryTemp, selectedDefenderCountryTemp, attackingForces, defendingForces )) {
-
+                            if (risiko.missionFulfilled(currentPlayer)) {
+                                endGameBIGBOSS();
+                            }
                             while (bool3) {
                                 try {
                                     System.out.println("How many forces do you want to distribute to the conquered country?");

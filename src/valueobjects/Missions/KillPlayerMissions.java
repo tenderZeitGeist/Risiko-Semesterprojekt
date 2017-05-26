@@ -1,4 +1,3 @@
-/*
 package valueobjects.Missions;
 
 import valueobjects.Continent;
@@ -6,24 +5,19 @@ import valueobjects.Country;
 import valueobjects.Mission;
 import valueobjects.Player;
 
-import java.awt.datatransfer.MimeTypeParseException;
 import java.util.List;
 import java.util.Vector;
 
-*/
 /**
- * Created by Christopher on 12.05.2017.
- *//*
+ * Created by Felda on 25.05.2017.
+ */
+public class KillPlayerMissions extends Mission {
 
-public class ContinentMissions extends Mission {
+    int playerToKillID;
 
-    int countryCount;
-    int forces;
-
-    public ContinentMissions(Player player, String description, int id, int countryCount, int forces) {
+    public KillPlayerMissions(Player player, String description, int id, int playerToKillID) {
         super(player, description, id);
-        this.countryCount = countryCount;
-        this.forces = forces;
+        this.playerToKillID = playerToKillID;
     }
 
 
@@ -34,16 +28,12 @@ public class ContinentMissions extends Mission {
 
         for (Continent c : continentList) {
             for (Country co : c.getContinentCountries()) {
-                if (!co.getOwningPlayer().equals(player)) {
-                    break;
-                }
-                if (co.getOwningPlayer().equals(player) && (co.getContinentID() == countryCount && co.getContinentID() == forces)) {
-                    if ()
+                if (co.getOwningPlayer().getPlayerID() == playerToKillID) {
                     counter++;
                 }
             }
         }
-        if (counter >= countryCount) {
+        if (counter > 0) {
             return true;
         }
         return false;
@@ -62,5 +52,3 @@ public class ContinentMissions extends Mission {
 
 
 }
-
-*/
