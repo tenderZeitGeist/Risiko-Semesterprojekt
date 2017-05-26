@@ -417,7 +417,7 @@ public class PlayGroundCUI {
         Country selectedAttackerCountryTemp = null;
         Country selectedDefenderCountryTemp = null;
         int selectedDefenderIDTemp;
-        int distributeForces;
+        int distributeForces = 0;
 
 
         try {
@@ -428,6 +428,7 @@ public class PlayGroundCUI {
                 boolean bool1 = true;
                 boolean bool2 = true;
                 boolean bool3 = true;
+                boolean bool4 = true;
 
                 System.out.println ( "" );
                 System.out.println ( "<----- ATTACK MENU ----->" );
@@ -531,20 +532,26 @@ public class PlayGroundCUI {
                             }
                             while (bool3) {
                                 try {
-                                    System.out.println("How many forces do you want to distribute to the conquered country?");
-                                    System.out.println("");
-                                    System.out.print("##>");
+                                    while (bool4) {
+                                        System.out.println("");
+                                        System.out.println("How many forces do you want to distribute to the conquered country on top of the " +
+                                                "forces you used for the attack?");
+                                        System.out.println("You have " + (selectedAttackerCountryTemp.getLocalForces()-1) + " forces to distribute.");
+                                        System.out.println("");
+                                        System.out.print("##>");
+                                        distributeForces = new Integer(readInput());
 
-                                    distributeForces = new Integer(readInput());
+                                        if (distributeForces < selectedAttackerCountryTemp.getLocalForces() + 1) {
+                                            risiko.setForcesToCountry(selectedDefenderCountryTemp, distributeForces);
+                                            risiko.setForcesToCountry(selectedAttackerCountryTemp, - distributeForces);
+                                            System.out.println("You set " + distributeForces + " on" + selectedAttackerCountryTemp.getCountryName() + ".");
+                                            bool4 = false;
 
-                                    if (distributeForces > selectedAttackerCountryTemp.getLocalForces() + 1) {
-                                        System.out.println("Please enter the correct number! Keep in mind you" +
-                                                " have to have at least 1 force left on each country!");
-                                        break;
+                                        } else {
+                                            System.out.println("Please enter the correct number! Keep in mind you" +
+                                                    " have to have at least 1 force left on each country!");
+                                        }
                                     }
-
-                                    risiko.setForcesToCountry(selectedDefenderCountryTemp, distributeForces);
-                                    risiko.setForcesToCountry(selectedAttackerCountryTemp, - distributeForces);
 
                                     bool3 = false;
 

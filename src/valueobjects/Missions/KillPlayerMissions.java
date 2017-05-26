@@ -33,7 +33,7 @@ public class KillPlayerMissions extends Mission {
                 }
             }
         }
-        if (counter > 0) {
+        if (counter == 0) {
             return true;
         }
         return false;
