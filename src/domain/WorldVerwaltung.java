@@ -23,12 +23,13 @@ public class WorldVerwaltung {
 
     public int countryCount = 42;
     private PersistenceManager pm = new FilePersistenceManager ( );
+    private Vector < Country > countryList = new Vector < Country > ( );
     private Vector < Continent > continentList = new Vector < Continent > ( );
     private Vector < Card > cardList = new Vector <> ( );
 
-    // private Vector < Country > ownedCountriesList = new Vector <> ( );
-    // private Vector < Country > neighbouringCountriesList = new Vector <> ( );
-    // private Vector < Country > attackingCountriesList = new Vector <> ( );
+     private Vector < Country > ownedCountriesList = new Vector <> ( );
+     private Vector < Country > neighbouringCountriesList = new Vector <> ( );
+     private Vector < Country > attackingCountriesList = new Vector <> ( );
 
 
     //TODO this replaces the text file for now!
@@ -113,20 +114,6 @@ public class WorldVerwaltung {
     }*/
     }
 
-    public void checkCountriesForPlayer ( Vector < Player > playerList ) throws IllegalStateException {
-
-        for ( Player p : playerList ){
-            for ( Continent currentContinent : continentList ){
-                for( Country currentCountry : currentContinent.getContinentCountries () )
-                    if ( p.getPlayerName ().equals( currentCountry.getOwningPlayerName () ) ){
-                        currentCountry.setOwningPlayer ( p );
-                    } else {
-                        throw new IllegalStateException (  );
-                    }
-            }
-        }
-    }
-
     public void addCountriesListsToContinentList ( ) {
 
         continentList.add ( new Continent ( "North America", 5, 1, countryListNAmerica ) );  //Id 0
@@ -137,50 +124,46 @@ public class WorldVerwaltung {
         continentList.add ( new Continent ( "Australia", 2, 6, countryListAustralia ) );     //Id 5
     }
 
+    public void getCountryListNames ( ) {
+        for ( Country c : countryList ) {
+            System.out.println ( c.getCountryName ( ) );
+        }
+    }
+
     /**
      * Saves the date into a .txt file
      *
-     * @param
+     * @param file
      * @throws IOException
      */
-    public void writeData ( ) throws IOException {
+    public void writeData ( String file ) throws IOException {
         // PersistenzManager für Schreibvorgänge öffnen
-        pm.openForWriting ( "CountryList.txt" );
+        pm.openForWriting ( file );
 
         for ( Continent continent : continentList ) {
             for ( Country country : continent.getContinentCountries ( ) ) {
                 pm.saveCountry ( country );
             }
         }
-
         pm.close ( );
-
-        pm.openForWriting ( "CardList.txt" );
-
-        for ( Card c : cardList ) {
-            pm.saveCard ( c );
-        }
-
-        pm.close ( );
-
     }
 
     /**
      * Logical part of WorldVerwaltung to retrieve and set information of continents/countries
      */
 
-/*    public void resetOwnedCountriesList ( ) {
+    public void resetOwnedCountriesList ( ) {
         ownedCountriesList.removeAllElements ( );
     }
 
-    public void resetAttackingCountriesList ( ) {
+    /*public void resetAttackingCountriesList ( ) {
         attackingCountriesList.removeAllElements ( );
-    }
+    }*/
 
     public void resetNeighbouringCountriesList ( ) {
         neighbouringCountriesList.removeAllElements ( );
     }
-
+/*
     public Country selectNeighbouringCountriesListByNumber ( int selectedCountryNumber ) {
         return neighbouringCountriesList.get ( selectedCountryNumber - 1 );
     }
@@ -216,7 +199,7 @@ public class WorldVerwaltung {
         for ( Continent continent : continentList ) {
             for ( Country country : continent.getContinentCountries ( ) ) {
                 if ( country.getCountryID ( ) == countryID ) {
-                    return c = country;
+                    c = country;
                 }
             }
         }
@@ -227,12 +210,16 @@ public class WorldVerwaltung {
         return continentList;
     }
 
+    public Vector < Country > getCountryList ( ) {
+        return countryList;
+    }
+
     public void setForcesToCountry ( Country country, int forces ) {
         int n = country.getLocalForces ( );
         country.setLocalForces ( n + forces );
     }
 
-    public int returnForcesPerRoundsPerPlayer ( Player player, boolean cards ) {
+    public int returnForcesPerRoundsPerPlayer ( Player player ) {
         int forcesCount = 0;
 
         if ( getNumberOfCountriesOfPlayer ( player ) < 9 ) {
@@ -243,26 +230,22 @@ public class WorldVerwaltung {
 
         //Check if continent is completely occupied and add forces accordingly
         if ( isContinentOccupied ( player, 1 ) ) {
-            forcesCount += continentList.get ( 1 ).getValue ( );
+            forcesCount += continentList.get ( 0 ).getValue ( );
         }
         if ( isContinentOccupied ( player, 2 ) ) {
-            forcesCount += continentList.get ( 2 ).getValue ( );
+            forcesCount += continentList.get ( 1 ).getValue ( );
         }
         if ( isContinentOccupied ( player, 3 ) ) {
-            forcesCount += continentList.get ( 3 ).getValue ( );
+            forcesCount += continentList.get ( 2 ).getValue ( );
         }
         if ( isContinentOccupied ( player, 4 ) ) {
-            forcesCount += continentList.get ( 4 ).getValue ( );
+            forcesCount += continentList.get ( 3 ).getValue ( );
         }
         if ( isContinentOccupied ( player, 5 ) ) {
-            forcesCount += continentList.get ( 5 ).getValue ( );
+            forcesCount += continentList.get ( 4 ).getValue ( );
         }
         if ( isContinentOccupied ( player, 6 ) ) {
-            forcesCount += continentList.get ( 6 ).getValue ( );
-        }
-        // TODO Finish if query for cards.
-        if ( cards ) {
-            getPlayersCardList ( player );
+            forcesCount += continentList.get ( 5 ).getValue ( );
         }
         return forcesCount;
     }
@@ -333,7 +316,8 @@ public class WorldVerwaltung {
 
     //OWNED
     public Vector < Country > loadOwnedCountryList ( Player player ) {
-        Vector < Country > ownedCountriesList = new Vector < Country > ( );
+
+        resetOwnedCountriesList();
 
         for ( Continent continent : continentList ) {
             for ( Country country : continent.getContinentCountries ( ) ) {
@@ -345,13 +329,33 @@ public class WorldVerwaltung {
         return ownedCountriesList;
     }
 
-    public Vector < Country > loadOwnedCountryListWithMoreThanOneForce ( Player player ) {
+    public Vector < Country > loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
         // ConcurrentModificationException?
-        Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
-        ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) > 2 );
-        ownedCountriesList.trimToSize ( );
+        /*Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
+        ownedCountriesList.removeIf ( country -> country.getLocalForces ( ) < 2 );
+        ownedCountriesList.trimToSize ();
 
-        return ownedCountriesList;
+        return ownedCountriesList;*/
+        Vector < Country > ownedCountriesList = loadOwnedCountryList ( player );
+        Vector < Country > distributionCountriesList = new Vector <> ( );
+        Vector < Country > neighbouringCountriesList = new Vector <> ( );
+
+        for ( Country c : ownedCountriesList ) {
+            try {
+                neighbouringCountriesList = loadNeighbouringCountriesListForDistributionPhase ( c );
+            } catch ( NoAlliedCountriesNearException e ) {
+
+            }
+            if ( c.getLocalForces ( ) > 1 && ! ( neighbouringCountriesList.isEmpty ( ) ) ) {
+                distributionCountriesList.add ( c );
+            }
+        }
+        if ( distributionCountriesList.isEmpty ( ) ) {
+            throw new NoAlliedCountriesNearException ( );
+        }
+        return distributionCountriesList;
+
+
     }
 
     //ATTACKING
@@ -384,7 +388,7 @@ public class WorldVerwaltung {
     public Vector < Country > loadNeighbouringCountriesListForDistributionPhase ( Country country ) throws
             NoAlliedCountriesNearException {
 
-        Vector < Country > neighbouringCountriesList = new Vector < Country > ( );
+        resetNeighbouringCountriesList();
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
         for ( int n : neighbouringCountriesListIDs ) {
@@ -398,12 +402,11 @@ public class WorldVerwaltung {
         return neighbouringCountriesList;
     }
 
-
     //NEIGHBOUR
     public Vector < Country > loadNeighbouringCountryListForAttackingPhase ( Country country ) throws
             NoEnemyCountriesNearException {
 
-        Vector < Country > neighbouringCountriesList = new Vector < Country > ( );
+        resetNeighbouringCountriesList();
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries ( );
         for ( int n : neighbouringCountriesListIDs ) {
@@ -480,7 +483,7 @@ public class WorldVerwaltung {
 
         // Adds EU countries into a list
         countryListEurope.add ( new Country ( "Great Britain", 14, 1, null, 3, new int[] { 15 , 17 , 16 } ) );
-        countryListEurope.add ( new Country ( "Iceland", 15, 1, null, 3, new int[] { 14 , 16 } ) );
+        countryListEurope.add ( new Country ( "Iceland", 15, 1, null, 3, new int[] { 14 , 16 , 17} ) );
         countryListEurope.add ( new Country ( "Northern Europe", 16, 1, null, 3, new int[] { 14 , 17 , 18 , 19 , 20 } ) );
         countryListEurope.add ( new Country ( "Scandinavia", 17, 1, null, 3, new int[] { 14 , 15 , 16 , 19 } ) );
         countryListEurope.add ( new Country ( "Southern Europe", 18, 1, null, 3, new int[] { 16 , 19 , 20 , 23 } ) );
@@ -513,7 +516,7 @@ public class WorldVerwaltung {
         countryListAustralia.add ( new Country ( "Eastern Australia", 39, 1, null, 6, new int[] { 41 , 42 } ) );
         countryListAustralia.add ( new Country ( "Indonesia", 40, 1, null, 6, new int[] { 35 , 41 , 42 } ) );
         countryListAustralia.add ( new Country ( "New Guinea", 41, 1, null, 6, new int[] { 40 , 42 } ) );
-        countryListAustralia.add ( new Country ( "Western Australia", 42, 1, null, 6, new int[] { 39 , 41 } ) );
+        countryListAustralia.add ( new Country ( "Western Australia", 42, 1, null, 6, new int[] { 39 , 40, 41 } ) );
 
         // Adds all countryLists into a whole continentList
         continentList.add ( new Continent ( "North America", 5, 1, countryListNAmerica ) );  //Id 0

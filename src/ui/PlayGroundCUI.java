@@ -173,9 +173,8 @@ public class PlayGroundCUI {
         System.out.println ( "" );
 
         List < Player > playerList = new Vector < Player > ( risiko.getPlayerList ( ) );
-        //System.out.println( risiko.getMissionList().toString());
-        // risiko.getMissionList().toString();
-//n        risiko.distributeMissions();
+
+        risiko.distributeMissions();
 
 
         for ( int p = 0 ; p < playerList.size ( ) ; p++ ) {
@@ -241,30 +240,28 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "<----------------------> " + currentPlayerName );
 
-        /*System.out.println("");
-        System.out.println("Your mission:");
-        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
-        System.out.println("");*/
 
 
         distributeForcesMenu ( currentPlayer, ownedCountriesList );
 
 
         try {
-            attackEnemyMenu ( currentPlayer );
-            moveForcesEndOfRound ( currentPlayer, ownedCountriesList );
-
-        } catch ( CancelAttackException e ) {
-            System.out.println ( e.getMessage ( ) );
-        } catch ( CancelDistributeForcesEndOfRound | NoAlliedCountriesNearException ex ) {
-            System.out.println ( ex.getMessage ( ) );
+            attackEnemyMenu(currentPlayer);
+        } catch (CancelAttackException e) {
+            System.out.println(e.getMessage());
         }
+        try {
+            moveForcesEndOfRound(currentPlayer);
+        } catch (CancelDistributeForcesEndOfRound | NoAlliedCountriesNearException ex) {
+            System.out.println(ex.getMessage());
+         }
 
 
         /*if ( risiko.missionFulfilled ( currentPlayer ) ) {
             endGameBIGBOSS ( );
         }*/
+
     }
 
 
@@ -279,7 +276,7 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "Your mission for this game:" );
 
-//      System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
+        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
         System.out.println ( "" );
 
@@ -353,7 +350,7 @@ public class PlayGroundCUI {
         System.out.println ( "" );
         System.out.println ( "Your mission for this game:" );
 
-//        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
+        System.out.println(risiko.getMissionPerPlayer(currentPlayer).getDescription());
 
         System.out.println ( "" );
 
@@ -422,6 +419,7 @@ public class PlayGroundCUI {
         Country selectedAttackerCountryTemp = null;
         Country selectedDefenderCountryTemp = null;
         int selectedDefenderIDTemp;
+        int distributeForces = 0;
 
 
         try {
@@ -429,8 +427,10 @@ public class PlayGroundCUI {
             do {
 
                 boolean attackCountryChosen = false;
+                boolean bool1 = true;
                 boolean bool2 = true;
                 boolean bool3 = true;
+                boolean bool4 = true;
 
                 System.out.println ( "" );
                 System.out.println ( "<----- ATTACK MENU ----->" );
@@ -471,7 +471,7 @@ public class PlayGroundCUI {
                     }
                 }
 
-                while ( bool2 ) {
+                while ( bool1 ) {
                     try {
 
                         System.out.println ( "Which country do you want to attack?" );
@@ -492,7 +492,7 @@ public class PlayGroundCUI {
                         System.out.println ( "The attacking Country is " + selectedAttackerCountryTemp.getCountryName ( ) + " it has " + selectedAttackerCountryTemp.getLocalForces ( ) + " forces." );
 
 
-                        bool2 = false;
+                        bool1 = false;
 
                     } catch ( NumberFormatException | ArrayIndexOutOfBoundsException e ) {
                         System.out.println ( "Please enter the correct number222222!" );
@@ -500,7 +500,7 @@ public class PlayGroundCUI {
                     }
                 }
 
-                while ( bool3 ) {
+                while ( bool2 ) {
                     try {
                         System.out.println ( "How many do you want to use for the attack?" );
                         System.out.println ( "" );
@@ -526,10 +526,44 @@ public class PlayGroundCUI {
                             defendingForces = 2;
                         }
 
-                        risiko.battle ( selectedAttackerCountryTemp, selectedDefenderCountryTemp, attackingForces, defendingForces );
+                        bool2 = false;
 
-                        bool3 = false;
+                        if (risiko.battle ( selectedAttackerCountryTemp, selectedDefenderCountryTemp, attackingForces, defendingForces )) {
+                            if (risiko.missionFulfilled(currentPlayer)) {
+                                endGameBIGBOSS();
+                            }
+                            while (bool3) {
+                                try {
+                                    while (bool4) {
+                                        System.out.println("");
+                                        System.out.println("How many forces do you want to distribute to the conquered country on top of the " +
+                                                "forces you used for the attack?");
+                                        System.out.println("You have " + (selectedAttackerCountryTemp.getLocalForces()-1) + " forces to distribute.");
+                                        System.out.println("");
+                                        System.out.print("##>");
+                                        distributeForces = new Integer(readInput());
 
+                                        if (distributeForces < selectedAttackerCountryTemp.getLocalForces() + 1) {
+                                            risiko.setForcesToCountry(selectedDefenderCountryTemp, distributeForces);
+                                            risiko.setForcesToCountry(selectedAttackerCountryTemp, - distributeForces);
+                                            System.out.println("You set " + distributeForces + " on" + selectedAttackerCountryTemp.getCountryName() + ".");
+                                            bool4 = false;
+
+                                        } else {
+                                            System.out.println("Please enter the correct number! Keep in mind you" +
+                                                    " have to have at least 1 force left on each country!");
+                                        }
+                                    }
+
+                                    bool3 = false;
+
+                                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                                    System.out.println("Please enter the correct number444444!");
+                                    System.out.println(e.getMessage());
+                                    System.out.println("");
+                                }
+                            }
+                        }
                     } catch ( NumberFormatException | ArrayIndexOutOfBoundsException e ) {
                         System.out.println ( "Please enter the correct number333333!" );
                         System.out.println ( e.getMessage ( ) );
@@ -545,12 +579,13 @@ public class PlayGroundCUI {
     }
 
 
-    public void moveForcesEndOfRound ( Player currentPlayer, Vector < Country > ownedCountriesList ) throws CancelDistributeForcesEndOfRound, NoAlliedCountriesNearException {
-        int countriesWithMoreThanOneForce = risiko.loadOwnedCountryListWithMoreThanOneForce ( currentPlayer ).size ( );
+    public void moveForcesEndOfRound ( Player currentPlayer) throws CancelDistributeForcesEndOfRound, NoAlliedCountriesNearException {
+        int countriesWithMoreThanOneForce = risiko.loadDistributionCountriesList ( currentPlayer ).size ( );
         int selectedCountryIDTempFrom;
         int selectedCountryIDTempTo;
         int forcesToDistribute = 0;
         int selectedForcesCountTemp;
+        Vector <Country> distributionCountriesList = risiko.loadDistributionCountriesList(currentPlayer);
 
 
         Country selectedCountryTempFrom;
@@ -562,7 +597,7 @@ public class PlayGroundCUI {
                 System.out.println ( "Please choose a country to redistribute forces from." );
                 System.out.println ( "" );
 
-                printOwnedCountriesListWithMoreThanOneForce ( currentPlayer );
+                printDistributionCountriesListList ( currentPlayer );
 
                 System.out.println ( "" );
                 System.out.println ( "Enter 99 to skip reditsribution of forces" );
@@ -577,12 +612,12 @@ public class PlayGroundCUI {
                     }
 
                     selectedCountryIDTempFrom -= 1;
-                    selectedCountryTempFrom = ownedCountriesList.get ( selectedCountryIDTempFrom );
-                    forcesToDistribute = ownedCountriesList.get ( selectedCountryIDTempFrom ).getLocalForces ( ) - 1;
+                    selectedCountryTempFrom = distributionCountriesList.get ( selectedCountryIDTempFrom );
+                    forcesToDistribute = distributionCountriesList.get ( selectedCountryIDTempFrom ).getLocalForces ( ) - 1;
 
                     System.out.println ( "You selected " + selectedCountryTempFrom.getCountryName ( ) );
                     System.out.println ( "You have " + forcesToDistribute + " forces to distribute. " );
-                    System.out.println ( "Please enter how many forces you want to distribute." );
+                    System.out.println ( "Please enter how many forces do you want to distribute." );
                     System.out.println ( "" );
                     System.out.print ( "##>" );
                     selectedForcesCountTemp = new Integer ( readInput ( ) );
@@ -615,7 +650,7 @@ public class PlayGroundCUI {
                 } catch ( NumberFormatException | ArrayIndexOutOfBoundsException e ) {
                     System.out.println ( "" );
                     System.out.println ( "Please enter the correct number!" );
-                    moveForcesEndOfRound ( currentPlayer, ownedCountriesList );
+                    moveForcesEndOfRound ( currentPlayer);
                 }
             }
         } catch ( NoAlliedCountriesNearException e ) {
@@ -626,16 +661,16 @@ public class PlayGroundCUI {
 
 //______________________________________________________________________________________
 
-    public void printOwnedCountriesListWithMoreThanOneForce ( Player currentPlayer ) {
-        Vector < Country > ownedCountriesListWithMoreThanOneForce = risiko.loadOwnedCountryListWithMoreThanOneForce ( currentPlayer );
+    public void printDistributionCountriesListList ( Player currentPlayer ) throws NoAlliedCountriesNearException {
+        Vector < Country > distributionCountriesList = risiko.loadDistributionCountriesList ( currentPlayer );
         int index = 1;
 
         System.out.format ( "%2s%21s%7s", "Number: ", "Country: ", "Forces: " );
         System.out.println ( "" );
         System.out.println ( "----------------------------------------" );
-        for ( int i = 0 ; i < ownedCountriesListWithMoreThanOneForce.size ( ) ; i++ ) {
+        for ( int i = 0 ; i < distributionCountriesList.size ( ) ; i++ ) {
 
-            System.out.format ( "%2d%25s%7d", index, ownedCountriesListWithMoreThanOneForce.get ( i ).getCountryName ( ), ownedCountriesListWithMoreThanOneForce.get ( i ).getLocalForces ( ) );
+            System.out.format ( "%2d%25s%7d", index, distributionCountriesList.get ( i ).getCountryName ( ), distributionCountriesList.get ( i ).getLocalForces ( ) );
             System.out.println ( "" );
             index++;
         }

@@ -66,7 +66,7 @@ public class PlayGround {
         return ( int ) ( Math.random ( ) * 6 + 1 );
     }
 
-    public void battle ( Country attackingCountry, Country defendingCountry, int attackerRolls, int defenderRolls ) {
+    public boolean battle ( Country attackingCountry, Country defendingCountry, int attackerRolls, int defenderRolls ) {
 // KLasse BattleResult (C1, C2, W1, W2, Winner, ...)
         //TODO attacker can use more then 3 forces to attack, but only 3 dices(maybe!)
         /*if ( ! ( attackerRolls < attackingCountry.getLocalForces ( ) && attackerRolls < 4 && attackerRolls > 0 ) ) {
@@ -115,10 +115,10 @@ public class PlayGround {
             defendingCountry.setLocalForces ( attackerRolls - forcesLosses[ 0 ] );
             attackingCountry.setLocalForces ( attackingCountry.getLocalForces ( ) - attackerRolls - forcesLosses[ 0 ] );
             // conquerCountry ( attackingCountry, defendingCountry, attackerRolls );
-
+            return true;
         }
 
-        //return true;
+        return false;
     }
     public boolean isCardStackFulfilled ( Vector < Card > playerCards ) {
         boolean isFulfilled = false;
