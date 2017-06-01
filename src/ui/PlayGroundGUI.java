@@ -1,5 +1,6 @@
 package ui;
 
+import jdk.nashorn.internal.scripts.JD;
 import net.miginfocom.swing.MigLayout;
 
 import javax.imageio.ImageIO;
@@ -8,40 +9,85 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import valueobjects.Player;
+import java.io.*;
+
+import valueobjects.*;
+
+import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
+
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 31.05.2017.
  */
-public class PlayGroundGUI  {
-    List<Player> playerList = new Vector<Player>();
+public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
-    public PlayGroundGUI() {}
+    private List<Player> playerList = new Vector<Player>();
+    private Vector<Continent> continentList = new Vector<Continent>();
+    private Mission currentMission = null;
+    private Player currentPlayer = null;
+    private Card currentCard = null;
+
+    private Socket socket = null;
+    private BufferedReader in;
+    private PrintStream out;
+
+
+
+    public PlayGroundGUI() {
+        super();
+
+
+    }
+
+
 
     public static void main(String[] args) {
         PlayGroundGUI p = new PlayGroundGUI();
 
-        p.createGame();
+
+        if(p.openServerConnection()){
+            p.createGame();
+        }
+
     }
 
+    public void establishConnection(String title, String host, int port) {
+        try {
+            socket = new Socket(host, port);
+
+            in = new BufferedReader(new InputStreamReader(
+                    socket.getInputStream()));
+            out = new PrintStream(socket.getOutputStream());
+
+        }  catch (IOException e) {
+            /* Fehlerbehandlung, z.B. Socket schließen  */
+            System.out.println("can't open socket");
+        }
+
+        try {
+            String message = in.readLine();
+            System.out.println(message);
+        } catch (IOException e) { /* Fehlerbehandlung */
+            System.out.println("can't handshake with server");}
+    }
+
+
     public void createGame(){
-        JFrame mainWindowFrame = new JFrame("WADDUPPP??!?!?!?");
-        mainWindowFrame.setSize(2000, 1300);
-        mainWindowFrame.addWindowListener(new WindowAdapter() {
+//        JFrame mainWindowFrame = new JFrame("WADDUPPP??!?!?!?");
+        this.setSize(2000, 1300);
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                exitGameSecurely(mainWindowFrame);
+                exitGameSecurely();
             }
         });
         //- Add stuff to mainWindowFrame
         //-- Add ContentPanel
         JPanel mainWindowPanel = new JPanel(new MigLayout("debug, wrap 2, gap rel 7","[50][][][]","[][][][][][]"));
         mainWindowPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        mainWindowFrame.add(mainWindowPanel);
+        this.add(mainWindowPanel);
 
         //--- Add left side Button Row
         //---- Add picture
@@ -70,7 +116,6 @@ public class PlayGroundGUI  {
         JTextArea actionPerformedText = new JTextArea("actionPerformedText",10,20);
         JTextArea placeholderText1 = new JTextArea("placeholderText1",10,20);
         JTextArea placeholderText2 = new JTextArea("placeholderText2",10,20);
-
         //---
         //--- Add content to mainWindowPanel
         mainWindowPanel.add(button1, "left, growx, growy, wmin 160, hmin 70");
@@ -84,15 +129,39 @@ public class PlayGroundGUI  {
         mainWindowPanel.add(placeholderText2, "growx, growy");
         //---
         //--
-        mainWindowFrame.setVisible(true);
-        mainWindowFrame.setResizable(false);
+        this.setVisible(true);
+        this.setResizable(false);
     }
 
 
 
-    public void exitGameSecurely(JFrame window) {
+    private void exitGameSecurely() {
         //TODO add end game context
-        window.dispose();
+        this.dispose();
+    }
+
+
+
+    public boolean openServerConnection() {
+        String[] connectionParams = {};
+        boolean connectionSuccessful = false;
+
+        ConnectionDialog connectionDialog = new ConnectionDialog(this); // erwartet in Konstruktor einen ConnectionDataHandler
+        connectionDialog.createDialog();
+
+
+
+
+        return connectionSuccessful;
+    }
+
+
+    /* Interface
+
+     */
+    @Override
+    public void setConnectionData(String[] connectionData) {
+        System.out.println("Received connection data");
     }
 
 }
