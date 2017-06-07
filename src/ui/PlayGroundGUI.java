@@ -1,5 +1,6 @@
 package ui;
 
+import com.sun.xml.internal.ws.api.ImpliesWebServiceFeature;
 import jdk.nashorn.internal.scripts.JD;
 import net.miginfocom.swing.MigLayout;
 
@@ -34,22 +35,22 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private PrintStream out;
 
 
+    private String connectionIp;
+    private int connectionPort;
+
+    private String[] connectionData = new String[4];
+
 
     public PlayGroundGUI() {
         super();
-
-
     }
-
 
 
     public static void main(String[] args) {
         PlayGroundGUI p = new PlayGroundGUI();
+        p.openServerConnection();
+            //p.establishConnection(p.currentPlayer.getPlayerName(), p.connectionIp, p.connectionPort);
 
-
-        if(p.openServerConnection()){
-            p.createGame();
-        }
 
     }
 
@@ -61,7 +62,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                     socket.getInputStream()));
             out = new PrintStream(socket.getOutputStream());
 
-        }  catch (IOException e) {
+        } catch (IOException e) {
             /* Fehlerbehandlung, z.B. Socket schließen  */
             System.out.println("can't open socket");
         }
@@ -70,13 +71,14 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             String message = in.readLine();
             System.out.println(message);
         } catch (IOException e) { /* Fehlerbehandlung */
-            System.out.println("can't handshake with server");}
+            System.out.println("can't handshake with server");
+        }
     }
 
 
-    public void createGame(){
+    public void createGame() {
 //        JFrame mainWindowFrame = new JFrame("WADDUPPP??!?!?!?");
-        this.setSize(2000, 1300);
+        this.setSize(1000  , 600);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -85,7 +87,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         });
         //- Add stuff to mainWindowFrame
         //-- Add ContentPanel
-        JPanel mainWindowPanel = new JPanel(new MigLayout("debug, wrap 2, gap rel 7","[50][][][]","[][][][][][]"));
+        JPanel mainWindowPanel = new JPanel(new MigLayout("wrap 2, gap rel 7", "[50][][][]", "[][][][][][]"));
         mainWindowPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         this.add(mainWindowPanel);
 
@@ -96,7 +98,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
         try {
             myPicture = ImageIO.read(new File("./src/ui/rescourcen/StarRiskBG.jpg"));
-            playGroundLabel = new JLabel(new ImageIcon(myPicture.getScaledInstance((int)(myPicture.getWidth()*1.8), (int)(myPicture.getHeight()*1.8), Image.SCALE_FAST)));
+            playGroundLabel = new JLabel(new ImageIcon(myPicture.getScaledInstance((int) (myPicture.getWidth()*0.9), (int) (myPicture.getHeight()*0.9), Image.SCALE_FAST)));
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -113,26 +115,28 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         button4.setFont(new Font("Arial", Font.PLAIN, 30));
         JButton button5 = new JButton("button5");
         button5.setFont(new Font("Arial", Font.PLAIN, 30));
-        JTextArea actionPerformedText = new JTextArea("actionPerformedText",10,20);
-        JTextArea placeholderText1 = new JTextArea("placeholderText1",10,20);
-        JTextArea placeholderText2 = new JTextArea("placeholderText2",10,20);
+        JTextArea actionPerformedText = new JTextArea("actionPerformedText", 10, 20);
+        JTextArea placeholderText1 = new JTextArea("placeholderText1", 10, 20);
+        JTextArea placeholderText2 = new JTextArea("placeholderText2", 10, 20);
         //---
         //--- Add content to mainWindowPanel
-        mainWindowPanel.add(button1, "left, growx, growy, wmin 160, hmin 70");
-        mainWindowPanel.add(playGroundLabel,"center, spanx 5, spany 6");
-        mainWindowPanel.add(button2, "left, growx, growy, wmin 160, hmin 70");
-        mainWindowPanel.add(button3, "left, growx, growy, wmin 160, hmin 70");
-        mainWindowPanel.add(button4, "left, growx, growy, wmin 160, hmin 70");
-        mainWindowPanel.add(button5, "left, growx, growy, wmin 160, hmin 70");
+        mainWindowPanel.add(button1, "left, growx, growy, wmin 140, hmin 40");
+        mainWindowPanel.add(playGroundLabel, "center, spanx 5, spany 6");
+        mainWindowPanel.add(button2, "left, growx, growy, wmin 140, hmin 40");
+        mainWindowPanel.add(button3, "left, growx, growy, wmin 140, hmin 40");
+        mainWindowPanel.add(button4, "left, growx, growy, wmin 140, hmin 40");
+        mainWindowPanel.add(button5, "left, growx, growy, wmin 140, hmin 40");
         mainWindowPanel.add(actionPerformedText, "growx, growy");
         mainWindowPanel.add(placeholderText1, "split2, spanx, growx, growy");
         mainWindowPanel.add(placeholderText2, "growx, growy");
         //---
         //--
         this.setVisible(true);
-        this.setResizable(false);
-    }
+        this.pack();
 
+        this.setResizable(false);
+
+    }
 
 
     private void exitGameSecurely() {
@@ -141,14 +145,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     }
 
 
-
     public boolean openServerConnection() {
         String[] connectionParams = {};
         boolean connectionSuccessful = false;
-
         ConnectionDialog connectionDialog = new ConnectionDialog(this); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();
-
 
 
 
@@ -162,6 +163,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     @Override
     public void setConnectionData(String[] connectionData) {
         System.out.println("Received connection data");
-    }
 
+        this.connectionData = connectionData;
+        currentPlayer = new Player(1, this.connectionData[0]);
+        connectionIp = this.connectionData[1];
+        connectionPort = Integer.parseInt(this.connectionData[2]);
+        createGame();
+    }
 }
