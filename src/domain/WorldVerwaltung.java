@@ -115,13 +115,13 @@ public class WorldVerwaltung {
 
     public void checkCountriesForPlayer ( Vector < Player > playerList ) throws IllegalStateException {
 
-        for ( Player p : playerList ){
-            for ( Continent currentContinent : continentList ){
-                for( Country currentCountry : currentContinent.getContinentCountries () )
-                    if ( p.getPlayerName ().equals( currentCountry.getOwningPlayerName () ) ){
+        for ( Player p : playerList ) {
+            for ( Continent currentContinent : continentList ) {
+                for ( Country currentCountry : currentContinent.getContinentCountries ( ) )
+                    if ( p.getPlayerName ( ).equals ( currentCountry.getOwningPlayerName ( ) ) ) {
                         currentCountry.setOwningPlayer ( p );
                     } else {
-                        throw new IllegalStateException (  );
+                        throw new IllegalStateException ( );
                     }
             }
         }
@@ -259,10 +259,6 @@ public class WorldVerwaltung {
         }
         if ( isContinentOccupied ( player, 6 ) ) {
             forcesCount += continentList.get ( 6 ).getValue ( );
-        }
-        // TODO Finish if query for cards.
-        if ( cards ) {
-            getPlayersCardList ( player );
         }
         return forcesCount;
     }

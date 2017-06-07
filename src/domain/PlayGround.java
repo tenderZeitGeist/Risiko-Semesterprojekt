@@ -121,15 +121,8 @@ public class PlayGround {
         return false;
     }
     public boolean isCardStackFulfilled ( Vector < Card > playerCards ) {
-        boolean isFulfilled = false;
-        boolean checkInfantry = false;
-        boolean checkCavalry = false;
-        boolean checkArtillery = false;
-        boolean checkJoker = false;
-        int infantry = 0;
-        int cavalry = 0;
-        int artillery = 0;
-        int joker = 0;
+        boolean isFulfilled = false, checkInfantry = false, checkCavalry = false, checkArtillery = false ,checkJoker = false;
+        int infantry = 0, cavalry = 0, artillery = 0, joker = 0;
 
         if ( playerCards.size ( ) < 3 ) {
             for ( Card currentCard : playerCards ) {
@@ -168,7 +161,7 @@ public class PlayGround {
 
                     return isFulfilled = true;
                 } else {
-                    return isFulfilled = false;
+                    return isFulfilled;
                 }
                 /*if ( ( infantry > 2 || cavalry > 2 || artillery > 2 )
                         || ( infantry >= 1 && cavalry >= 1 && artillery >= 1 )
