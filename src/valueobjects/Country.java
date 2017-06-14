@@ -1,9 +1,11 @@
 package valueobjects;
 
+import java.io.Serializable;
+
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 23.03.2017.
  */
-public class Country {
+public class Country implements Serializable{
     private int localForces;
     private String countryName;
     private Player owningPlayer;

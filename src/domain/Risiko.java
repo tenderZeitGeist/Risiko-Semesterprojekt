@@ -23,18 +23,51 @@ public class Risiko {
     private String file = "";
 
 
-    public Risiko ( String file ) throws IOException {
+    public Risiko () throws IOException {
 
-        this.file = file;
 
         playerManager = new PlayerVerwaltung ( );
         worldManager = new WorldVerwaltung ( );
         missionVerwaltung = new MissionVerwaltung ( );
         playGround = new PlayGround ( );
         //worldManager.writeData ( "CountryListTest.txt" );
-        worldManager.createGameFile ( );
-        worldManager.writeData ( );
-        worldManager.readData ( file );
+        //worldManager.createGameFile ( );
+        //worldManager.readData ( file );
+        //worldManager.writeData ( );
+
+    }
+
+    public void readData (String file) throws IOException {
+        worldManager.readData (file);
+    }
+
+    /*public void readGameData (String file) throws IOException {
+        worldManager.readGameData (file, playerManager.getPlayerList(), missionVerwaltung.getMissionList());
+    }*/
+
+    public void serializePlayers () throws IOException {
+        worldManager.serializePlayers(playerManager.getPlayerList());
+    }
+
+    public void serializeMissions () throws IOException {
+        worldManager.serializeMissions(missionVerwaltung.getUsedMissions());
+    }
+
+    public void serializeCountries () throws IOException {
+        worldManager.serializeCountries();
+    }
+
+    public List<Player> deSerializePlayers () throws IOException, ClassNotFoundException {
+        return worldManager.deSerializePlayers();
+    }
+
+    public void deSerializeCountries () throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
+        worldManager.deSerializeCountries();
+    }
+
+    public void writeMissionsFromFile() throws IOException, ClassNotFoundException {
+        Vector<Mission> v = worldManager.deSerializeMissions();
+        missionVerwaltung.overwriteMissions(v);
     }
 
     public void createPlayer ( int newPlayerID, String newPlayerName ) throws PlayerAlreadyExistsException {
@@ -66,13 +99,13 @@ public class Risiko {
         worldManager.createGameFile ( );
     }
 
-    public void writeData ( ) throws IOException {
-        worldManager.writeData ( );
-    }
+    /*public void writeData ( ) throws IOException {
+        worldManager.writeData (playerManager.getPlayerList(), missionVerwaltung.getMissionList());
+    }*/
 
 
-    public int returnForcesPerRoundsPerPlayer ( Player player, boolean cards ) {
-        return worldManager.returnForcesPerRoundsPerPlayer ( player, cards );
+    public int returnForcesPerRoundsPerPlayer ( Player player) {//, boolean cards ) {
+        return worldManager.returnForcesPerRoundsPerPlayer ( player); //, cards );
     }
 
 

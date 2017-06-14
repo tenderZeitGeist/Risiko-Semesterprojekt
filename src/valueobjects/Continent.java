@@ -2,13 +2,14 @@ package valueobjects;
 
 import valueobjects.Country;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Created by Intersection on 30.03.2017.
  */
-public class Continent {
+public class Continent implements Serializable {
 
     private String name;
     private int value;

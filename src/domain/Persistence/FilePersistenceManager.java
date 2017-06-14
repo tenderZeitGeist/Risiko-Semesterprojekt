@@ -122,7 +122,7 @@ public class FilePersistenceManager implements PersistenceManager {
      * @param
      * @return true , wenn Schreibvorgang erfolgreich, false sonst
      */
-    public boolean saveCountry ( Country country ) throws IOException {
+    /*public boolean saveCountry ( Country country ) throws IOException {
 
         // Titel, Nummer und Verfügbarkeit schreiben
 
@@ -142,7 +142,7 @@ public class FilePersistenceManager implements PersistenceManager {
         // schreibeZeile(Integer.valueOf(b.getNummer()).toString());
 
         return true;
-    }
+    }*/
 
     public Card loadCard ( ) throws IOException {
         String idString;
@@ -176,26 +176,37 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
-    public Player loadPlayer ( ) throws IOException {
+    /*public Player loadPlayer ( ) throws IOException {
         String playerName;
         String playerIDString;
         int playerID;
+        String blank="";
 
-        playerIDString = readLine ( );
-        playerID = Integer.parseInt ( playerIDString );
 
-        playerName = readLine ( );
+        do {
+            playerIDString = readLine();
 
-        return new Player ( playerID, playerName );
+            if (playerIDString.length() > 0) {
+
+                playerID = Integer.parseInt(playerIDString);
+
+                playerName = readLine();
+
+                return new Player(playerID, playerName);
+            }
+        } while (playerIDString.length()>0);
+        return null;
     }
 
     public boolean savePlayer ( Player player ) throws IOException {
         writeLine ( player.getPlayerID ( ) + "" );
         writeLine ( player.getPlayerName ( ) );
+        writeLine("");
         return true;
-    }
+    }*/
 
-/*    public Mission loadMission ( ) throws IOException {
+
+    /*public Mission loadMission ( ) throws IOException {
 
         String missionDescription;
         String missionIDString;
@@ -209,10 +220,17 @@ public class FilePersistenceManager implements PersistenceManager {
         missionIDString = readLine ();
         missionID = Integer.parseInt ( missionIDString );
 
-        if( missionDescription.contains ( "" ) ){
+        *//*if( missionDescription.contains ( "" ) ){
 
-        }
-        return new  ( player, missionDescription, missionID );
+        }*//*
+        return new Mission ( player, missionDescription, missionID );
+    }*/
+
+    /*public boolean saveMission(Mission mission)  throws IOException {
+        writeLine(mission.getPlayer().getPlayerName());
+        writeLine(mission.getDescription());
+        writeLine(mission.getId() + "");
+        return true;
     }*/
 
 

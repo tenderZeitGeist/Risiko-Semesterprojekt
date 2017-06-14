@@ -28,7 +28,7 @@ public class PlayerVerwaltung {
         return playerList;
     }
 
-    public void readData ( String file ) throws IOException {
+    /*public void readData ( String file ) throws IOException {
         pm.openForReading ( file );
 
         Player player;
@@ -50,7 +50,7 @@ public class PlayerVerwaltung {
         }
 
         pm.close ();
-    }
+    }*/
 
 
 //check if this is correct!
