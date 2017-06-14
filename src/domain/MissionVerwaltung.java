@@ -22,9 +22,9 @@ public class MissionVerwaltung {
         missionList.add ( new ContinentMissions ( null, "Conquer Asia and South-America!", 4, new int[] { 2 , 5 } ) );
         missionList.add ( new ContinentMissions ( null, "Conquer North-America and Australia!", 5, new int[] { 1 , 7 } ) );
         missionList.add ( new ContinentMissions ( null, "Conquer North-America and Africa!", 6, new int[] { 1 , 4 } ) );
-        missionList.add ( new TakeOverThreeContinents ( null, "Conquer Europe, Australia and a third one of your choice!", 7, 3, 6 ) );
-        missionList.add ( new TakeOverThreeContinents ( null, "Conquer Europe, South-America and a third one of your choice!", 8, 3, 2 ) );
-        missionList.add ( new TakeOverThreeContinents ( null, "Conquer Europe, Africa and a third one of your choice!", 9, 3, 4 ) );
+        missionList.add ( new ContinentMissions ( null, "Conquer Europe, Australia and a third one of your choice!", 7, new int[] { 3 , 6 , 0 } ) );
+        missionList.add ( new ContinentMissions ( null, "Conquer Europe, South-America and a third one of your choice!", 8, new int[] { 3 , 2 , 0 } ) );
+        missionList.add ( new ContinentMissions ( null, "Conquer Europe, Africa and a third one of your choice!", 9, new int[] { 3 , 4 , 0 } ) );
 /*      missionList.add(new KillPlayerMissions(null, "Capture all countries of player 1", 10, 1));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 2", 11, 2));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 3", 12, 3));
@@ -105,9 +105,7 @@ public class MissionVerwaltung {
     public void createPlayerMission ( Vector < Player > playerList ) {
         // TODO Create dynamic method for various player amount.
         int missionID = 7;
-        int id;
         for ( Player p : playerList ) {
-            id = p.getPlayerID ( );
             new PlayerMission ( null, "Defeat " + p.getPlayerName ( ), missionID++, p.getPlayerID ( ) );
         }
     }

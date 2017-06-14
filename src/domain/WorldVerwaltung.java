@@ -1,7 +1,10 @@
 package domain;
 
 
-import valueobjects.*;
+import valueobjects.Continent;
+import valueobjects.Country;
+import valueobjects.Player;
+import valueobjects.Card;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.CountryAlreadyExistsException;
 import domain.exceptions.NoAlliedCountriesNearException;
@@ -9,6 +12,7 @@ import domain.Persistence.*;
 
 import java.io.*;
 import java.util.*;
+import java.io.IOException;
 import java.util.stream.IntStream;
 
 
@@ -250,13 +254,13 @@ public class WorldVerwaltung {
 
     public void checkCountriesForPlayer ( Vector < Player > playerList ) throws IllegalStateException {
 
-        for ( Player p : playerList ){
-            for ( Continent currentContinent : continentList ){
-                for( Country currentCountry : currentContinent.getContinentCountries () )
-                    if ( p.getPlayerName ().equals( currentCountry.getOwningPlayerName () ) ){
+        for ( Player p : playerList ) {
+            for ( Continent currentContinent : continentList ) {
+                for ( Country currentCountry : currentContinent.getContinentCountries ( ) )
+                    if ( p.getPlayerName ( ).equals ( currentCountry.getOwningPlayerName ( ) ) ) {
                         currentCountry.setOwningPlayer ( p );
                     } else {
-                        throw new IllegalStateException (  );
+                        throw new IllegalStateException ( );
                     }
             }
         }
@@ -408,10 +412,6 @@ public class WorldVerwaltung {
         if ( isContinentOccupied ( player, 6 ) ) {
             forcesCount += continentList.get ( 5 ).getValue ( );
         }
-        // TODO Finish if query for cards.
-        /*if ( cards ) {
-            getPlayersCardList ( player );
-        }*/
         return forcesCount;
     }
 
@@ -594,6 +594,10 @@ public class WorldVerwaltung {
         }
         return neighbouringCountriesList;
 
+    }
+
+    public Vector < Card > getCardList () {
+        return cardList;
     }
 
 

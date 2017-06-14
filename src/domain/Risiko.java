@@ -25,6 +25,7 @@ public class Risiko {
 
     public Risiko () throws IOException {
 
+        this.file = file;
 
         playerManager = new PlayerVerwaltung ( );
         worldManager = new WorldVerwaltung ( );
@@ -74,6 +75,10 @@ public class Risiko {
         playerManager.createPlayer ( newPlayerID, newPlayerName );
     }
 
+    public Vector < Card > getCardList ( ) {
+        return worldManager.getCardList ( );
+    }
+
     public List < Player > getPlayerList ( ) {
         return playerManager.getPlayerList ( );
     }
@@ -113,8 +118,8 @@ public class Risiko {
         worldManager.setForcesToCountry ( country, forces );
     }
 
-    public Vector<Country> loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
-       return worldManager.loadDistributionCountriesList ( player );
+    public Vector < Country > loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
+        return worldManager.loadDistributionCountriesList ( player );
     }
 
     public Vector < Country > loadNeighbouringCountriesListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {

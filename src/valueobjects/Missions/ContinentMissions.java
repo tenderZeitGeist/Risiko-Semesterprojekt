@@ -5,7 +5,6 @@ import valueobjects.Country;
 import valueobjects.Mission;
 import valueobjects.Player;
 
-import java.awt.datatransfer.MimeTypeParseException;
 import java.util.List;
 import java.util.Vector;
 
@@ -22,10 +21,30 @@ public class ContinentMissions extends Mission {
 
     @Override
     public boolean isFulfilled ( Player player, List < Player > playerList, Vector < Continent > continentList ) {
+        Vector < Continent > copyContinentList = new Vector <> ( continentList );
+
         for ( int n : continentIDs ) {
-            for ( Country c : continentList.get ( n ).getContinentCountries ( ) ) {
-                if ( ! c.getOwningPlayer ( ).equals ( player ) ) {
-                    return false;
+            copyContinentList.remove ( n );
+        }
+
+        for ( int n : continentIDs ) {
+            if ( n == 0 ) {
+                for ( Continent currentContinent : copyContinentList ) {
+                    boolean owned = true;
+                    for ( Country currentCountry : currentContinent.getContinentCountries ( ) ) {
+
+                        if ( ! currentCountry.getOwningPlayer ( ).equals ( player ) ) {
+                            owned = false;
+                        }
+                    }
+                    if ( owned ) return true;
+                }
+                return false;
+            } else {
+                for ( Country c : continentList.get ( n ).getContinentCountries ( ) ) {
+                    if ( ! c.getOwningPlayer ( ).equals ( player ) ) {
+                        return false;
+                    }
                 }
             }
         }
