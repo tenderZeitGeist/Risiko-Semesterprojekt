@@ -444,6 +444,10 @@ public class WorldVerwaltung {
 
     }
 
+    public Vector < Card > getCardList () {
+        return cardList;
+    }
+
 
     // Checks if the continent ist occupied by the player
 

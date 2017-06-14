@@ -23,7 +23,7 @@ public class Risiko {
     private String file = "";
 
 
-    public Risiko ( String file ) throws IOException {
+    public Risiko ( ) {
 
         this.file = file;
 
@@ -33,12 +33,16 @@ public class Risiko {
         playGround = new PlayGround ( );
         //worldManager.writeData ( "CountryListTest.txt" );
         worldManager.createGameFile ( );
-        worldManager.writeData ( );
-        worldManager.readData ( file );
+        // worldManager.writeData ( );
+        // worldManager.readData ( file );
     }
 
     public void createPlayer ( int newPlayerID, String newPlayerName ) throws PlayerAlreadyExistsException {
         playerManager.createPlayer ( newPlayerID, newPlayerName );
+    }
+
+    public Vector < Card > getCardList ( ) {
+        return worldManager.getCardList ( );
     }
 
     public List < Player > getPlayerList ( ) {
@@ -80,8 +84,8 @@ public class Risiko {
         worldManager.setForcesToCountry ( country, forces );
     }
 
-    public Vector<Country> loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
-       return worldManager.loadDistributionCountriesList ( player );
+    public Vector < Country > loadDistributionCountriesList ( Player player ) throws NoAlliedCountriesNearException {
+        return worldManager.loadDistributionCountriesList ( player );
     }
 
     public Vector < Country > loadNeighbouringCountriesListForAttackingPhase ( Country country ) throws NoEnemyCountriesNearException {

@@ -41,7 +41,7 @@ public class PlayGroundCUI {
 
     public PlayGroundCUI ( String file ) throws IOException {
 
-        risiko = new Risiko ( file );
+        // risiko = new Risiko ( file );
         in = new BufferedReader ( new InputStreamReader ( System.in ) );
     }
 
@@ -307,6 +307,12 @@ public class PlayGroundCUI {
                         cardExchangeArmies += 5;
                         forcesLeft += cardExchangeArmies;
                     }
+
+                    Vector < Card > cardList = risiko.getCardList ();
+                    for ( Card c : tempCardList ) {
+                        cardList.remove ( c );
+                    }
+
                     break cardLoop;
                 } else {
                     System.out.println ( "Input incorrect! Please choose your cards again" );
