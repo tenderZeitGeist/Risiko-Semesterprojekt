@@ -16,7 +16,7 @@ public class PlayerMission extends Mission {
     private int playerID;
 
     public PlayerMission ( Player player, String description, int id, int playerID ) {
-        super ( player, description, id );
+        super ();
 
     }
 

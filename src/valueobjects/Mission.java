@@ -14,7 +14,7 @@ public abstract class Mission implements Serializable {
     protected String description;
     protected int id;
 
-    public Mission(Player player, String description, int id) {
+    public Mission() {
         this.player = player;
         this.description = description;
         this.id = id;

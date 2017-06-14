@@ -3,18 +3,22 @@ package valueobjects.Missions;
 import domain.WorldVerwaltung;
 import valueobjects.*;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 
-public class CountryMissions extends Mission {
+public class CountryMissions extends Mission implements Serializable {
 
     int countryCount;
     int forces;
 
     public CountryMissions(Player player, String description, int id, int countryCount, int forces) {
-        super(player, description, id);
+        super();
+        this.player = player;
+        this.description = description;
+        this.id = id;
         this.countryCount = countryCount;
         this.forces = forces;
     }

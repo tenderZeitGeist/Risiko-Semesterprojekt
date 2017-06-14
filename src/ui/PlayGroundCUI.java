@@ -282,7 +282,7 @@ public class PlayGroundCUI {
         int selectedForcesCountTemp = 0;
         int temp = 0;
 
-        if ( cards ) {
+        /*if ( cards ) {
             Vector < Card > currentCardList = worldManager.getPlayersCardList ( currentPlayer ), tempCardList = new Vector <> ( );
             int selectedCardID;
             boolean isFulfilled = false, checkInfantry = false, checkCavalry = false, checkArtillery = false, checkJoker = false;
@@ -331,7 +331,7 @@ public class PlayGroundCUI {
                     continue;
                 }
 
-            }
+            }*/
 
 
             System.out.println ( "" );
@@ -399,7 +399,7 @@ public class PlayGroundCUI {
             //MOAR COMMANDS AFTER FORCE VERTEILUNG
             //
         }
-    }
+
 
     public void distribureForcesMenuInitial ( Player currentPlayer, Vector < Country > ownedCountriesList ) {
 
@@ -679,8 +679,8 @@ public class PlayGroundCUI {
                             if (inputGameSave.equals("y")) {
                                 //risiko.writeData();
                                 risiko.serializePlayers();
-                                risiko.serializeMissions();
                                 risiko.serializeCountries();
+                                risiko.serializeMissions();
                                 throw new CancelDistributeForcesEndOfRound();
 
                                 // maybe "exitGame function" here?

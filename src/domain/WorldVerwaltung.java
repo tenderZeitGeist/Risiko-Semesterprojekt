@@ -1,10 +1,7 @@
 package domain;
 
 
-import valueobjects.Continent;
-import valueobjects.Country;
-import valueobjects.Player;
-import valueobjects.Card;
+import valueobjects.*;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.CountryAlreadyExistsException;
 import domain.exceptions.NoAlliedCountriesNearException;

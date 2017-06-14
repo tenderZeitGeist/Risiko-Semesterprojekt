@@ -4,17 +4,22 @@ import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Mission;
 import valueobjects.Player;
+import valueobjects.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
 
-public class ContinentMissions extends Mission {
+public class ContinentMissions extends Mission implements Serializable {
 
     int[] continentIDs;
 
     public ContinentMissions ( Player player, String description, int id, int[] continentIDs ) {
-        super ( player, description, id );
+        super ();
+        this.player = player;
+        this.description = description;
+        this.id = id;
         this.continentIDs = continentIDs;
     }
 
