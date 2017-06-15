@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0e208651-fcb6-4e63-978b-30fab9227ee9" name="Default" comment="persistence fully working, players are now saved in correct playing order">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/ui/PlayGroundGUIForm.form" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/ui/PlayGroundGUIForm.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/ui/RisikoClientGUI.java" afterPath="" />
+    <list default="true" id="0e208651-fcb6-4e63-978b-30fab9227ee9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/Persistence/FilePersistenceManager.class" afterPath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/Persistence/FilePersistenceManager.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/Persistence/PersistenceManager.class" afterPath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/Persistence/PersistenceManager.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/PlayerVerwaltung.class" afterPath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/domain/PlayerVerwaltung.class" />
@@ -13,11 +10,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/ui/PlayGroundCUI.class" afterPath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/ui/PlayGroundCUI.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/ui/PlayGroundGUI.class" afterPath="$PROJECT_DIR$/out/production/Risiko-Semesterprojekt/ui/PlayGroundGUI.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/domain/PlayerVerwaltung.java" afterPath="$PROJECT_DIR$/src/domain/PlayerVerwaltung.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/domain/Risiko.java" afterPath="$PROJECT_DIR$/src/domain/Risiko.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/domain/WorldVerwaltung.java" afterPath="$PROJECT_DIR$/src/domain/WorldVerwaltung.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/PlayGroundCUI.java" afterPath="$PROJECT_DIR$/src/ui/PlayGroundCUI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/PlayGroundGUI.java" afterPath="$PROJECT_DIR$/src/ui/PlayGroundGUI.java" />
     </list>
     <list id="2243d443-f317-47b6-a81d-5ccb5b4df50f" name="Revert: Implemented mission logic. Implemented persistence for player class. TODO saveGame/loadGame" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -662,7 +654,7 @@
       <workItem from="1496746863309" duration="10817000" />
       <workItem from="1496834510544" duration="2062000" />
       <workItem from="1496848064540" duration="9459000" />
-      <workItem from="1497514185282" duration="5788000" />
+      <workItem from="1497514185282" duration="5811000" />
     </task>
     <task id="LOCAL-00001" summary="Testing local lists instead of global lists in WorldVerwaltung.">
       <created>1495378117665</created>
@@ -713,11 +705,18 @@
       <option name="project" value="LOCAL" />
       <updated>1496578368921</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="persistence fully working, players are now saved in correct playing order">
+      <created>1497519991827</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1497519991827</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="124006000" />
+    <option name="totallyTimeSpent" value="124029000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1928" y="-91" width="1936" height="1056" extended-state="6" />
@@ -725,13 +724,13 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19860847" sideWeight="0.5013976" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32830626" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32830626" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30138445" sideWeight="0.50208336" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32983926" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.49166667" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32830626" sideWeight="0.49166667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2980666" sideWeight="0.49791667" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28583264" sideWeight="0.5013976" order="0" side_tool="true" content_ui="tabs" />
