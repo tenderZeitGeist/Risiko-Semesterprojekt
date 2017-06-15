@@ -39,15 +39,15 @@ public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHand
     private String[] connectionData = new String[4];
 
 
-    public PlayGroundGUIPrototype () {
+    public PlayGroundGUIPrototype() {
         super();
     }
 
 
     public static void main(String[] args) {
-        PlayGroundGUIPrototype p = new PlayGroundGUIPrototype ();
+        PlayGroundGUIPrototype p = new PlayGroundGUIPrototype();
         p.openServerConnection();
-            //p.establishConnection(p.currentPlayer.getPlayerName(), p.connectionIp, p.connectionPort);
+        //p.establishConnection(p.currentPlayer.getPlayerName(), p.connectionIp, p.connectionPort);
 
 
     }
@@ -76,7 +76,7 @@ public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHand
 
     public void createGame() {
 //        JFrame mainWindowFrame = new JFrame("WADDUPPP??!?!?!?");
-        this.setSize(1000  , 600);
+        this.setSize(1000, 600);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -96,7 +96,7 @@ public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHand
 
         try {
             myPicture = ImageIO.read(new File("./src/ui/rescourcen/StarRiskBG.jpg"));
-            playGroundLabel = new JLabel(new ImageIcon(myPicture.getScaledInstance((int) (myPicture.getWidth()*0.9), (int) (myPicture.getHeight()*0.9), Image.SCALE_FAST)));
+            playGroundLabel = new JLabel(new ImageIcon(myPicture.getScaledInstance((int) (myPicture.getWidth() * 0.9), (int) (myPicture.getHeight() * 0.9), Image.SCALE_FAST)));
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -148,7 +148,6 @@ public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHand
         boolean connectionSuccessful = false;
         ConnectionDialog connectionDialog = new ConnectionDialog(this); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();
-
 
 
         return connectionSuccessful;

@@ -15,21 +15,21 @@ public class PlayerMission extends Mission {
 
     private int playerID;
 
-    public PlayerMission ( Player player, String description, int id, int playerID ) {
-        super ();
+    public PlayerMission(Player player, String description, int id, int playerID) {
+        super();
 
     }
 
     @Override
-    public boolean isFulfilled ( Player player, List < Player > playerList, Vector < Continent > continentList ) {
-        for ( Player p : playerList ) {
-            if ( p.getPlayerID ( ) == playerID ) {
+    public boolean isFulfilled(Player player, List<Player> playerList, Vector<Continent> continentList) {
+        for (Player p : playerList) {
+            if (p.getPlayerID() == playerID) {
                 player = p;
             }
         }
-        for ( Continent currentContinent : continentList ) {
-            for ( Country currentCountry : currentContinent.getContinentCountries ( ) ) {
-                if ( player.equals ( currentCountry.getOwningPlayer ( ) ) ) {
+        for (Continent currentContinent : continentList) {
+            for (Country currentCountry : currentContinent.getContinentCountries()) {
+                if (player.equals(currentCountry.getOwningPlayer())) {
                     return false;
                 }
             }
@@ -38,12 +38,12 @@ public class PlayerMission extends Mission {
     }
 
     @Override
-    public Player getPlayer ( ) {
+    public Player getPlayer() {
         return this.player;
     }
 
     @Override
-    public void setPlayer ( Player p ) {
+    public void setPlayer(Player p) {
         this.player = p;
     }
 }

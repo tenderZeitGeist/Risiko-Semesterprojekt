@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 23.03.2017.
  */
-public class Country implements Serializable{
+public class Country implements Serializable {
     private int localForces;
     private String countryName;
     private Player owningPlayer;
@@ -77,8 +77,8 @@ public class Country implements Serializable{
         return neighbouringCountriesByID;
     }
 
-    public String getOwningPlayerName(){
-        return owningPlayer.getPlayerName ( );
+    public String getOwningPlayerName() {
+        return owningPlayer.getPlayerName();
     }
 
 }

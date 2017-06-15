@@ -23,18 +23,18 @@ public interface PersistenceManager {
      */
 
 
-    public void openForReading ( String datenquelle ) throws IOException;
+    public void openForReading(String datenquelle) throws IOException;
 
-    public void openForWriting ( String datenquelle ) throws IOException;
+    public void openForWriting(String datenquelle) throws IOException;
 
-    public boolean close ( );
+    public boolean close();
 
     /**
      * Methode zum Einlesen der Buchdaten aus einer externen Datenquelle.
      *
      * @return Buch-Objekt, wenn Einlesen erfolgreich, false null
      */
-    public Country loadCountry ( ) throws IOException;
+    public Country loadCountry() throws IOException;
 
     /**
      * Methode zum Schreiben der Buchdaten in eine externe Datenquelle.
@@ -52,9 +52,9 @@ public interface PersistenceManager {
     public boolean speichereKunde(Kunde k) throws IOException;
 
     */
-    public Card loadCard () throws IOException;
+    public Card loadCard() throws IOException;
 
-    public boolean saveCard ( Card card ) throws IOException;
+    public boolean saveCard(Card card) throws IOException;
 
     //public Player loadPlayer () throws IOException;
 

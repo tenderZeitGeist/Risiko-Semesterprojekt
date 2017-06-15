@@ -106,7 +106,7 @@ public class ConnectionDialog {
 
     public void confirm(String name, String host, String port) {
         // liest Textfelder
-        String[] s = new String[] {name, host, port};
+        String[] s = new String[]{name, host, port};
 
         handler.setConnectionData(s);
     }

@@ -30,24 +30,24 @@ public class FilePersistenceManager implements PersistenceManager {
     private BufferedReader reader = null;
     private PrintWriter writer = null;
 
-    public void openForReading ( String file ) throws FileNotFoundException {
-        reader = new BufferedReader ( new FileReader ( file ) );
+    public void openForReading(String file) throws FileNotFoundException {
+        reader = new BufferedReader(new FileReader(file));
     }
 
-    public void openForWriting ( String file ) throws IOException {
-        writer = new PrintWriter ( new BufferedWriter ( new FileWriter ( file ) ) );
+    public void openForWriting(String file) throws IOException {
+        writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
     }
 
-    public boolean close ( ) {
-        if ( writer != null )
-            writer.close ( );
+    public boolean close() {
+        if (writer != null)
+            writer.close();
 
-        if ( reader != null ) {
+        if (reader != null) {
             try {
-                reader.close ( );
-            } catch ( IOException e ) {
+                reader.close();
+            } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace ( );
+                e.printStackTrace();
 
                 return false;
             }
@@ -63,7 +63,7 @@ public class FilePersistenceManager implements PersistenceManager {
      *
      * @return Buch-Objekt, wenn Einlesen erfolgreich, false null
      */
-    public Country loadCountry ( ) throws IOException {
+    public Country loadCountry() throws IOException {
         String name;
         String IDString;
         String playerNameString;
@@ -75,41 +75,41 @@ public class FilePersistenceManager implements PersistenceManager {
         int continentID;
 
         // read country name
-        name = readLine ( );
-        if ( name == null ) {
+        name = readLine();
+        if (name == null) {
             // keine Daten mehr vorhanden
             return null;
         }
         // read country ID
-        IDString = readLine ( );
+        IDString = readLine();
         //Integer id = Integer.valueOf(IDString);
         // ... und von String in int konvertieren
-        ID = Integer.parseInt ( IDString );
+        ID = Integer.parseInt(IDString);
 
         // read player
-        playerNameString = readLine ( );
+        playerNameString = readLine();
         // read forces
-        forcesString = readLine ( );
+        forcesString = readLine();
         // ... und von String in int konvertieren
-        forces = Integer.parseInt ( forcesString );
+        forces = Integer.parseInt(forcesString);
 
         // read continentID
-        continentIDString = readLine ( );
+        continentIDString = readLine();
         // ... und von String in int konvertieren
-        continentID = Integer.parseInt ( continentIDString );
+        continentID = Integer.parseInt(continentIDString);
 
         // read neighbours array
-        integersInString = readLine ( ).split ( ", " );
-        int a[] = new int[ integersInString.length ];
-        for ( int i = 0 ; i < integersInString.length ; i++ ) {
-            a[ i ] = Integer.parseInt ( integersInString[ i ] );
+        integersInString = readLine().split(", ");
+        int a[] = new int[integersInString.length];
+        for (int i = 0; i < integersInString.length; i++) {
+            a[i] = Integer.parseInt(integersInString[i]);
         }
 
         // create new country object and return it
-        if ( playerNameString.contains ( "null" ) ) {
-            return new Country ( name, ID, forces, null, continentID, a );
+        if (playerNameString.contains("null")) {
+            return new Country(name, ID, forces, null, continentID, a);
         } else {
-            return new Country ( name, ID, forces, new Player ( 0, playerNameString ), continentID, a );
+            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a);
         }
     }
 
@@ -143,35 +143,34 @@ public class FilePersistenceManager implements PersistenceManager {
 
         return true;
     }*/
-
-    public Card loadCard ( ) throws IOException {
+    public Card loadCard() throws IOException {
         String idString;
         String typeString;
         String cardName;
         int id;
         int type;
 
-        idString = readLine ( );
-        if ( idString == null ) {
+        idString = readLine();
+        if (idString == null) {
             return null;
         } else {
-            id = Integer.parseInt ( idString );
+            id = Integer.parseInt(idString);
         }
 
-        typeString = readLine ( );
-        type = Integer.parseInt ( typeString );
+        typeString = readLine();
+        type = Integer.parseInt(typeString);
 
-        cardName = readLine ( );
+        cardName = readLine();
 
-        return new Card ( id, type, cardName );
+        return new Card(id, type, cardName);
 
     }
 
-    public boolean saveCard ( Card card ) throws IOException {
+    public boolean saveCard(Card card) throws IOException {
 
-        writeLine ( card.getCardID ( ) + "" );
-        writeLine ( card.getCardType ( ) + "" );
-        writeLine ( card.getCardName ( ) );
+        writeLine(card.getCardID() + "");
+        writeLine(card.getCardType() + "");
+        writeLine(card.getCardName());
 
         return true;
     }
@@ -234,16 +233,16 @@ public class FilePersistenceManager implements PersistenceManager {
     }*/
 
 
-    private String readLine ( ) throws IOException {
-        if ( reader != null )
-            return reader.readLine ( );
+    private String readLine() throws IOException {
+        if (reader != null)
+            return reader.readLine();
         else
             return "";
     }
 
-    private void writeLine ( String daten ) {
-        if ( writer != null )
-            writer.println ( daten );
+    private void writeLine(String daten) {
+        if (writer != null)
+            writer.println(daten);
     }
 }
 

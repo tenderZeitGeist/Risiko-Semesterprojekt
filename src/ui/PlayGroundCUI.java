@@ -672,28 +672,27 @@ public class PlayGroundCUI {
                     selectedCountryIDTempFrom = new Integer(readInput());
 
                     if (selectedCountryIDTempFrom == 99) {
-                        System.out.println("Do you want to save the game? y/n");
+                    }
+                    System.out.println("Do you want to save the game? y/n");
 
-                        try {
-                            System.out.print("##>");
-                            inputGameSave = readInput();
-                            if (inputGameSave.equals("y")) {
-                                //risiko.writeData();
+                    try {
+                        System.out.print("##>");
+                        inputGameSave = readInput();
+                        if (inputGameSave.equals("y")) {
+                            //risiko.writeData();
 
-                                risiko.serializePlayers(currentPlayer);
-                                risiko.serializeCountries();
-                                risiko.serializeMissions();
-                                throw new CancelDistributeForcesEndOfRound();
+                            risiko.serializePlayers(currentPlayer);
+                            risiko.serializeCountries();
+                            risiko.serializeMissions();
+                            throw new CancelDistributeForcesEndOfRound();
 
-                                // maybe "exitGame function" here?
+                            // maybe "exitGame function" here?
 
-                            } else if (inputGameSave.equals("n")) {
-                                throw new CancelDistributeForcesEndOfRound();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } else if (inputGameSave.equals("n")) {
+                            throw new CancelDistributeForcesEndOfRound();
                         }
-
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
                     selectedCountryIDTempFrom -= 1;

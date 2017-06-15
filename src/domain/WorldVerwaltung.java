@@ -170,6 +170,7 @@ public class WorldVerwaltung {
                 Mission m = (Mission) ois.readObject();
                 //Following line stays the same
                 tempMissionList.add(m);
+                System.out.println("Mission vom Typ " + m.getClass().getName() + " / " + m.getDescription());
             }
         } catch (EOFException e) {
             System.out.println(e.getMessage());

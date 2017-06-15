@@ -25,7 +25,7 @@ public class CountryMissions extends Mission implements Serializable {
 
 
     @Override
-    public boolean isFulfilled(Player player, List <Player> playerList, Vector<Continent> continentList) {
+    public boolean isFulfilled(Player player, List<Player> playerList, Vector<Continent> continentList) {
 
         int counter = 0;
 

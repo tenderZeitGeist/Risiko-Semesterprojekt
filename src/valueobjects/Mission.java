@@ -14,13 +14,17 @@ public abstract class Mission implements Serializable {
     protected String description;
     protected int id;
 
+    // Für De-Serialisierung
     public Mission() {
+    }
+
+    public Mission(Player player, String description, int id) {
         this.player = player;
         this.description = description;
         this.id = id;
     }
 
-    public abstract boolean isFulfilled(Player player, List <Player> playerList, Vector <Continent> continentList);
+    public abstract boolean isFulfilled(Player player, List<Player> playerList, Vector<Continent> continentList);
 
     public abstract Player getPlayer();
 
