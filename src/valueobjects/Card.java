@@ -1,9 +1,11 @@
 package valueobjects;
 
+import java.io.Serializable;
+
 /**
  * Created by Intersection on 27.04.2017.
  */
-public class Card {
+public class Card implements Serializable{
     private int cardID;
     private int cardType;
     private String cardName;

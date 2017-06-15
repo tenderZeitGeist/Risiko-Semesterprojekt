@@ -1,9 +1,11 @@
 package valueobjects;
 
+import java.io.Serializable;
+
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 23.03.2017.
  */
-public class Player {
+public class Player implements Serializable {
     private int playerID;
     private String playerName;
 

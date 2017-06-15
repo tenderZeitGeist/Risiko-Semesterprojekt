@@ -60,20 +60,36 @@ public class MissionVerwaltung {
         }
     }
 
+    public void overwriteMissions(Vector<Mission> missionList) {
+        this.missionList = missionList;
+    }
 
     public Vector < Mission > getMissionList ( ) {
         return missionList;
     }
 
-    public Mission getMissionPerPlayer ( Player player ) {
+    public Mission getMissionPerPlayer(Player player) {
 
-        for ( Mission m : missionList ) {
-            if ( m.getPlayer ( ).equals ( player ) ) {
-                return m;
+        for (int i = 0; i < missionList.size(); i++) {
+            if ((missionList.get(i).getPlayer() == null || !missionList.get(i).getPlayer().equals(player))) {
+                continue;
+            } else if (missionList.get(i).getPlayer().equals(player)) {
+                return missionList.get(i);
             }
         }
-
         return null;
+    }
+
+    public Vector<Mission> getUsedMissions() {
+        Vector <Mission> tempMissionList = new Vector<>();
+        for (Mission m : missionList)
+            if (m.getPlayer() == null) {
+                continue;
+            } else {
+                tempMissionList.add(m);
+            }
+
+        return tempMissionList;
     }
 
     public boolean missionFullfilled ( Player player, List < Player > playerList, Vector < Continent > continentList ) {

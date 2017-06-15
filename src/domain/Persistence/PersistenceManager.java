@@ -1,9 +1,6 @@
 package domain.Persistence;
 
-import valueobjects.Country;
-import valueobjects.Continent;
-import valueobjects.Player;
-import valueobjects.Card;
+import valueobjects.*;
 
 import java.io.IOException;
 
@@ -45,7 +42,7 @@ public interface PersistenceManager {
      * @param b Buch-Objekt, das gespeichert werden soll
      * @return true , wenn Schreibvorgang erfolgreich, false sonst
      */
-    public boolean saveCountry ( Country country ) throws IOException;
+    //public boolean saveCountry ( Country country ) throws IOException;
 
     /*
      *  Wenn später mal eine Kundenverwaltung ergänzt wird:
@@ -59,9 +56,9 @@ public interface PersistenceManager {
 
     public boolean saveCard ( Card card ) throws IOException;
 
-    public Player loadPlayer () throws IOException;
+    //public Player loadPlayer () throws IOException;
 
-    public boolean savePlayer ( Player player ) throws IOException;
+    //public boolean savePlayer ( Player player ) throws IOException;
 
-
+    //public boolean saveMission (Mission mission) throws IOException;
 }

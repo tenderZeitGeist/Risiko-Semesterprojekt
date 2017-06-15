@@ -29,7 +29,11 @@ public class PlayGroundGUI extends JFrame {
         SwingUtilities.invokeLater ( new Runnable ( ) {
             @Override
             public void run ( ) {
-                new PlayGroundGUI ( ).startGame ( );
+                try {
+                    new PlayGroundGUI ( ).startGame ( );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } );
     }
@@ -39,7 +43,7 @@ public class PlayGroundGUI extends JFrame {
         System.exit (this.EXIT_ON_CLOSE);
     }
 
-    public void startGame ( ) {
+    public void startGame ( ) throws IOException {
         // Create link to Risiko class
         risk = new Risiko ( );  // Übergabe von Daten zum Einlesen wurde deaktiviert!!!
 

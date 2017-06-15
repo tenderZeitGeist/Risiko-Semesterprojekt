@@ -1,5 +1,6 @@
 package valueobjects;
 
+import java.io.Serializable;
 import java.util.List;
 
 import java.util.Vector;
@@ -7,13 +8,13 @@ import java.util.Vector;
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 27.04.2017.
  */
-public abstract class Mission {
+public abstract class Mission implements Serializable {
 
     protected Player player;
     protected String description;
     protected int id;
 
-    public Mission(Player player, String description, int id) {
+    public Mission() {
         this.player = player;
         this.description = description;
         this.id = id;
@@ -27,5 +28,9 @@ public abstract class Mission {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public int getId() {
+        return id;
     }
 }
