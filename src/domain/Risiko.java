@@ -46,8 +46,8 @@ public class Risiko {
         worldManager.readGameData (file, playerManager.getPlayerList(), missionVerwaltung.getMissionList());
     }*/
 
-    public void serializePlayers () throws IOException {
-        worldManager.serializePlayers(playerManager.getPlayerList());
+    public void serializePlayers(Player p) throws IOException {
+        worldManager.serializePlayers(playerManager.getPlayerList(), p);
     }
 
     public void serializeMissions () throws IOException {
@@ -83,6 +83,9 @@ public class Risiko {
         return playerManager.getPlayerList ( );
     }
 
+    public void setPlayerList(List<Player> p) {
+        playerManager.setPlayerList(p);
+    }
 
     public void distributeCountries ( ) {
         worldManager.distributeCountries ( playerManager.getPlayerList ( ) );

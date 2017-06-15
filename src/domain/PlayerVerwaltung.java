@@ -28,6 +28,10 @@ public class PlayerVerwaltung {
         return playerList;
     }
 
+    public void setPlayerList(List<Player> p) {
+        this.playerList = p;
+    }
+
     /*public void readData ( String file ) throws IOException {
         pm.openForReading ( file );
 

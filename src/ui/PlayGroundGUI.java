@@ -40,8 +40,11 @@ public class PlayGroundGUI extends JFrame {
 
     private void exitGameSecurely() {
         //TODO add end game context
+
+
         System.exit (this.EXIT_ON_CLOSE);
     }
+
 
     public void startGame ( ) throws IOException {
         // Create link to Risiko class
@@ -167,6 +170,8 @@ public class PlayGroundGUI extends JFrame {
         button4.setFont ( new Font ( "Arial", Font.PLAIN, 20 ) );
         JButton button5 = new JButton ( "button5" );
         button5.setFont ( new Font ( "Arial", Font.PLAIN, 20 ) );
+
+
         JTextArea actionPerformedText = new JTextArea ( "", 10, 20 );
         actionPerformedText.setEditable ( false );
         // JTextArea placeholderText1 = new JTextArea ( "placeholderText1", 10, 20 );
@@ -194,7 +199,7 @@ public class PlayGroundGUI extends JFrame {
         // In this part, the necessary methods for the gameplay are being called
         risk.distributeCountries ( );
         risk.distributeMissions ( );
-        gameRound ( );
+        //gameRound ( );
     }
 
     public void gameRound ( ) {
