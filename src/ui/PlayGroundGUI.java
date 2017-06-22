@@ -19,8 +19,6 @@ import java.util.Collections;
  * Created by ZeitGeist on 14.06.2017.
  */
 public class PlayGroundGUI extends JFrame {
-    private JButton startGameButton, loadGameButton, button1;
-    private JPanel gamePanel;
     private Risiko risk;
     private BufferedImage in;
 
@@ -40,8 +38,6 @@ public class PlayGroundGUI extends JFrame {
 
     private void exitGameSecurely() {
         //TODO add end game context
-
-
         System.exit(this.EXIT_ON_CLOSE);
     }
 
@@ -51,18 +47,22 @@ public class PlayGroundGUI extends JFrame {
         risk = new Risiko();  // Übergabe von Daten zum Einlesen wurde deaktiviert!!!
 
         // Create starting GUI
-        gamePanel = new JPanel(new MigLayout(
+        JPanel gamePanel = new JPanel(new MigLayout(
                 "ins 24",
                 "",
                 "[]16[]")
         );
 
         gamePanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        this.add(gamePanel);
+        this.setLayout ( new MigLayout (
+                "debug",
+                "[][][]",
+                "[][][]") );
+        this.add(gamePanel, "cell 0 0");
         this.setResizable(false);
 
         //Insert and create buttons
-        startGameButton = new JButton("Start Game");
+        JButton startGameButton = new JButton("Start Game");
         gamePanel.add(startGameButton, "cell 0 0");
         startGameButton.addActionListener(new ActionListener() {
             @Override
@@ -72,6 +72,7 @@ public class PlayGroundGUI extends JFrame {
                 int playerCount = 0;
 
                 // Query for player creation
+                // TODO Change continue to proper loop solution
                 while (!isValid) {
                     try {
                         playerCount = Integer.parseInt(JOptionPane.showInputDialog("Please insert the amount of players."));
@@ -105,7 +106,7 @@ public class PlayGroundGUI extends JFrame {
             }
         });
 
-        loadGameButton = new JButton("Load Game");
+        JButton loadGameButton = new JButton("Load Game");
         gamePanel.add(loadGameButton, "cell 0 1");
         loadGameButton.addActionListener(new ActionListener() {
             @Override
@@ -148,19 +149,22 @@ public class PlayGroundGUI extends JFrame {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } finally {
-            // Remove all former elements
-            gamePanel.removeAll();
         }
 
         //----------->
         // Add new UI elements into the panel
-        gamePanel.setLayout(new MigLayout(
+        JPanel gamePanel =  new JPanel (new MigLayout(
                 "debug, gap rel 12",
                 "[][][]",
                 "[][]"));
 
-        button1 = new JButton("Next Phase");
+        JPanel textPanel = new JPanel ( new MigLayout (
+                "debug",
+                "[][]",
+                ""
+        ) );
+
+        JButton button1 = new JButton("Next Phase");
         button1.setFont(new Font("Arial", Font.PLAIN, 20));
         JButton button2 = new JButton("button2");
         button2.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -171,18 +175,22 @@ public class PlayGroundGUI extends JFrame {
         JButton button5 = new JButton("button5");
         button5.setFont(new Font("Arial", Font.PLAIN, 20));
 
-
+        // CReating TextAreas for messaging
         JTextArea actionPerformedText = new JTextArea("", 10, 20);
         actionPerformedText.setEditable(false);
-        // JTextArea placeholderText1 = new JTextArea ( "placeholderText1", 10, 20 );
+        JTextArea countryListText = new JTextArea ( "", 10 , 20 );
+        countryListText.setEditable ( false );
+
+        //
         JScrollPane console = new JScrollPane(actionPerformedText,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         JTextAreaOutputStream out = new JTextAreaOutputStream(actionPerformedText);
         System.setOut(new PrintStream(out));
+
+
         //---
         //--- Add content to mainWindowPanel
-        //gamePanel.add ( placeholderText1, "left, growy" );
         gamePanel.add(playBoard, "left, growx, growy");
         gamePanel.add(button1, "sg b, cell 3 0, flowy, al 100% 10%, wmin 140, hmin 40");
         gamePanel.add(button2, "sg b, cell 3 0, flowy");
