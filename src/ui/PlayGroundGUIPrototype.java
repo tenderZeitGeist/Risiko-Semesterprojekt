@@ -21,7 +21,6 @@ import java.util.Vector;
  * Created by YEAH BOIIIIIIIIIIIIIII on 31.05.2017.
  */
 public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHandler {
-
     private List<Player> playerList = new Vector<Player>();
     private Vector<Continent> continentList = new Vector<Continent>();
     private Mission currentMission = null;
