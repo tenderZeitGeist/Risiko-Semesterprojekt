@@ -31,33 +31,4 @@ public class PlayerVerwaltung {
     public void setPlayerList(List<Player> p) {
         this.playerList = p;
     }
-
-    /*public void readData ( String file ) throws IOException {
-        pm.openForReading ( file );
-
-        Player player;
-        do {
-            player = pm.loadPlayer ( );
-            if ( player != null ) {
-                playerList.add ( player );
-            }
-        } while ( player != null );
-
-        pm.close ();
-    }
-
-    public void writeData (  ) throws IOException{
-        pm.openForWriting ( "PlayerList.txt" );
-
-        for ( Player player : playerList ){
-            pm.savePlayer ( player );
-        }
-
-        pm.close ();
-    }*/
-
-
-//check if this is correct!
-
-
 }

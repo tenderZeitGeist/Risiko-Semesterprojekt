@@ -23,6 +23,7 @@ public class Risiko {
     private String file = "";
 
 
+
     public Risiko() throws IOException {
 
         this.file = file;
@@ -170,5 +171,17 @@ public class Risiko {
 
     public Country compareRGB(int RGBvalue) {
         return worldManager.compareRGB(RGBvalue);
+    }
+
+    public Turn getTurn() {
+        return playGround.getTurn();
+    }
+
+    public void nextTurn(Player p) {
+        playGround.nextTurn(p);
+    }
+
+    public void nextPhase() {
+        playGround.nextPhase();
     }
 }

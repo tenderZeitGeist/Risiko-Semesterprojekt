@@ -1,10 +1,12 @@
 package ui;
 
 import domain.Risiko;
+import domain.exceptions.NoAlliedCountriesNearException;
+import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
-import valueobjects.Continent;
 import valueobjects.Country;
+import valueobjects.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,9 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
 
 /**
  * Created by ZeitGeist on 14.06.2017.
@@ -24,18 +24,22 @@ import java.util.Vector;
 public class PlayGroundGUI extends JFrame {
     private Risiko risk;
     private BufferedImage in;
+    private int gamePhase;
+    private Player thisPlayer;
+    private JButton nextPhaseButton;
+    private JButton saveGameButton;
+    private JButton loadGameButton;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
+
+
                 try {
                     new PlayGroundGUI().startGame();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        });
+
+
     }
 
     private void exitGameSecurely() {
@@ -92,26 +96,29 @@ public class PlayGroundGUI extends JFrame {
                         }
                     }
                     // Creating players
-                    int playerAmount = 0;
-                    while (playerAmount < playerCount) {
+                    int playerID = 0;
+                    while (playerID < playerCount) {
                         try {
-                            String playerName = JOptionPane.showInputDialog("Please insert the name of Player " + (playerAmount + 1));
-                            risk.createPlayer(playerAmount++, playerName);
+                            String playerName = JOptionPane.showInputDialog("Please insert the name of Player " + (playerID+1));
+                            risk.createPlayer(playerID+1, playerName);
                         } catch (PlayerAlreadyExistsException ex) {
                             JOptionPane.showMessageDialog(null, ex.getMessage() + " Please use another name.", "Player already exists.", JOptionPane.ERROR_MESSAGE);
-                            playerAmount--;
+                            playerID--;
                         }
+                        playerID++;
                     }
                     isValid = true;
+
                 }
-                createGameGUI();
+                initGameGUI();
+                //roundManager(0);
 
             }
         });
 
-        JButton loadGameButton = new JButton("Load Game");
-        startPanel.add(loadGameButton, "cell 0 1");
-        loadGameButton.addActionListener(new ActionListener() {
+        JButton loadGameButtonInitial = new JButton("Load Game");
+        startPanel.add(loadGameButtonInitial, "cell 0 1");
+        loadGameButtonInitial.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Function is not yet implemented.", "Unavailable", JOptionPane.ERROR_MESSAGE);
@@ -132,11 +139,10 @@ public class PlayGroundGUI extends JFrame {
         this.setVisible(true);
     }
 
-    public void createGameGUI() {
-
-
+    public void initGameGUI() {
         // Set screen size resolution of the GUI
         // TODO Necessary?
+
         getContentPane().removeAll();
         this.setLayout(new MigLayout(
                 "debug",
@@ -148,8 +154,6 @@ public class PlayGroundGUI extends JFrame {
         int height = (int) (screenSize.getHeight() * 0.5);
 
         // Get the board
-
-
         JLabel fgPictureLabel = new JLabel();
         BufferedImage fgPicture;
         BufferedImage bgPicture = null;
@@ -174,6 +178,22 @@ public class PlayGroundGUI extends JFrame {
         createMapClickListener(fgPictureLabel, bgPicture);
 
 
+        nextPhaseButton = new JButton("Next Phase");
+        saveGameButton = new JButton("Save Game");
+        loadGameButton = new JButton("Load Game");
+        nextPhaseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        saveGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        loadGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        nextPhaseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                risk.nextPhase();
+            }
+        });
+        nextPhaseButton.setEnabled(false);
+
+
         //----------->
         // Add new UI elements into the panel
         JPanel gamePanel = new JPanel();
@@ -186,12 +206,8 @@ public class PlayGroundGUI extends JFrame {
         ));
 
         // Creating buttons
-        JButton button1 = new JButton("Next Phase");
-        button1.setFont(new Font("Arial", Font.PLAIN, 20));
-        JButton button2 = new JButton("Save Game");
-        button2.setFont(new Font("Arial", Font.PLAIN, 20));
-        JButton button3 = new JButton("Load Game");
-        button3.setFont(new Font("Arial", Font.PLAIN, 20));
+        
+
 
         // Creating textarea for sysout
         JTextArea actionPerformedText = new JTextArea("", 10, 20);
@@ -231,9 +247,8 @@ public class PlayGroundGUI extends JFrame {
 
         consolePanel.add(console);
         playerPanel.add(playerListPane);
-        buttonPanel.add(button1, "cell 0 0, sg b, wmin 140, hmin 40");
-        buttonPanel.add(button2, "cell 0 1, sg b");
-        buttonPanel.add(button3, "cell 0 2, sg b");
+
+
 
         //
         this.add(gamePanel);
@@ -241,6 +256,9 @@ public class PlayGroundGUI extends JFrame {
         this.add(console, "grow");
         this.add(playerPanel);
 
+        buttonPanel.add(nextPhaseButton);
+        buttonPanel.add(saveGameButton);
+        buttonPanel.add(loadGameButton);
         //
         this.revalidate();
         this.repaint();
@@ -248,6 +266,7 @@ public class PlayGroundGUI extends JFrame {
         this.setLocationRelativeTo(null);
 
         // In this part, the necessary methods for the gameplay are being called
+        Collections.shuffle(risk.getPlayerList());
         risk.distributeCountries();
         risk.distributeMissions();
         //gameRound ( );
@@ -255,85 +274,117 @@ public class PlayGroundGUI extends JFrame {
 
     }
 
-    public void gameRound() {
+    public void roundManager(int currentPlayerID) {
+        Player currentPlayer = risk.getPlayerList().get(currentPlayerID);
+            switch (risk.getTurn().getPhase()){
+                case DISTRIBUTE:
 
-        // Primitive data necessary to play the game
-        boolean game = true, distributePhase = true, attackPhase = true, movePhase = true;
-        int playerPointer = 0;
-        int gameRound = 0;
+                    risk.nextPhase();
+                    break;
+                case ATTACK:
+                    nextPhaseButton.setEnabled(true);
 
-        // List of all phases
-        ArrayList<Boolean> gamePhaseList = new ArrayList<>();
-        gamePhaseList.add(distributePhase);
-        gamePhaseList.add(attackPhase);
-        gamePhaseList.add(movePhase);
+                    risk.nextPhase();
+                    break;
+                case MOVE:
 
-        // Shuffle the order of players
-        Collections.shuffle(risk.getPlayerList());
-
-        game:
-        while (game) {
-            playerPointer = playerPointer % risk.getPlayerList().size();
-            JOptionPane.showMessageDialog(null, "It is " + risk.getPlayerList().get(playerPointer).getPlayerName() + "'s turn!");
-            distributePhase:
-            while (distributePhase) {
-                System.out.println("Please distribute your troops.");
-                System.out.println("");
+                    risk.nextTurn(currentPlayer);
+                    break;
             }
-            while (attackPhase) {
-                System.out.println("You may attack now!");
+            currentPlayerID++;
+            int nextplayer = currentPlayerID % risk.getPlayerList().size();
+            roundManager(nextplayer);
 
-            }
-            while (movePhase) {
-                System.out.println("Move and fortify your countries.");
-            }
-
-            //Resets all boolean to true
-            for (boolean b : gamePhaseList) {
-                b = true;
-            }
-        }
     }
 
 
     public void createMapClickListener(JLabel fgPanel, BufferedImage bgPicture) {
-        fgPanel.addMouseListener(new MouseListener() {
+        fgPanel.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
                 int packetInt = bgPicture.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, true);
-                //System.out.print("red:  " + Integer.toString(color.getRed()));
-                //System.out.print(" green:  " + Integer.toString(color.getGreen()));
-                //System.out.print(" blue:  " + Integer.toString(color.getBlue()));
-                //System.out.println(" alpha:  " + Integer.toString(color.getAlpha()));
 
                 String RGBString = "" + color.getRed() + color.getGreen() + color.getBlue();
                 int RGBvalue = Integer.parseInt(RGBString);
                 System.out.println(RGBvalue);
-                //risk.compareRGB(RGBvalue);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
+                checkClickedCountry(risk.compareRGB(RGBvalue));
 
             }
         });
     }
+
+
+    public void checkClickedCountry(Country selectedCountry) {
+        switch (risk.getTurn().getPhase()){
+            case DISTRIBUTE:
+
+
+                risk.nextPhase();
+                break;
+            case ATTACK:
+                nextPhaseButton.setEnabled(true);
+
+                risk.nextPhase();
+                break;
+            case MOVE:
+
+                risk.nextTurn();
+                break;
+        }
+
+    }
+
+    public void distributePhase(Player currentPlayer) {
+        boolean distributeDone = false;
+
+        createButtonsdist();
+
+        try {
+            risk.loadDistributionCountriesList(currentPlayer);
+        } catch (NoAlliedCountriesNearException e) {
+            //e.printStackTrace();
+            //distributeDone = true;
+        }
+        while (!distributeDone) {
+            //distribute
+            gamePhase = 1;
+
+
+        }
+    }
+
+    public void attackingPhase(Player currentPlayer) {
+        boolean attackingDone = false;
+        try {
+            risk.loadAttackingCountriesList(currentPlayer);
+        } catch (NoEnemyCountriesNearException e) {
+            //e.printStackTrace();
+            attackingDone = true;
+        }
+        while (!attackingDone) {
+            //attack
+            gamePhase = 2;
+
+        }
+    }
+
+    public void movePhase(Player currentPlayer) {
+        boolean movingDone = false;
+        try {
+            risk.loadDistributionCountriesList(currentPlayer);
+        } catch (NoAlliedCountriesNearException e) {
+            //e.printStackTrace();
+            movingDone = true;
+        }
+        while (!movingDone) {
+            //attack
+            gamePhase = 3;
+
+
+        }
+    }
+
 
     public static BufferedImage resizeBuffImg(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
@@ -344,6 +395,20 @@ public class PlayGroundGUI extends JFrame {
         g2d.dispose();
 
         return dimg;
+    }
+
+    public void createButtonsdist() {
+        JButton nextPhaseButton = new JButton("Next Phase");
+        JButton saveGameButton = new JButton("Save Game");
+        JButton loadGameButton = new JButton("Load Game");
+        nextPhaseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        saveGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        loadGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        /*buttonPanel.add(nextPhaseButton, "cell 0 0, sg b, wmin 140, hmin 40");
+        buttonPanel.add(saveGameButton, "cell 0 1, sg b");
+        buttonPanel.add(loadGameButton, "cell 0 2, sg b");*/
+
     }
 
 }

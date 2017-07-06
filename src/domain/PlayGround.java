@@ -4,13 +4,15 @@ import domain.Persistence.FilePersistenceManager;
 import domain.Persistence.PersistenceManager;
 import valueobjects.Card;
 import valueobjects.Country;
+import valueobjects.Player;
+import valueobjects.Turn;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 
 public class PlayGround {
-
+    private Turn turn;
     private PersistenceManager pm = new FilePersistenceManager();
 
     public PlayGround() {
@@ -176,5 +178,24 @@ public class PlayGround {
         }
         return isFulfilled;
     }
+
+
+    public Turn getTurn() {
+        return turn;
+    }
+
+    public void nextTurn(Player currentPlayer) {
+        turn = new Turn(currentPlayer);
+    }
+
+    public void nextPhase() {
+        turn.nextPhase();
+    }
+
+
+
+
+
+
 
 }

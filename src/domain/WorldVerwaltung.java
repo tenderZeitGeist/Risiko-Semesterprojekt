@@ -102,7 +102,7 @@ public class WorldVerwaltung {
             }
         }
 
-        try (FileOutputStream fos = new FileOutputStream("player.ser");
+        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/player.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Player pl : plist) {
@@ -113,7 +113,7 @@ public class WorldVerwaltung {
 
     public void serializeMissions(Vector<Mission> missionList) throws IOException {
 
-        try (FileOutputStream fos = new FileOutputStream("missions.ser");
+        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/missions.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Mission m : missionList) {
@@ -124,7 +124,7 @@ public class WorldVerwaltung {
 
     public void serializeCountries() throws IOException {
 
-        try (FileOutputStream fos = new FileOutputStream("countries.ser");
+        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/countries.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Continent c : continentList) {
@@ -136,7 +136,7 @@ public class WorldVerwaltung {
 
     public List<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
         List<Player> playerList = new Vector<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/player.ser"))) {
 
             while (true) {
                 Player p = (Player) ois.readObject();
@@ -151,7 +151,7 @@ public class WorldVerwaltung {
     }
 
     public void deSerializeCountries() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("countries.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/countries.ser"))) {
             while (true) {
                 Country c = (Country) ois.readObject();
                 //Following line stays the same
@@ -167,7 +167,7 @@ public class WorldVerwaltung {
 
     public Vector<Mission> deSerializeMissions() throws IOException, ClassNotFoundException {
         Vector<Mission> tempMissionList = new Vector<Mission>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("missions.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/missions.ser"))) {
             while (true) {
                 Mission m = (Mission) ois.readObject();
                 //Following line stays the same
@@ -758,7 +758,7 @@ public class WorldVerwaltung {
         }*/
         int n = getNumberOfCountriesOfPlayer(p);
 
-        if (n == 42 || b) {
+        if (n == countryCount || b) {
             return true;
         }
         return false;
@@ -775,6 +775,24 @@ public class WorldVerwaltung {
         }
         return null;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
