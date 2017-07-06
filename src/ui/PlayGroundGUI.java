@@ -172,7 +172,11 @@ public class PlayGroundGUI extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(ImageIO.read(new File("./src/ui/rescourcen/starRiskColorCoded.png")), 0, 0, null);
+                try {
+                    g.drawImage(ImageIO.read(new File("./src/ui/rescourcen/starRiskColorCoded.png")), 0, 0, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
 

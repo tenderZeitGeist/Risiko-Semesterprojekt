@@ -1,6 +1,10 @@
 package ui;
 
 import net.miginfocom.swing.MigLayout;
+import valueobjects.Card;
+import valueobjects.Continent;
+import valueobjects.Mission;
+import valueobjects.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -9,9 +13,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
-
-import valueobjects.*;
-
 import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
