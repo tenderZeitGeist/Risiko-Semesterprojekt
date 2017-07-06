@@ -7,3 +7,6 @@
 *.idea
 */workspare.xml
 .idea/workspace.xml
+out/*
+./out/*
+./out
