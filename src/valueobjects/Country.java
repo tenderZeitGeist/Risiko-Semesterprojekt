@@ -16,14 +16,14 @@ public class Country implements Serializable {
     private int RGBvalue;
 
 
-    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID) {
+    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,int RGBvalue ) {
         this.localForces = localForces;
         this.countryName = countryName;
         this.owningPlayer = owningPlayer;
         this.countryID = countryID;
         this.continentID = continentID;
         this.neighbouringCountriesByID = neighbouringCountriesByID;
-        //this.RGBvalue = RGBvalue;
+        this.RGBvalue = RGBvalue;
 
     }
 

@@ -73,6 +73,7 @@ public class FilePersistenceManager implements PersistenceManager {
         int ID;
         int forces;
         int continentID;
+        int RGBvalue;
 
         // read country name
         name = readLine();
@@ -105,11 +106,15 @@ public class FilePersistenceManager implements PersistenceManager {
             a[i] = Integer.parseInt(integersInString[i]);
         }
 
+        String RGBString = readLine();
+        // ... und von String in int konvertieren
+        RGBvalue = Integer.parseInt(RGBString);
+
         // create new country object and return it
         if (playerNameString.contains("null")) {
-            return new Country(name, ID, forces, null, continentID, a);
+            return new Country(name, ID, forces, null, continentID, a, RGBvalue);
         } else {
-            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a);
+            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a, RGBvalue);
         }
     }
 

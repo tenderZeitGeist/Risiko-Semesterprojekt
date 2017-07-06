@@ -82,7 +82,7 @@ public class PlayGroundCUI {
             case "n":       //start new game
                 //TODO start_new_game() should be called here
                 System.out.println("new game started!");
-                risiko.readData("countryList.txt");
+                risiko.readData("Risiko-Semesterprojekt/countryList.txt");
                 startGameCUI();
 
                 break;

@@ -658,7 +658,7 @@ public class WorldVerwaltung {
         //TODO THIS IS NOT THE FINAL VERSION, PLEASE USE METHOD ABOVE!!
 
         // Adds NA countries into a list
-        countryListNAmerica.add(new Country("Alaska", 1, 1, null, 1, new int[]{2, 6, 32}));
+        /*countryListNAmerica.add(new Country("Alaska", 1, 1, null, 1, new int[]{2, 6, 32}));
         countryListNAmerica.add(new Country("Alberta", 2, 1, null, 1, new int[]{1, 6, 7, 9}));
         countryListNAmerica.add(new Country("Central America", 3, 1, null, 1, new int[]{4, 9, 13}));
         countryListNAmerica.add(new Country("Eastern United States", 4, 1, null, 1, new int[]{3, 7, 8, 9}));
@@ -718,7 +718,7 @@ public class WorldVerwaltung {
         continentList.add(new Continent("Africa", 3, 4, countryListAfrica));           //Id 3
         continentList.add(new Continent("Asia", 7, 5, countryListAsia));               //Id 4
         continentList.add(new Continent("Australia", 2, 6, countryListAustralia));     //Id 5
-
+*/
         // Creates and adds als cards into the cardList Vector
 
         for (int i = 0, index = 1; i < continentList.size(); i++) {
