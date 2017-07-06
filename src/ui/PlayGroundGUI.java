@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -73,22 +72,23 @@ public class PlayGroundGUI extends JFrame {
                 risk.createGameFile();
                 boolean isValid = false;
                 int playerCount = 0;
+                boolean playerValidation = false;
 
                 // Query for player creation
                 // TODO Change continue to proper loop solution
                 while (!isValid) {
-                    try {
-                        playerCount = Integer.parseInt(JOptionPane.showInputDialog("Please insert the amount of players."));
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "You have entered an invalid value. Please try again", "Invalid value.", JOptionPane.ERROR_MESSAGE);
-                        continue;
+                    while (!playerValidation) {
+                        try {
+                            playerCount = Integer.parseInt(JOptionPane.showInputDialog("Please insert the amount of players."));
+                            if (playerCount < 2 || playerCount > 6) {
+                                JOptionPane.showMessageDialog(null, "The recommended player numbers of players lies between 2 and 6 people. Please enter a different value.", "Invalid value.", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                playerValidation = true;
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, ex.getMessage(), "Invalid value.", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
-                    if ((playerCount < 2 && playerCount > 6)) {
-                        JOptionPane.showMessageDialog(null, "The recommended player numbers of players lies between 2 and 6 people. Please enter a different value.", "Invalid value.", JOptionPane.ERROR_MESSAGE);
-                        continue;
-                    }
-                    isValid = true;
-
                     // Creating players
                     int playerAmount = 0;
                     while (playerAmount < playerCount) {
@@ -100,6 +100,7 @@ public class PlayGroundGUI extends JFrame {
                             playerAmount--;
                         }
                     }
+                    isValid = true;
                 }
                 createGameGUI();
 
@@ -131,13 +132,6 @@ public class PlayGroundGUI extends JFrame {
 
     public void createGameGUI() {
 
-        BufferedImage fgPicture = null;
-        JLabel fgPictureLabel = new JLabel();
-        BufferedImage bgPicture = null;
-        JLabel bgPictureLabel = new JLabel();
-
-
-
 
         // Set screen size resolution of the GUI
         // TODO Necessary?
@@ -150,54 +144,32 @@ public class PlayGroundGUI extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.getWidth() * 0.5);
         int height = (int) (screenSize.getHeight() * 0.5);
-        this.setSize(width, height);
 
         // Get the board
+
+
+        JLabel fgPictureLabel = new JLabel();
+        BufferedImage fgPicture;
+        BufferedImage bgPicture = null;
+
         try {
-            fgPicture = ImageIO.read(new File("./src/ui/rescourcen/StarRiskBg.png"));
+            //extremely redundant scaling...
+            bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
+            bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * 0.5), (int) (bgPicture.getHeight() * 0.5));
+
+            //extremely redundant scaling...
+            fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
+            fgPicture = resizeBuffImg(fgPicture, (int) (fgPicture.getWidth() * 0.5), (int) (fgPicture.getHeight() * 0.5));
+
+            fgPictureLabel = new JLabel(new ImageIcon(fgPicture));
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        try {
-            bgPicture = ImageIO.read(new File("./src/ui/rescourcen/starRiskColorCoded.png"));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
-
-        bgPictureLabel = new JLabel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                try {
-                    g.drawImage(ImageIO.read(new File("./src/ui/rescourcen/starRiskColorCoded.png")), 0, 0, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        createMapClickListener(fgPictureLabel, bgPicture);
 
 
         //----------->
@@ -224,7 +196,7 @@ public class PlayGroundGUI extends JFrame {
         actionPerformedText.setEditable(false);
         JScrollPane console = new JScrollPane(actionPerformedText,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         JTextAreaOutputStream out = new JTextAreaOutputStream(actionPerformedText);
         System.setOut(new PrintStream(out));
 
@@ -248,8 +220,12 @@ public class PlayGroundGUI extends JFrame {
 */
 
         // Add the objects into the provided panels
-        gamePanel.add(bgPictureLabel);
+        //gamePanel.add(bgPictureLabel);
         gamePanel.add(fgPictureLabel);
+        //gamePanel.add(fgPictureLabel);
+
+        String workingDir = System.getProperty("user.dir");
+        System.out.println("Current working directory : " + workingDir);
 
         consolePanel.add(console);
         playerPanel.add(playerListPane);
@@ -318,26 +294,16 @@ public class PlayGroundGUI extends JFrame {
     }
 
 
-    public void createMapClickListener(JLabel playBoard) {
-        Icon myIcon = playBoard.getIcon();
-        BufferedImage myPic = new BufferedImage(
-                myIcon.getIconWidth(),
-                myIcon.getIconHeight(),
-                BufferedImage.TYPE_INT_RGB);
-        Graphics g = myPic.createGraphics();
-        // paint the Icon to the BufferedImage.
-        myIcon.paintIcon(null, g, 0, 0);
-        g.dispose();
-
-        playBoard.addMouseListener(new MouseListener() {
+    public void createMapClickListener(JLabel fgPanel, BufferedImage bgPicture) {
+        fgPanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int packetInt = myPic.getRGB(e.getX(), e.getY());
+                int packetInt = bgPicture.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, true);
-                System.out.println("");
-                System.out.println("red:  " + Integer.toString(color.getRed()));
-                System.out.println("green:  " + Integer.toString(color.getGreen()));
-                System.out.println("blue:  " + Integer.toString(color.getBlue()));
+                System.out.print("red:  " + Integer.toString(color.getRed()));
+                System.out.print(" green:  " + Integer.toString(color.getGreen()));
+                System.out.print(" blue:  " + Integer.toString(color.getBlue()));
+                System.out.println(" alpha:  " + Integer.toString(color.getAlpha()));
             }
 
             @Override
@@ -360,6 +326,17 @@ public class PlayGroundGUI extends JFrame {
 
             }
         });
-
     }
+
+    public static BufferedImage resizeBuffImg(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
+    }
+
 }
