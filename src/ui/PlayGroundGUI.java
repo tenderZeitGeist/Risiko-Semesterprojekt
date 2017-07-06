@@ -3,6 +3,8 @@ package ui;
 import domain.Risiko;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
+import valueobjects.Continent;
+import valueobjects.Country;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Vector;
 
 /**
  * Created by ZeitGeist on 14.06.2017.
@@ -21,7 +24,6 @@ import java.util.Collections;
 public class PlayGroundGUI extends JFrame {
     private Risiko risk;
     private BufferedImage in;
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -300,10 +302,15 @@ public class PlayGroundGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int packetInt = bgPicture.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, true);
-                System.out.print("red:  " + Integer.toString(color.getRed()));
-                System.out.print(" green:  " + Integer.toString(color.getGreen()));
-                System.out.print(" blue:  " + Integer.toString(color.getBlue()));
-                System.out.println(" alpha:  " + Integer.toString(color.getAlpha()));
+                //System.out.print("red:  " + Integer.toString(color.getRed()));
+                //System.out.print(" green:  " + Integer.toString(color.getGreen()));
+                //System.out.print(" blue:  " + Integer.toString(color.getBlue()));
+                //System.out.println(" alpha:  " + Integer.toString(color.getAlpha()));
+
+                String RGBString = "" + color.getRed() + color.getGreen() + color.getBlue();
+                int RGBvalue = Integer.parseInt(RGBString);
+                System.out.println(RGBvalue);
+                //risk.compareRGB(RGBvalue);
             }
 
             @Override

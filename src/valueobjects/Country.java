@@ -13,6 +13,7 @@ public class Country implements Serializable {
     private int countryID;
     private int continentID;
     private int[] neighbouringCountriesByID;
+    private int RGBvalue;
 
 
     public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID) {
@@ -22,6 +23,7 @@ public class Country implements Serializable {
         this.countryID = countryID;
         this.continentID = continentID;
         this.neighbouringCountriesByID = neighbouringCountriesByID;
+        //this.RGBvalue = RGBvalue;
 
     }
 
@@ -79,6 +81,14 @@ public class Country implements Serializable {
 
     public String getOwningPlayerName() {
         return owningPlayer.getPlayerName();
+    }
+
+    public int getRGB() {
+        return RGBvalue;
+    }
+
+    public void setRGBvalue(int RGBvalue) {
+        this.RGBvalue = RGBvalue;
     }
 
 }

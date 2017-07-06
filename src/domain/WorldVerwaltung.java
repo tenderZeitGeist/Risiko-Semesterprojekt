@@ -1,16 +1,18 @@
 package domain;
 
 
-import valueobjects.*;
-import domain.exceptions.NoEnemyCountriesNearException;
+import domain.Persistence.FilePersistenceManager;
+import domain.Persistence.PersistenceManager;
 import domain.exceptions.CountryAlreadyExistsException;
 import domain.exceptions.NoAlliedCountriesNearException;
-import domain.Persistence.*;
+import domain.exceptions.NoEnemyCountriesNearException;
+import valueobjects.*;
 
 import java.io.*;
-import java.util.*;
-import java.io.IOException;
-import java.util.stream.IntStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 
 /**
@@ -762,7 +764,21 @@ public class WorldVerwaltung {
         return false;
 
     }
+
+
+    public Country compareRGB(int rgbValue) {
+        for (Continent currentContinent : continentList) {
+            for (Country currentCountry : currentContinent.getContinentCountries())
+                if (currentCountry.getRGB() == rgbValue) {
+                    return currentCountry;
+                }
+        }
+        return null;
+    }
 }
+
+
+
 
 
 /*  Buffered Reader line einlesen und Strings in Integer Array umwandeln/hinzufügen <-- wichtig für Nachbarländer

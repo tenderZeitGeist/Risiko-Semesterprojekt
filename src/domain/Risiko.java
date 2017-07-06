@@ -167,4 +167,8 @@ public class Risiko {
     public boolean isCardStackFulfilled(Vector<Card> playersCards) {
         return playGround.isCardStackFulfilled(playersCards);
     }
+
+    public Country compareRGB(int RGBvalue) {
+        return worldManager.compareRGB(RGBvalue);
+    }
 }
