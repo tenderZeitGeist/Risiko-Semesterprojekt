@@ -13,17 +13,17 @@ public class Country implements Serializable {
     private int countryID;
     private int continentID;
     private int[] neighbouringCountriesByID;
-    private int RGBvalue;
+    private String HEXvalue;
 
 
-    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,int RGBvalue ) {
+    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,String HEXvalue ) {
         this.localForces = localForces;
         this.countryName = countryName;
         this.owningPlayer = owningPlayer;
         this.countryID = countryID;
         this.continentID = continentID;
         this.neighbouringCountriesByID = neighbouringCountriesByID;
-        this.RGBvalue = RGBvalue;
+        this.HEXvalue = HEXvalue;
 
     }
 
@@ -83,12 +83,12 @@ public class Country implements Serializable {
         return owningPlayer.getPlayerName();
     }
 
-    public int getRGB() {
-        return RGBvalue;
+    public String getHEX() {
+        return HEXvalue;
     }
 
-    public void setRGBvalue(int RGBvalue) {
-        this.RGBvalue = RGBvalue;
+    public void setHEXvalue(String HEXvalue) {
+        this.HEXvalue = HEXvalue;
     }
 
 }

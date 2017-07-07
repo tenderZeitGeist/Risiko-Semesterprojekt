@@ -1,6 +1,5 @@
 package domain;
 
-import domain.Persistence.PersistenceManager;
 import domain.exceptions.NoAlliedCountriesNearException;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
@@ -169,8 +168,8 @@ public class Risiko {
         return playGround.isCardStackFulfilled(playersCards);
     }
 
-    public Country compareRGB(int RGBvalue) {
-        return worldManager.compareRGB(RGBvalue);
+    public Country compareHEX(String HEXvalue) {
+        return worldManager.compareHEX(HEXvalue);
     }
 
     public Turn getTurn() {

@@ -766,10 +766,10 @@ public class WorldVerwaltung {
     }
 
 
-    public Country compareRGB(int rgbValue) {
+    public Country compareHEX(String HEXvalue) {
         for (Continent currentContinent : continentList) {
             for (Country currentCountry : currentContinent.getContinentCountries())
-                if (currentCountry.getRGB() == rgbValue) {
+                if (currentCountry.getHEX().equals(HEXvalue)) {
                     return currentCountry;
                 }
         }

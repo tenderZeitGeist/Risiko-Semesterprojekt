@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.Vector;
 
 /**
  * Created by ZeitGeist on 14.06.2017.
@@ -29,6 +30,8 @@ public class PlayGroundGUI extends JFrame {
     private JButton nextPhaseButton;
     private JButton saveGameButton;
     private JButton loadGameButton;
+    private Vector<Country> disabledCountriesList;
+    private Vector<Country> enabledCountriesList;
 
     public static void main(String[] args) {
 
@@ -75,7 +78,11 @@ public class PlayGroundGUI extends JFrame {
         startGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                risk.createGameFile();
+                try {
+                    risk.readData("Risiko-Semesterprojekt/countryList.txt");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 boolean isValid = false;
                 int playerCount = 0;
                 boolean playerValidation = false;
@@ -210,7 +217,8 @@ public class PlayGroundGUI extends JFrame {
 
 
         // Creating textarea for sysout
-        JTextArea actionPerformedText = new JTextArea("", 10, 20);
+        JTextArea actionPerformedText = new JTextArea("", 6, 20);
+        actionPerformedText.setFont(actionPerformedText.getFont().deriveFont(30f));
         actionPerformedText.setEditable(false);
         JScrollPane console = new JScrollPane(actionPerformedText,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -304,36 +312,23 @@ public class PlayGroundGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int packetInt = bgPicture.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, true);
+                //RGB to Hex
+                String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 
-                String RGBString = "" + color.getRed() + color.getGreen() + color.getBlue();
-                int RGBvalue = Integer.parseInt(RGBString);
-                System.out.println(RGBvalue);
-                checkClickedCountry(risk.compareRGB(RGBvalue));
+                if(!hex.equals("000000")) {
+                    System.out.print(hex + "  ");
+                    System.out.println(risk.compareHEX(hex).getCountryName());
+
+                    //checkClickedCountry(risk.compareHEX(hex));
+                }
+
 
             }
         });
     }
 
 
-    public void checkClickedCountry(Country selectedCountry) {
-        switch (risk.getTurn().getPhase()){
-            case DISTRIBUTE:
 
-
-                risk.nextPhase();
-                break;
-            case ATTACK:
-                nextPhaseButton.setEnabled(true);
-
-                risk.nextPhase();
-                break;
-            case MOVE:
-
-                risk.nextTurn();
-                break;
-        }
-
-    }
 
     public void distributePhase(Player currentPlayer) {
         boolean distributeDone = false;

@@ -73,7 +73,7 @@ public class FilePersistenceManager implements PersistenceManager {
         int ID;
         int forces;
         int continentID;
-        int RGBvalue;
+
 
         // read country name
         name = readLine();
@@ -81,14 +81,17 @@ public class FilePersistenceManager implements PersistenceManager {
             // keine Daten mehr vorhanden
             return null;
         }
+
         // read country ID
         IDString = readLine();
+
         //Integer id = Integer.valueOf(IDString);
         // ... und von String in int konvertieren
         ID = Integer.parseInt(IDString);
 
         // read player
         playerNameString = readLine();
+
         // read forces
         forcesString = readLine();
         // ... und von String in int konvertieren
@@ -96,25 +99,26 @@ public class FilePersistenceManager implements PersistenceManager {
 
         // read continentID
         continentIDString = readLine();
+
         // ... und von String in int konvertieren
         continentID = Integer.parseInt(continentIDString);
 
         // read neighbours array
         integersInString = readLine().split(", ");
+
         int a[] = new int[integersInString.length];
         for (int i = 0; i < integersInString.length; i++) {
             a[i] = Integer.parseInt(integersInString[i]);
         }
 
-        String RGBString = readLine();
-        // ... und von String in int konvertieren
-        RGBvalue = Integer.parseInt(RGBString);
+        String HEXvalue = readLine();
+
 
         // create new country object and return it
         if (playerNameString.contains("null")) {
-            return new Country(name, ID, forces, null, continentID, a, RGBvalue);
+            return new Country(name, ID, forces, null, continentID, a, HEXvalue);
         } else {
-            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a, RGBvalue);
+            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a, HEXvalue);
         }
     }
 
