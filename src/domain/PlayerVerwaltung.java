@@ -14,14 +14,17 @@ import java.util.Vector;
  */
 public class PlayerVerwaltung {
 
+
     private PersistenceManager pm = new FilePersistenceManager();
     private List<Player> playerList = new Vector<Player>();
+    private  Player currentPlayer;
 
     public void createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException {
         Player newPlayer = new Player(newPlayerID, newPlayerName);
         if (playerList.contains(newPlayer))
             throw new PlayerAlreadyExistsException(newPlayerName);
         playerList.add(newPlayer);
+        currentPlayer = playerList.get(0);
     }
 
     public List<Player> getPlayerList() {
@@ -30,5 +33,14 @@ public class PlayerVerwaltung {
 
     public void setPlayerList(List<Player> p) {
         this.playerList = p;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setNextPlayer() {
+        int nextPlayer = currentPlayer.getPlayerID() % playerList.size();
+        this.currentPlayer = playerList.get(nextPlayer);
     }
 }

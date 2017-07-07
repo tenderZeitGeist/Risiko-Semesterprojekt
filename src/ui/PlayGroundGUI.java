@@ -1,12 +1,11 @@
 package ui;
 
 import domain.Risiko;
-import domain.exceptions.NoAlliedCountriesNearException;
-import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
 import valueobjects.Player;
+import valueobjects.Turn;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,15 +31,17 @@ public class PlayGroundGUI extends JFrame {
     private JButton loadGameButton;
     private Vector<Country> disabledCountriesList;
     private Vector<Country> enabledCountriesList;
+    private Turn turn;
+    int initForces;
 
     public static void main(String[] args) {
 
 
-                try {
-                    new PlayGroundGUI().startGame();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        try {
+            new PlayGroundGUI().startGame();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -106,8 +107,8 @@ public class PlayGroundGUI extends JFrame {
                     int playerID = 0;
                     while (playerID < playerCount) {
                         try {
-                            String playerName = JOptionPane.showInputDialog("Please insert the name of Player " + (playerID+1));
-                            risk.createPlayer(playerID+1, playerName);
+                            String playerName = JOptionPane.showInputDialog("Please insert the name of Player " + (playerID + 1));
+                            risk.createPlayer(playerID + 1, playerName);
                         } catch (PlayerAlreadyExistsException ex) {
                             JOptionPane.showMessageDialog(null, ex.getMessage() + " Please use another name.", "Player already exists.", JOptionPane.ERROR_MESSAGE);
                             playerID--;
@@ -118,7 +119,9 @@ public class PlayGroundGUI extends JFrame {
 
                 }
                 initGameGUI();
-                //roundManager(0);
+                risk.distributeCountries();
+                risk.startTurn(risk.getCurrentPlayer());
+                roundManager(risk.getCurrentPlayer());
 
             }
         });
@@ -213,7 +216,6 @@ public class PlayGroundGUI extends JFrame {
         ));
 
         // Creating buttons
-        
 
 
         // Creating textarea for sysout
@@ -257,7 +259,6 @@ public class PlayGroundGUI extends JFrame {
         playerPanel.add(playerListPane);
 
 
-
         //
         this.add(gamePanel);
         this.add(buttonPanel, "aligny top, center, wrap");
@@ -282,32 +283,36 @@ public class PlayGroundGUI extends JFrame {
 
     }
 
-    public void roundManager(int currentPlayerID) {
-        Player currentPlayer = risk.getPlayerList().get(currentPlayerID);
-            switch (risk.getTurn().getPhase()){
-                case DISTRIBUTE:
+    public void roundManager(Player currentPlayer) {
 
-                    risk.nextPhase();
-                    break;
-                case ATTACK:
-                    nextPhaseButton.setEnabled(true);
+        switch (risk.getTurn().getPhase()) {
+            case DISTRIBUTE:
+                Vector<Country> ownedCountriesList = risk.loadOwnedCountryList(currentPlayer);
+                initForces = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
+                displayCountries(ownedCountriesList);
 
-                    risk.nextPhase();
-                    break;
-                case MOVE:
 
-                    risk.nextTurn(currentPlayer);
-                    break;
-            }
-            currentPlayerID++;
-            int nextplayer = currentPlayerID % risk.getPlayerList().size();
-            roundManager(nextplayer);
+
+                break;
+            case ATTACK:
+                nextPhaseButton.setEnabled(true);
+
+                risk.nextPhase();
+                break;
+            case MOVE:
+
+                risk.nextTurn(currentPlayer);
+                risk.setNextPlayer();
+                roundManager(risk.getCurrentPlayer());
+                break;
+        }
+
 
     }
 
 
     public void createMapClickListener(JLabel fgPanel, BufferedImage bgPicture) {
-        fgPanel.addMouseListener(new MouseAdapter(){
+        fgPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int packetInt = bgPicture.getRGB(e.getX(), e.getY());
@@ -315,69 +320,41 @@ public class PlayGroundGUI extends JFrame {
                 //RGB to Hex
                 String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 
-                if(!hex.equals("000000")) {
+                if (!hex.equals("000000")) {
                     System.out.print(hex + "  ");
                     System.out.println(risk.compareHEX(hex).getCountryName());
+                    switch (risk.getTurn().getPhase()) {
+                        case DISTRIBUTE:
+                            Vector<Country> ownedCountriesList = risk.loadOwnedCountryList(risk.getCurrentPlayer());
+                            //System.out.print(hex + "  ");
+                            Country selectedCountry = risk.compareHEX(hex);
+                            //System.out.println(risk.compareHEX(hex).getCountryName());
 
-                    //checkClickedCountry(risk.compareHEX(hex));
+                            if(ownedCountriesList.contains(selectedCountry)) {
+                                //TODO handle if selected country is owned by current player....
+                                System.out.println("I own  " + selectedCountry.getCountryName());
+                                initForces--;
+                            }
+
+                            if(initForces < 1) {
+                                risk.nextPhase();
+                            }
+
+                            break;
+                        case ATTACK:
+
+
+                            break;
+                        case MOVE:
+
+
+                            break;
+                    }
+
+
                 }
-
-
             }
         });
-    }
-
-
-
-
-    public void distributePhase(Player currentPlayer) {
-        boolean distributeDone = false;
-
-        createButtonsdist();
-
-        try {
-            risk.loadDistributionCountriesList(currentPlayer);
-        } catch (NoAlliedCountriesNearException e) {
-            //e.printStackTrace();
-            //distributeDone = true;
-        }
-        while (!distributeDone) {
-            //distribute
-            gamePhase = 1;
-
-
-        }
-    }
-
-    public void attackingPhase(Player currentPlayer) {
-        boolean attackingDone = false;
-        try {
-            risk.loadAttackingCountriesList(currentPlayer);
-        } catch (NoEnemyCountriesNearException e) {
-            //e.printStackTrace();
-            attackingDone = true;
-        }
-        while (!attackingDone) {
-            //attack
-            gamePhase = 2;
-
-        }
-    }
-
-    public void movePhase(Player currentPlayer) {
-        boolean movingDone = false;
-        try {
-            risk.loadDistributionCountriesList(currentPlayer);
-        } catch (NoAlliedCountriesNearException e) {
-            //e.printStackTrace();
-            movingDone = true;
-        }
-        while (!movingDone) {
-            //attack
-            gamePhase = 3;
-
-
-        }
     }
 
 
@@ -403,7 +380,11 @@ public class PlayGroundGUI extends JFrame {
         /*buttonPanel.add(nextPhaseButton, "cell 0 0, sg b, wmin 140, hmin 40");
         buttonPanel.add(saveGameButton, "cell 0 1, sg b");
         buttonPanel.add(loadGameButton, "cell 0 2, sg b");*/
+    }
 
+
+    public void displayCountries(Vector<Country> ownedCountriesList) {
+        //TODO show green glow(or sth) on countries that belong to you...
     }
 
 }

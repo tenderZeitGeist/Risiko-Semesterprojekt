@@ -183,4 +183,18 @@ public class Risiko {
     public void nextPhase() {
         playGround.nextPhase();
     }
+
+    public Player getCurrentPlayer() {
+        return playerManager.getCurrentPlayer();
+    }
+
+    public void setNextPlayer() {
+        playerManager.setNextPlayer();
+    }
+
+    public void startTurn(Player p) {
+        playGround.startTurn(p);
+    }
+
+
 }

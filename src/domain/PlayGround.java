@@ -192,7 +192,9 @@ public class PlayGround {
         turn.nextPhase();
     }
 
-
+    public void startTurn(Player p) {
+        turn = new Turn(p);
+    }
 
 
 
