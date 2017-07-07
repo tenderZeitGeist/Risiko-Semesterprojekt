@@ -14,9 +14,10 @@ public class Country implements Serializable {
     private int continentID;
     private int[] neighbouringCountriesByID;
     private String HEXvalue;
+    private int[] coords;
 
 
-    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,String HEXvalue ) {
+    public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,String HEXvalue, int[] coords) {
         this.localForces = localForces;
         this.countryName = countryName;
         this.owningPlayer = owningPlayer;
@@ -24,7 +25,7 @@ public class Country implements Serializable {
         this.continentID = continentID;
         this.neighbouringCountriesByID = neighbouringCountriesByID;
         this.HEXvalue = HEXvalue;
-
+        this.coords = coords;
     }
 
     public String getCountryName() {
@@ -89,6 +90,16 @@ public class Country implements Serializable {
 
     public void setHEXvalue(String HEXvalue) {
         this.HEXvalue = HEXvalue;
+    }
+
+
+
+    public int getX() {
+        return coords[0];
+    }
+
+    public int getY() {
+        return coords[1];
     }
 
 }

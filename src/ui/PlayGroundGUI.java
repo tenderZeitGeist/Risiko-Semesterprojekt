@@ -24,6 +24,10 @@ import java.util.Vector;
 public class PlayGroundGUI extends JFrame {
     private Risiko risk;
     private BufferedImage in;
+    private Graphics canvas;
+    private BufferedImage fgPicture;
+    private JLabel fgPictureLabel = new JLabel();
+
     private int gamePhase;
     private Player thisPlayer;
     private JButton nextPhaseButton;
@@ -119,9 +123,7 @@ public class PlayGroundGUI extends JFrame {
 
                 }
                 initGameGUI();
-                risk.distributeCountries();
-                risk.startTurn(risk.getCurrentPlayer());
-                roundManager(risk.getCurrentPlayer());
+
 
             }
         });
@@ -164,8 +166,8 @@ public class PlayGroundGUI extends JFrame {
         int height = (int) (screenSize.getHeight() * 0.5);
 
         // Get the board
-        JLabel fgPictureLabel = new JLabel();
-        BufferedImage fgPicture;
+
+
         BufferedImage bgPicture = null;
 
         try {
@@ -174,10 +176,11 @@ public class PlayGroundGUI extends JFrame {
             bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * 0.5), (int) (bgPicture.getHeight() * 0.5));
 
             //extremely redundant scaling...
-            fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
+            fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskBG.png"));
             fgPicture = resizeBuffImg(fgPicture, (int) (fgPicture.getWidth() * 0.5), (int) (fgPicture.getHeight() * 0.5));
 
             fgPictureLabel = new JLabel(new ImageIcon(fgPicture));
+
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -270,7 +273,7 @@ public class PlayGroundGUI extends JFrame {
         buttonPanel.add(loadGameButton);
         //
         this.revalidate();
-        this.repaint();
+        //this.repaint();
         this.pack();
         this.setLocationRelativeTo(null);
 
@@ -279,6 +282,8 @@ public class PlayGroundGUI extends JFrame {
         risk.distributeCountries();
         risk.distributeMissions();
         //gameRound ( );
+        risk.startTurn(risk.getCurrentPlayer());
+        roundManager(risk.getCurrentPlayer());
 
 
     }
@@ -287,10 +292,11 @@ public class PlayGroundGUI extends JFrame {
 
         switch (risk.getTurn().getPhase()) {
             case DISTRIBUTE:
+
+                fgPictureLabel.repaint();
                 Vector<Country> ownedCountriesList = risk.loadOwnedCountryList(currentPlayer);
                 initForces = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
                 displayCountries(ownedCountriesList);
-
 
 
                 break;
@@ -322,21 +328,38 @@ public class PlayGroundGUI extends JFrame {
 
                 if (!hex.equals("000000")) {
                     System.out.print(hex + "  ");
-                    System.out.println(risk.compareHEX(hex).getCountryName());
-                    switch (risk.getTurn().getPhase()) {
+                    Country c = risk.compareHEX(hex);
+                    System.out.println(c.getCountryName() + " " + c.getX() + " " + c.getY());
+                    int x = e.getX();
+                    int y = e.getY();
+
+                    //printCoords
+                    Graphics2D g = (Graphics2D) fgPictureLabel.getGraphics();
+                    g.setColor(Color.red);
+                    g.setStroke(new BasicStroke(3));
+                    g.drawOval(x - 10, y - 10, 20, 20);
+                    g.dispose();
+                    //--------------------
+
+
+
+
+
+
+                    /*switch (risk.getTurn().getPhase()) {
                         case DISTRIBUTE:
                             Vector<Country> ownedCountriesList = risk.loadOwnedCountryList(risk.getCurrentPlayer());
                             //System.out.print(hex + "  ");
                             Country selectedCountry = risk.compareHEX(hex);
                             //System.out.println(risk.compareHEX(hex).getCountryName());
 
-                            if(ownedCountriesList.contains(selectedCountry)) {
+                            if (ownedCountriesList.contains(selectedCountry)) {
                                 //TODO handle if selected country is owned by current player....
                                 System.out.println("I own  " + selectedCountry.getCountryName());
                                 initForces--;
                             }
 
-                            if(initForces < 1) {
+                            if (initForces < 1) {
                                 risk.nextPhase();
                             }
 
@@ -349,9 +372,13 @@ public class PlayGroundGUI extends JFrame {
 
 
                             break;
-                    }
+                    }*/
 
 
+                } else {
+                    //printCoords
+
+                    //---------------------
                 }
             }
         });
@@ -385,6 +412,23 @@ public class PlayGroundGUI extends JFrame {
 
     public void displayCountries(Vector<Country> ownedCountriesList) {
         //TODO show green glow(or sth) on countries that belong to you...
+        Graphics2D g2 = (Graphics2D) fgPictureLabel.getGraphics();
+        g2.setColor(Color.red);
+        g2.setStroke(new BasicStroke(10));
+        for (Country country : ownedCountriesList) {
+            System.out.println(country.getCountryName());
+
+
+            int x = country.getX();
+            int y = country.getY();
+
+            g2.drawOval(x - 10, y - 10, 50, 50);
+
+            System.out.println("painted " + country.getX());
+            System.out.println("painted " + country.getY());
+            System.out.println("");
+        }
+        g2.dispose();
     }
 
 }

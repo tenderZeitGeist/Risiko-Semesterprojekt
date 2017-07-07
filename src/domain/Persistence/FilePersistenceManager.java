@@ -113,12 +113,17 @@ public class FilePersistenceManager implements PersistenceManager {
 
         String HEXvalue = readLine();
 
+        String[] coordsString = readLine().split(", ");
+        int coords[] = new int[coordsString.length];
+        for (int i = 0; i < coordsString.length; i++) {
+            coords[i] = Integer.parseInt(coordsString[i]);
+        }
 
         // create new country object and return it
         if (playerNameString.contains("null")) {
-            return new Country(name, ID, forces, null, continentID, a, HEXvalue);
+            return new Country(name, ID, forces, null, continentID, a, HEXvalue, coords);
         } else {
-            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a, HEXvalue);
+            return new Country(name, ID, forces, new Player(0, playerNameString), continentID, a, HEXvalue, coords);
         }
     }
 
