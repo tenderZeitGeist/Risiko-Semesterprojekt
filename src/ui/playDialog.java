@@ -34,7 +34,7 @@ public class playDialog {
         connectionDialog.setTitle("New Game");
         connectionDialog.setSize(300, 180);
         connectionDialog.setLocationRelativeTo(null);
-        JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1, debug", "[]", "[][]"));
+        JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1", "[]", "[][]"));
         connectionDialog.add(connectionDialogPanel);
         JLabel inputPlayerCount = new JLabel("Enter number of Players please");
         JTextArea playerCount = new JTextArea("", 1, 1);
@@ -78,7 +78,7 @@ public class playDialog {
         connectionDialog.setTitle("Enter Player Name");
         connectionDialog.setSize(300, 180);
         connectionDialog.setLocationRelativeTo(null);
-        JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1, debug", "[]", "[][]"));
+        JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1", "[]", "[][]"));
         connectionDialog.add(connectionDialogPanel);
         JLabel inputPlayerCount = new JLabel("Enter the Name of player " + (playerID + 1));
         JTextArea playerCount = new JTextArea("", 1, 1);
