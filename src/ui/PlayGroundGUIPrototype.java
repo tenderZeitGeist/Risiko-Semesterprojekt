@@ -144,7 +144,7 @@ public class PlayGroundGUIPrototype extends JFrame implements ConnectionDataHand
 
 
     public boolean openServerConnection() {
-        String[] connectionParams = {};
+
         boolean connectionSuccessful = false;
         ConnectionDialog connectionDialog = new ConnectionDialog(this); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();

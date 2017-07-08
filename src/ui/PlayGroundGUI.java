@@ -19,7 +19,7 @@ import java.util.Vector;
 /**
  * Created by ZeitGeist on 14.06.2017.
  */
-public class PlayGroundGUI extends JFrame {
+public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Risiko risk;
     private StartDialog startDialog;
     private BufferedImage in;
@@ -36,28 +36,55 @@ public class PlayGroundGUI extends JFrame {
     private Vector<Country> enabledCountriesList;
     private Turn turn;
     int initForces;
+    private String[] connectionData = new String[4];
+    String connectionIp;
+    int connectionPort;
+
+
+    @Override
+    public void setConnectionData(String[] connectionData) {
+        System.out.println("Received connection data");
+
+        this.connectionData = connectionData;
+        thisPlayer = new Player(1, this.connectionData[0]);
+        connectionIp = this.connectionData[1];
+        connectionPort = Integer.parseInt(this.connectionData[2]);
+        initGamelogic();
+    }
 
     public static void main(String[] args) throws IOException {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    new PlayGroundGUI().startGame();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new PlayGroundGUI();
             }
         });
+
 
     }
 
 
-    public void startGame() throws IOException {
-        //risk = new Risiko();  // Übergabe von Daten zum Einlesen wurde deaktiviert!!!
-        startDialog = new StartDialog();
-        risk = startDialog.startGameDialog(risk);
+    public PlayGroundGUI() {
+        super();
+        try {
+            startGame(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void startGame(ConnectionDataHandler cDH) throws IOException {
+        risk = new Risiko();  // Übergabe von Daten zum Einlesen wurde deaktiviert!!!
+
+        //risk = startDialog.startGameDialog(risk);
 
         initGameGUI();
+        ConnectionDialog connectionDialog = new ConnectionDialog(cDH); // erwartet in Konstruktor einen ConnectionDataHandler
+        connectionDialog.createDialog();
+
+
     }
 
     public void initGameGUI() {
@@ -128,7 +155,9 @@ public class PlayGroundGUI extends JFrame {
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         JTextAreaOutputStream out = new JTextAreaOutputStream(actionPerformedText);
-
+        System.setOut(new PrintStream(out));
+        String workingDir = System.getProperty("user.dir");
+        System.out.println("Current working directory : " + workingDir);
 
         // Creating player list pane for displaying active players
         JTextArea playerListText = new JTextArea("", 10, 20);
@@ -159,8 +188,11 @@ public class PlayGroundGUI extends JFrame {
         this.setVisible(true);
 
 
-        //GUI ERSTELLT, LOGIK UND LADEN ERST AB HIER!
+        //GUI ERSTELLT, LOGIK UND LADEN ERST AB HIER! (doch nicht)
+        //_________________________
+    }
 
+    public void initGamelogic() {
         nextPhaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -170,25 +202,18 @@ public class PlayGroundGUI extends JFrame {
         nextPhaseButton.setEnabled(false);
 
 
-        System.setOut(new PrintStream(out));
-        String workingDir = System.getProperty("user.dir");
-        System.out.println("Current working directory : " + workingDir);
-
-
         try {
             risk.readData("Risiko-Semesterprojekt/countryList.txt");
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-
+//        this is meh
 //        Collections.shuffle(risk.getPlayerList());
 //        risk.setPlayerIDs();
 //        risk.distributeCountries();
 //        risk.distributeMissions();
 //        risk.startTurn(risk.getCurrentPlayer());
-        //roundManager(risk.getCurrentPlayer());
-
-        //_________________________
+//        roundManager(risk.getCurrentPlayer());
     }
 
     public void roundManager(Player currentPlayer) {
@@ -282,5 +307,6 @@ public class PlayGroundGUI extends JFrame {
         }
         g2.dispose();
     }
+
 
 }
