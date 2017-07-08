@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -44,12 +45,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     @Override
     public void setConnectionData(String[] connectionData) {
         System.out.println("Received connection data");
-
-        this.connectionData = connectionData;
-        thisPlayer = new Player(1, this.connectionData[0]);
-        connectionIp = this.connectionData[1];
-        connectionPort = Integer.parseInt(this.connectionData[2]);
-        initGamelogic();
+        this.initGamelogic();
     }
 
     public static void main(String[] args) throws IOException {
@@ -59,8 +55,6 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                 new PlayGroundGUI();
             }
         });
-
-
     }
 
 
@@ -81,7 +75,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         //risk = startDialog.startGameDialog(risk);
 
         initGameGUI();
-        ConnectionDialog connectionDialog = new ConnectionDialog(cDH); // erwartet in Konstruktor einen ConnectionDataHandler
+        playDialog connectionDialog = new playDialog(cDH); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();
 
 
@@ -207,13 +201,13 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-//        this is meh
-//        Collections.shuffle(risk.getPlayerList());
-//        risk.setPlayerIDs();
-//        risk.distributeCountries();
-//        risk.distributeMissions();
-//        risk.startTurn(risk.getCurrentPlayer());
-//        roundManager(risk.getCurrentPlayer());
+        // this is meh
+        Collections.shuffle(risk.getPlayerList());
+        risk.setPlayerIDs();
+        risk.distributeCountries();
+        risk.distributeMissions();
+        risk.startTurn(risk.getCurrentPlayer());
+        roundManager(risk.getCurrentPlayer());
     }
 
     public void roundManager(Player currentPlayer) {

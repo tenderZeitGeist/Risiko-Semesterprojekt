@@ -15,7 +15,7 @@ public class ConnectionDialog {
     private ConnectionDataHandler handler = null;
 
     public ConnectionDialog(ConnectionDataHandler handler) {
-
+        this.handler = handler;
     }
 
 
