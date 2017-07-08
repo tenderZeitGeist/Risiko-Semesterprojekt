@@ -147,13 +147,13 @@ public class Risiko {
     }
 
 
-    public boolean playerWon(Player p, boolean b) {
-        return worldManager.playerWon(p, b);
+    public boolean playerWon(Player p, WorldVerwaltung wv, MissionVerwaltung mv, PlayerVerwaltung pv) {
+        return playGround.playerWon( p, wv, mv, pv );
     }
 
 
     public boolean missionFulfilled(Player player) {
-        return missionVerwaltung.missionFullfilled(player, playerManager.getPlayerList(), worldManager.getContinentList());
+        return missionVerwaltung.missionFulfilled (player, playerManager.getPlayerList(), worldManager.getContinentList());
     }
 
     public void distributeMissions() {

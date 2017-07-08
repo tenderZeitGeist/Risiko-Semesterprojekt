@@ -102,7 +102,7 @@ public class WorldVerwaltung {
             }
         }
 
-        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/player.ser");
+        try (FileOutputStream fos = new FileOutputStream("player.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Player pl : plist) {
@@ -113,7 +113,7 @@ public class WorldVerwaltung {
 
     public void serializeMissions(Vector<Mission> missionList) throws IOException {
 
-        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/missions.ser");
+        try (FileOutputStream fos = new FileOutputStream("missions.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Mission m : missionList) {
@@ -124,7 +124,7 @@ public class WorldVerwaltung {
 
     public void serializeCountries() throws IOException {
 
-        try (FileOutputStream fos = new FileOutputStream("Risiko-Semesterprojekt/countries.ser");
+        try (FileOutputStream fos = new FileOutputStream("countries.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             for (Continent c : continentList) {
@@ -136,7 +136,7 @@ public class WorldVerwaltung {
 
     public List<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
         List<Player> playerList = new Vector<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/player.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
 
             while (true) {
                 Player p = (Player) ois.readObject();
@@ -656,9 +656,10 @@ public class WorldVerwaltung {
     public void createGameFile() {
         //TODO ersetzt die text Datei,
         //TODO THIS IS NOT THE FINAL VERSION, PLEASE USE METHOD ABOVE!!
+/*
 
         // Adds NA countries into a list
-        /*countryListNAmerica.add(new Country("Alaska", 1, 1, null, 1, new int[]{2, 6, 32}));
+        countryListNAmerica.add(new Country("Alaska", 1, 1, null, 1, new int[]{2, 6, 32}));
         countryListNAmerica.add(new Country("Alberta", 2, 1, null, 1, new int[]{1, 6, 7, 9}));
         countryListNAmerica.add(new Country("Central America", 3, 1, null, 1, new int[]{4, 9, 13}));
         countryListNAmerica.add(new Country("Eastern United States", 4, 1, null, 1, new int[]{3, 7, 8, 9}));
@@ -719,6 +720,7 @@ public class WorldVerwaltung {
         continentList.add(new Continent("Asia", 7, 5, countryListAsia));               //Id 4
         continentList.add(new Continent("Australia", 2, 6, countryListAustralia));     //Id 5
 */
+
         // Creates and adds als cards into the cardList Vector
 
         for (int i = 0, index = 1; i < continentList.size(); i++) {
@@ -740,29 +742,16 @@ public class WorldVerwaltung {
         }
     }
 
+    public boolean annihilation ( Player p ) {
 
-    public boolean playerWon(Player p, boolean b) {
-        //TODO: implement this to also ask if player achieved his goal
-        //TODO split Method to fill hte ownedCountrieslist and seperate the printing from the filling
-
-/*        for ( int i = 0 ; i < continentList.size ( ) ; i++ ) {
-
-            for ( int j = 0 ; j < continentList.get ( i ).getContinentCountries ( ).size ( ) ; j++ ) {
-
-                if ( continentList.get ( i ).getContinentCountries ( ).get ( j ).getOwningPlayer ( ).equals ( p ) ) {
-                    ownedCountriesList.add ( continentList.get ( i ).getContinentCountries ( ).get ( j ) );
+        for ( Continent currentContinent : continentList ) {
+            for ( Country currentCountry : currentContinent.getContinentCountries ( ) ) {
+                if ( ! p.equals ( currentCountry.getOwningPlayer ( ) ) ) {
+                    return false;
                 }
-
             }
-
-        }*/
-        int n = getNumberOfCountriesOfPlayer(p);
-
-        if (n == countryCount || b) {
-            return true;
         }
-        return false;
-
+        return true;
     }
 
 

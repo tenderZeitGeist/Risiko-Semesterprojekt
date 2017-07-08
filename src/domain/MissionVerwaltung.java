@@ -92,7 +92,7 @@ public class MissionVerwaltung {
         return tempMissionList;
     }
 
-    public boolean missionFullfilled(Player player, List<Player> playerList, Vector<Continent> continentList) {
+    public boolean missionFulfilled ( Player player, List<Player> playerList, Vector<Continent> continentList) {
 
         Mission m = getMissionPerPlayer(player);
 

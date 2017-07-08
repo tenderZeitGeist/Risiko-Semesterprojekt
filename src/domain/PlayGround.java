@@ -4,6 +4,8 @@ import domain.Persistence.FilePersistenceManager;
 import domain.Persistence.PersistenceManager;
 import valueobjects.Card;
 import valueobjects.Country;
+import valueobjects.Mission;
+import valueobjects.Player;
 import valueobjects.Player;
 import valueobjects.Turn;
 
@@ -196,8 +198,10 @@ public class PlayGround {
         turn = new Turn(p);
     }
 
-
-
-
-
+    public boolean playerWon ( Player p, WorldVerwaltung wv, MissionVerwaltung mv, PlayerVerwaltung pv ) {
+        if ( wv.annihilation ( p ) || mv.missionFulfilled ( p, pv.getPlayerList ( ), wv.getContinentList ( ) ) ) {
+            return true;
+        }
+        return false;
+    }
 }
