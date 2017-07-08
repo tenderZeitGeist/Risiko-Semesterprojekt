@@ -1,7 +1,6 @@
 package ui;
 
 import domain.Risiko;
-import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import valueobjects.Player;
 
@@ -10,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 01.06.2017.
@@ -18,8 +17,9 @@ import java.util.Vector;
 public class playDialog {
 
     private ConnectionDataHandler handler = null;
-    private Vector<Player> playerArray;
-    Risiko risk;
+
+    private Vector<String> connectionData = new Vector<>();
+    private Risiko risk;
 
 
     public playDialog(ConnectionDataHandler handler) throws IOException {
@@ -80,7 +80,7 @@ public class playDialog {
         connectionDialog.setLocationRelativeTo(null);
         JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1, debug", "[]", "[][]"));
         connectionDialog.add(connectionDialogPanel);
-        JLabel inputPlayerCount = new JLabel("Enter the Name of player " + (playerID+1));
+        JLabel inputPlayerCount = new JLabel("Enter the Name of player " + (playerID + 1));
         JTextArea playerCount = new JTextArea("", 1, 1);
         connectionDialogPanel.add(inputPlayerCount);
         connectionDialogPanel.add(playerCount, "growx, growy");
@@ -97,12 +97,8 @@ public class playDialog {
         connectionDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         confirmButton.addActionListener(new ActionListener() { //confirmed
             public void actionPerformed(ActionEvent e) {
-                String playerName = playerCount.getText();
-                try {
-                    risk.createPlayer(playerID, playerName);
-                } catch (PlayerAlreadyExistsException e1) {
-                    e1.printStackTrace();
-                }
+                String playerName = (String) playerCount.getText();
+                connectionData.add(playerName);
                 connectionDialog.dispose();
             }
         });
@@ -121,7 +117,7 @@ public class playDialog {
 
     public void confirm() {
 
-        String[] s =  {};
+        String[] s = connectionData.toArray(new String[0]);
         handler.setConnectionData(s);
     }
 }

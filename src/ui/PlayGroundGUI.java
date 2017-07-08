@@ -1,6 +1,7 @@
 package ui;
 
 import domain.Risiko;
+import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
 import valueobjects.Player;
@@ -14,7 +15,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -45,6 +45,13 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     @Override
     public void setConnectionData(String[] connectionData) {
         System.out.println("Received connection data");
+        for (int i = 0; i < connectionData.length; i++) {
+            try {
+                risk.createPlayer(i, connectionData[i]);
+            } catch (PlayerAlreadyExistsException e) {
+                e.printStackTrace();
+            }
+        }
         this.initGamelogic();
     }
 
@@ -77,8 +84,6 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         initGameGUI();
         playDialog connectionDialog = new playDialog(cDH); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();
-
-
     }
 
     public void initGameGUI() {
@@ -202,8 +207,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             e1.printStackTrace();
         }
         // this is meh
-        Collections.shuffle(risk.getPlayerList());
-        risk.setPlayerIDs();
+        //Collections.shuffle(risk.getPlayerList());
+        //risk.setPlayerIDs();
         risk.distributeCountries();
         risk.distributeMissions();
         risk.startTurn(risk.getCurrentPlayer());
@@ -248,17 +253,9 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                 if (!hex.equals("000000")) {
                     System.out.print(hex + "  ");
                     Country c = risk.compareHEX(hex);
-                    System.out.println(c.getCountryName() + " " + c.getX() + " " + c.getY());
+                    System.out.println(c.getCountryName() + " " + c.getX() + " " + c.getY() + "  " + c.getOwningPlayer().getPlayerName());
                     int x = e.getX();
                     int y = e.getY();
-
-                    //printCoords
-                    Graphics2D g = (Graphics2D) fgPictureLabel.getGraphics();
-                    g.setColor(Color.red);
-                    g.setStroke(new BasicStroke(3));
-                    g.drawOval(x - 10, y - 10, 20, 20);
-                    g.dispose();
-
                 } else {
                 }
             }
@@ -284,22 +281,9 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
     public void displayCountries(Vector<Country> ownedCountriesList) {
         //TODO show green glow(or sth) on countries that belong to you...
-        Graphics2D g2 = (Graphics2D) fgPictureLabel.getGraphics();
-        g2.setColor(Color.red);
-        g2.setStroke(new BasicStroke(10));
         for (Country country : ownedCountriesList) {
             System.out.println(country.getCountryName());
-
-            int x = country.getX();
-            int y = country.getY();
-
-            g2.drawOval(x - 10, y - 10, 50, 50);
-
-            System.out.println("painted " + country.getX());
-            System.out.println("painted " + country.getY());
-            System.out.println("");
         }
-        g2.dispose();
     }
 
 
