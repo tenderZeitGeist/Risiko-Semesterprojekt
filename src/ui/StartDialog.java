@@ -43,11 +43,7 @@ public class StartDialog extends JFrame{
         startGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    risk.readData("Risiko-Semesterprojekt/countryList.txt");
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+
                 boolean isValid = false;
                 int playerCount = 0;
                 boolean playerValidation = false;
@@ -81,6 +77,8 @@ public class StartDialog extends JFrame{
                     }
                     isValid = true;
                 }
+                //No!: risk.startTurn(risk.getCurrentPlayer());
+
                 setVisible ( false );
                 dispose ();
             }
@@ -103,10 +101,7 @@ public class StartDialog extends JFrame{
         this.setVisible(true);
 
         // Essential methods for playing the game are being invoked here
-        Collections.shuffle ( risk.getPlayerList ( ) );
-        risk.setPlayerIDs ( );
-        risk.distributeCountries ( );
-        risk.distributeMissions ( );
+        //dont do this here
         return risk;
     }
 }
