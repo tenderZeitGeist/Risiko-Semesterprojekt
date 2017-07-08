@@ -23,6 +23,10 @@ public class Turn {
         return phase;
     }
 
+    public Player getCurrentPlayer(){
+        return currentPlayer;
+    }
+
     public void nextPhase() {
         switch (phase){
             case DISTRIBUTE:

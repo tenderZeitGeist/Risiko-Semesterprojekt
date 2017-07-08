@@ -38,7 +38,11 @@ public class Risiko {
 
     }
 
-    public void readData(String file) throws IOException {
+    public void setPlayerIDs(){
+        playerManager.setPlayerIDs ();
+    }
+
+    public void readData( String file) throws IOException {
         worldManager.readData(file);
     }
 
