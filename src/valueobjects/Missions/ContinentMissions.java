@@ -30,8 +30,14 @@ public class ContinentMissions extends Mission implements Serializable {
     public boolean isFulfilled(Player player, List<Player> playerList, Vector<Continent> continentList) {
         Vector<Continent> copyContinentList = new Vector<>(continentList);
 
-        for (int n : continentIDs) {
-            copyContinentList.remove(n);
+        for ( int n : continentIDs ){
+            for( Continent con : continentList ){
+                if( n == 0 ){
+                    continue;
+                } else if ( con.getContinentID () == n ){
+                    copyContinentList.remove ( con );
+                }
+            }
         }
 
         for (int n : continentIDs) {

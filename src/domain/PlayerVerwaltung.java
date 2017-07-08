@@ -43,4 +43,11 @@ public class PlayerVerwaltung {
         int nextPlayer = currentPlayer.getPlayerID() % playerList.size();
         this.currentPlayer = playerList.get(nextPlayer);
     }
+
+    public void setPlayerIDs(){
+        int playerID = 0;
+        for (Player p : playerList) {
+            p.setPlayerID ( playerID++ );
+        }
+    }
 }
