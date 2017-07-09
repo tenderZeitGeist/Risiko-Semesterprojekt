@@ -1,8 +1,10 @@
-package ui;
+package ui.customUiElements;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import domain.PlayGround;
 import domain.Risiko;
 import net.miginfocom.swing.MigLayout;
-import valueobjects.Player;
+import ui.customUiElements.ConnectionDataHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +16,23 @@ import java.util.*;
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 01.06.2017.
  */
-public class playDialog {
+public class CreatePlayerDialog extends ModalDialog {
 
     private ConnectionDataHandler handler = null;
     private Vector<String> connectionData = new Vector<>();
     private Risiko risk;
 
 
-    public playDialog(ConnectionDataHandler handler) throws IOException {
+    public CreatePlayerDialog(ConnectionDataHandler handler) throws IOException {
         this.handler = handler;
         risk = new Risiko();
     }
 
+    public static void main(String[] args) {
 
+    }
+
+    @Override
     public void createDialog() {
         JDialog connectionDialog = new JDialog();
         connectionDialog.setModal(true);
@@ -114,6 +120,7 @@ public class playDialog {
 
     }
 
+    @Override
     public void confirm() {
 
         String[] s = connectionData.toArray(new String[0]);
