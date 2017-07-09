@@ -39,7 +39,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Turn turn;
     int initForces;
 
-    double scalingFactor = 0.2;
+    double scalingFactor = 0.5;
     //private String[] connectionData = new String[4];
 
 
@@ -109,6 +109,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         try {
             //extremely redundant scaling...
 
+            Toolkit tk = this.getToolkit();
             bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
             bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * scalingFactor), (int) (bgPicture.getHeight() * scalingFactor));
             redFlag = ImageIO.read( new File ("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
