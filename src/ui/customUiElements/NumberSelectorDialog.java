@@ -31,12 +31,12 @@ public class NumberSelectorDialog extends ModalDialog {
     public void createDialog() {
         JDialog connectionDialog = new JDialog();
         connectionDialog.setModal(true);
-        connectionDialog.setTitle(InfoText);
-        connectionDialog.setSize(300, 180);
+        connectionDialog.setTitle("Dialog");
+        connectionDialog.setSize(400, 180);
         connectionDialog.setLocationRelativeTo(null);
         JPanel connectionDialogPanel = new JPanel(new MigLayout("wrap1", "[]", "[][]"));
         connectionDialog.add(connectionDialogPanel);
-        JLabel inputTextLabel= new JLabel("Enter number of Players please");
+        JLabel inputTextLabel= new JLabel(InfoText);
         JTextArea inputTextField = new JTextArea("", 1, 1);
         inputTextLabel.setFont(new Font("Arial", Font.PLAIN, 17));
 
@@ -76,7 +76,7 @@ public class NumberSelectorDialog extends ModalDialog {
         confirmButton2.addActionListener(new ActionListener() { //cancelled
             public void actionPerformed(ActionEvent e) {
                 connectionDialog.dispose();
-                System.exit(0);
+
             }
         });
         connectionDialog.setResizable(false);
