@@ -39,7 +39,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Turn turn;
     int initForces;
 
-    double scalingFactor = 0.5;
+    double scalingFactor = 0.2;
     //private String[] connectionData = new String[4];
 
 
@@ -109,12 +109,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         try {
             //extremely redundant scaling...
 
-            Toolkit tk = this.getToolkit();
             bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
             bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * scalingFactor), (int) (bgPicture.getHeight() * scalingFactor));
-            redFlag = tk.getImage("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png");
+            redFlag = ImageIO.read( new File ("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
             //redFlag = resizeBuffImg(redFlag, (int)(redFlag.getWidth() * 0.1), (int)(redFlag.getHeight() * 0.1));
-            greenFlag = tk.getImage("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png");
+            greenFlag = ImageIO.read( new File ("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png"));
             //greenFlag = resizeBuffImg(greenFlag, (int)(greenFlag.getWidth() * 0.1), (int)(greenFlag.getHeight() * 0.1));
 
             fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
@@ -236,9 +235,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
         switch (risk.getTurn().getPhase()) {
             case DISTRIBUTE:
-                Vector<Country> ownedCountriesList = risk.loadOwnedCountryList(currentPlayer);
                 initForces = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
-                displayCountries(ownedCountriesList);
+                displayCountries(risk.loadOwnedCountryList ( currentPlayer ), risk.loadEnemyCountriesList ( currentPlayer ));
 
                 break;
             case ATTACK:
@@ -294,21 +292,26 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         System.exit(this.EXIT_ON_CLOSE);
     }
 
-    public void displayCountries(Vector<Country> ownedCountriesList) {
+    public void displayCountries(Vector<Country> ownedCountriesList, Vector<Country> enemyCountriesList) {
         //TODO show green glow(or sth) on countries that belong to you...
+        Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
 
         for (Country country : ownedCountriesList) {
             System.out.println(country.getCountryName());
-            Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
-            g2d.setColor(Color.RED);
-            g2d.setStroke(new BasicStroke(10));
+            //g2d.setColor(Color.RED);
+            //g2d.setStroke(new BasicStroke(10));
             int x = country.getX();
             int y = country.getY();
-            g2d.drawOval(x-10, y-10, 20, 20 );
-            g2d.drawImage(greenFlag, x, y, this);
-            g2d.dispose();
-
+            //g2d.drawOval(x-10, y-10, 20, 20 );
+            g2d.drawImage(greenFlag, (x - 10), (y - 30), this);
         }
+
+        for( Country country : enemyCountriesList ){
+            int x = country.getX ();
+            int y = country.getY ();
+            g2d.drawImage ( redFlag, (x- 10), (y - 30), this);
+        }
+        g2d.dispose();
         fgPictureLabel.repaint();
     }
 }

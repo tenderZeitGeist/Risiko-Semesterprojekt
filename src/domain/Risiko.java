@@ -212,6 +212,7 @@ public class Risiko {
         return countryList;
     }
 
-
-
+    public Vector<Country> loadEnemyCountriesList( Player player ){
+        return worldManager.loadEnemyCountryList ( player );
+    }
 }

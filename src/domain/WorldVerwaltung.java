@@ -495,7 +495,7 @@ public class WorldVerwaltung {
 
     //OWNED
     public Vector<Country> loadOwnedCountryList(Player player) {
-        resetOwnedCountriesList();
+        Vector<Country> ownedCountriesList = new Vector <Country> (  );
 
         for (Continent continent : continentList) {
             for (Country country : continent.getContinentCountries()) {
@@ -505,6 +505,18 @@ public class WorldVerwaltung {
             }
         }
         return ownedCountriesList;
+    }
+
+    public Vector<Country> loadEnemyCountryList(Player player){
+        Vector<Country> enemyCountriesList = new Vector <> (  );
+        for ( Continent continent : continentList ){
+            for ( Country currentCountry : continent.getContinentCountries () ){
+                if( ! currentCountry.getOwningPlayer ( ).equals(player) ){
+                    enemyCountriesList.add(  currentCountry );
+                }
+            }
+        }
+        return enemyCountriesList;
     }
 
     public Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException {
