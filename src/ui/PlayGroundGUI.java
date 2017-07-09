@@ -58,7 +58,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
     GameState gameState;
 
-    double scalingFactor = 0.5;
+    double scalingFactor = 0.25;
     //private String[] connectionData = new String[4];
 
 
