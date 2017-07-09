@@ -3,6 +3,7 @@ package ui;
 import domain.Risiko;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
+import ui.customUiElements.*;
 import valueobjects.Country;
 import valueobjects.Player;
 import valueobjects.Turn;
@@ -28,6 +29,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private BufferedImage fgPicture;
     private JLabel fgPictureLabel = new JLabel();
     private Image redFlag, greenFlag;
+    Country selectedCountry;
+
 
     private int gamePhase;
     private Player thisPlayer;
@@ -37,7 +40,17 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Vector<Country> disabledCountriesList;
     private Vector<Country> enabledCountriesList;
     private Turn turn;
-    int initForces;
+    int initForces = 25;
+    int forcesToMove;
+
+    public enum GameState {
+        PHASE1,
+        PHASE2,
+        PHASE3,
+        PHASE4,
+    }
+
+    GameState gameState;
 
     double scalingFactor = 0.5;
     //private String[] connectionData = new String[4];
@@ -45,15 +58,40 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
     @Override
     public void setConnectionData(String[] connectionData) {
-        System.out.println("Received connection data");
-        for (int i = 0; i < connectionData.length; i++) {
-            try {
-                risk.createPlayer(i, connectionData[i]);
-            } catch (PlayerAlreadyExistsException e) {
-                e.printStackTrace();
-            }
+
+        switch (gameState) {
+            case PHASE1:
+                System.out.println("Received connection data");
+                for (int i = 0; i < connectionData.length; i++) {
+                    try {
+                        risk.createPlayer(i, connectionData[i]);
+                    } catch (PlayerAlreadyExistsException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.initGamelogic();
+                break;
+            case PHASE2:
+                if (connectionData[0] != null) {
+                    int movedForces = Integer.parseInt(connectionData[0]);
+                    if (!(movedForces > forcesToMove)) {
+                        forcesToMove -= movedForces;
+                        System.out.println(selectedCountry.getLocalForces());
+                        System.out.println("du hast " + movedForces + " forces auf "+ selectedCountry.getCountryName() +" gesetzt ");
+                        selectedCountry.setLocalForces(selectedCountry.getLocalForces() + movedForces);
+                        System.out.println(selectedCountry.getLocalForces());
+
+                        if(forcesToMove<1) {
+                            risk.nextPhase();
+                            roundManager(risk.getCurrentPlayer());
+                        }
+
+                    }
+                }
+                break;
         }
-        this.initGamelogic();
+
+
     }
 
     public static void main(String[] args) throws IOException {
@@ -83,7 +121,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         //risk = startDialog.startGameDialog(risk);
 
         initGameGUI();
-        playDialog connectionDialog = new playDialog(cDH); // erwartet in Konstruktor einen ConnectionDataHandler
+        gameState = GameState.PHASE1;
+        CreatePlayerDialog connectionDialog = new CreatePlayerDialog(PlayGroundGUI.this); // erwartet in Konstruktor einen ConnectionDataHandler
         connectionDialog.createDialog();
     }
 
@@ -112,9 +151,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             Toolkit tk = this.getToolkit();
             bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
             bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * scalingFactor), (int) (bgPicture.getHeight() * scalingFactor));
-            redFlag = ImageIO.read( new File ("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
+            redFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
+            redFlag = redFlag.getScaledInstance(50, 50, 10);
             //redFlag = resizeBuffImg(redFlag, (int)(redFlag.getWidth() * 0.1), (int)(redFlag.getHeight() * 0.1));
-            greenFlag = ImageIO.read( new File ("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png"));
+            greenFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png"));
+            greenFlag = greenFlag.getScaledInstance(50, 50, 10);
             //greenFlag = resizeBuffImg(greenFlag, (int)(greenFlag.getWidth() * 0.1), (int)(greenFlag.getHeight() * 0.1));
 
             fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
@@ -200,11 +241,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
     public void initGamelogic() {
 
-
         nextPhaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 risk.nextPhase();
+                //roundManager(risk.getCurrentPlayer());
             }
         });
         nextPhaseButton.setEnabled(false);
@@ -219,8 +260,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
 
         for (Country c : risk.getCountryList()) {
-            c.setX((int) (c.getX() * scalingFactor*2));
-            c.setY((int) (c.getY() * scalingFactor*2));
+            c.setX((int) (c.getX() * scalingFactor * 2));
+            c.setY((int) (c.getY() * scalingFactor * 2));
         }
 
         // this is meh
@@ -236,14 +277,16 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
         switch (risk.getTurn().getPhase()) {
             case DISTRIBUTE:
-                initForces = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
-                displayCountries(risk.loadOwnedCountryList ( currentPlayer ), risk.loadEnemyCountriesList ( currentPlayer ));
+                forcesToMove = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
+                System.out.println("It's " + currentPlayer.getPlayerName() + "'s Turn right now! ("+forcesToMove+" forces)");
+                displayCountries(risk.loadOwnedCountryList(currentPlayer), risk.loadEnemyCountriesList(currentPlayer));
 
                 break;
             case ATTACK:
                 nextPhaseButton.setEnabled(true);
+                System.out.println("attack phase!");
 
-                risk.nextPhase();
+                //risk.nextPhase();
                 break;
             case MOVE:
 
@@ -267,12 +310,20 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                 String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 
                 if (!hex.equals("000000")) {
-                    System.out.print(hex + "  ");
-                    Country c = risk.compareHEX(hex);
-                    System.out.println(c.getCountryName() + " " + c.getX() + " " + c.getY() + "  " + c.getOwningPlayer().getPlayerName());
-                    int x = e.getX();
-                    int y = e.getY();
-                } else {
+                    selectedCountry = risk.compareHEX(hex);
+                    if (selectedCountry.getOwningPlayer().equals(risk.getCurrentPlayer())) {
+                        System.out.println("You selected " + selectedCountry.getCountryName());
+                        try {
+                            gameState = GameState.PHASE2;
+                            NumberSelectorDialog nsd = new NumberSelectorDialog("How many forces do you want to set?", PlayGroundGUI.this);
+                            nsd.createDialog();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+
+                    } else {
+                        System.out.println("You are not the owner of " + selectedCountry.getCountryName());
+                    }
                 }
             }
         });
@@ -298,19 +349,19 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
 
         for (Country country : ownedCountriesList) {
-            System.out.println(country.getCountryName());
+            //System.out.println(country.getCountryName());
             //g2d.setColor(Color.RED);
             //g2d.setStroke(new BasicStroke(10));
             int x = country.getX();
             int y = country.getY();
             //g2d.drawOval(x-10, y-10, 20, 20 );
-            g2d.drawImage(greenFlag, (x - 10), (y - 30), this);
+            g2d.drawImage(greenFlag, (x - 23), (y - 40), this);
         }
 
-        for( Country country : enemyCountriesList ){
-            int x = country.getX ();
-            int y = country.getY ();
-            g2d.drawImage ( redFlag, (x- 10), (y - 30), this);
+        for (Country country : enemyCountriesList) {
+            int x = country.getX();
+            int y = country.getY();
+            g2d.drawImage(redFlag, (x - 23), (y - 40), this);
         }
         g2d.dispose();
         fgPictureLabel.repaint();

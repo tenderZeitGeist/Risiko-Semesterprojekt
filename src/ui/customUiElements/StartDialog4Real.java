@@ -1,4 +1,4 @@
-package ui;
+package ui.customUiElements;
 
 import domain.Risiko;
 

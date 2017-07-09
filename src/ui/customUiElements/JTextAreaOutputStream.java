@@ -1,4 +1,4 @@
-package ui;
+package ui.customUiElements;
 
 import javax.swing.*;
 import java.io.IOException;

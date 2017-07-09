@@ -1,6 +1,8 @@
 package ui;
 
 import net.miginfocom.swing.MigLayout;
+import ui.customUiElements.ConnectionDataHandler;
+import ui.customUiElements.ConnectionDialog;
 import valueobjects.Card;
 import valueobjects.Continent;
 import valueobjects.Mission;

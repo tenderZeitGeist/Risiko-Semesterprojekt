@@ -1,9 +1,9 @@
-package ui;
+package ui.customUiElements;
 
 import net.miginfocom.swing.MigLayout;
+import ui.customUiElements.ConnectionDataHandler;
 
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.*;
 

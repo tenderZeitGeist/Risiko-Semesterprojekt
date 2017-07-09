@@ -28,6 +28,7 @@ public class Turn {
     }
 
     public void nextPhase() {
+
         switch (phase){
             case DISTRIBUTE:
                 phase = Phase.ATTACK;
@@ -36,6 +37,7 @@ public class Turn {
                 phase = Phase.MOVE;
                 break;
         }
+
     }
 
 

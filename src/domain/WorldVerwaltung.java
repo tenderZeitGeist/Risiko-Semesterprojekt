@@ -282,12 +282,12 @@ public class WorldVerwaltung {
 
     public void addCountriesListsToContinentList() {
 
-        continentList.add(new Continent("North America", 5, 1, countryListNAmerica));  //Id 0
-        continentList.add(new Continent("South America", 2, 2, countryListSAmerica));  //Id 1
-        continentList.add(new Continent("Europe", 5, 3, countryListEurope));           //Id 2
-        continentList.add(new Continent("Africa", 3, 4, countryListAfrica));           //Id 3
-        continentList.add(new Continent("Asia", 7, 5, countryListAsia));               //Id 4
-        continentList.add(new Continent("Australia", 2, 6, countryListAustralia));     //Id 5
+        continentList.add(new Continent("Left Top", 1, 1, countryListNAmerica));  //Id 0
+        continentList.add(new Continent("Left Bottom", 1, 2, countryListSAmerica));  //Id 1
+        continentList.add(new Continent("Right Top", 1, 3, countryListEurope));           //Id 2
+        continentList.add(new Continent("Right Bottom", 1, 4, countryListAfrica));           //Id 3
+        continentList.add(new Continent("Center", 1, 5, countryListAsia));               //Id 4
+        continentList.add(new Continent("Australia", 1, 6, countryListAustralia));     //Id 5
     }
 
     /**
@@ -409,21 +409,27 @@ public class WorldVerwaltung {
 
         //Check if continent is completely occupied and add forces accordingly
         if (isContinentOccupied(player, 1)) {
+            System.out.println("player owns " + continentList.get(0).getName());
             forcesCount += continentList.get(0).getValue();
         }
         if (isContinentOccupied(player, 2)) {
+            System.out.println("player owns " + continentList.get(1).getName());
             forcesCount += continentList.get(1).getValue();
         }
         if (isContinentOccupied(player, 3)) {
+            System.out.println("player owns " + continentList.get(2).getName());
             forcesCount += continentList.get(2).getValue();
         }
         if (isContinentOccupied(player, 4)) {
+            System.out.println("player owns " + continentList.get(3).getName());
             forcesCount += continentList.get(3).getValue();
         }
         if (isContinentOccupied(player, 5)) {
+            System.out.println("player owns " + continentList.get(4).getName());
             forcesCount += continentList.get(4).getValue();
         }
         if (isContinentOccupied(player, 6)) {
+            System.out.println("player owns " + continentList.get(5).getName());
             forcesCount += continentList.get(5).getValue();
         }
         return forcesCount;
@@ -631,11 +637,16 @@ public class WorldVerwaltung {
 
     public boolean isContinentOccupied(Player player, int continentNumber) {
         Continent continent = getContinentByID(continentNumber);
+        int index = 0;
         for (Country country : continent.getContinentCountries()) {
+            index++;
             if (!country.getOwningPlayer().equals(player))
                 return false;
         }
-        return true;
+        if(index!=0) {
+            return true;
+        }
+        return false;
     }
 
     // Iterates the continentList and compares value n with the continentID of each continent
