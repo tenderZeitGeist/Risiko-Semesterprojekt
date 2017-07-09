@@ -1,14 +1,11 @@
 package ui;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import domain.PlayGround;
 import domain.Risiko;
 import domain.WorldVerwaltung;
 import domain.exceptions.*;
 
 
 import valueobjects.Card;
-import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Player;
 
@@ -97,7 +94,7 @@ public class PlayGroundCUI {
             case "l":       //load game
                 System.out.println("load game");
                 //risiko.readGameData("runningGame.txt");
-                List<Player> playerList = risiko.deSerializePlayers();
+                Vector < Player > playerList = risiko.deSerializePlayers();
                 risiko.setPlayerList(playerList);
                 risiko.writeMissionsFromFile();
                 risiko.deSerializeCountries();

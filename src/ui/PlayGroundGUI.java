@@ -9,6 +9,7 @@ import valueobjects.Turn;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -28,6 +29,10 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private BufferedImage fgPicture;
     private JLabel fgPictureLabel = new JLabel();
     private Image redFlag, greenFlag;
+    private JTextArea actionPerformedText;
+    private JTable playerListTable;
+    private DefaultTableModel dynamicPlayerListing;
+    private JScrollPane console, playerListPane;
 
     private int gamePhase;
     private Player thisPlayer;
@@ -39,7 +44,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Turn turn;
     int initForces;
 
-    double scalingFactor = 0.5;
+    double scalingFactor = 0.25;
     //private String[] connectionData = new String[4];
 
 
@@ -150,14 +155,12 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                 "[][][]"
         ));
 
-        // Creating buttons
-
 
         // Creating textarea for sysout
-        JTextArea actionPerformedText = new JTextArea("", 6, 20);
+        actionPerformedText = new JTextArea("", 6, 20);
         actionPerformedText.setFont(actionPerformedText.getFont().deriveFont(30f));
         actionPerformedText.setEditable(false);
-        JScrollPane console = new JScrollPane(actionPerformedText,
+        console = new JScrollPane(actionPerformedText,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         JTextAreaOutputStream out = new JTextAreaOutputStream(actionPerformedText);
@@ -166,9 +169,13 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         System.out.println("Current working directory : " + workingDir);
 
         // Creating player list pane for displaying active players
-        JTextArea playerListText = new JTextArea("", 10, 20);
-        playerListText.setEditable(false);
-        JScrollPane playerListPane = new JScrollPane(playerListText,
+        String[] header  = {"Name", "Amount of occupied countries" };
+        //String[][] rowData = {{"",""},{"",""}};
+        playerListTable = new JTable ();
+        dynamicPlayerListing = new DefaultTableModel (0, 0);
+        dynamicPlayerListing.setColumnIdentifiers ( header );
+        playerListTable.setModel ( dynamicPlayerListing );
+        playerListPane = new JScrollPane(playerListTable,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -183,9 +190,9 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         this.add(console, "grow");
         this.add(playerPanel);
 
-        buttonPanel.add(nextPhaseButton);
-        buttonPanel.add(saveGameButton);
-        buttonPanel.add(loadGameButton);
+        buttonPanel.add(nextPhaseButton, "wrap");
+        buttonPanel.add(saveGameButton, "wrap");
+        buttonPanel.add(loadGameButton, "wrap");
 
         this.revalidate();
         this.repaint();
@@ -238,7 +245,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             case DISTRIBUTE:
                 initForces = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
                 displayCountries(risk.loadOwnedCountryList ( currentPlayer ), risk.loadEnemyCountriesList ( currentPlayer ));
-
+                displayPlayerList ( risk.getPlayerList () );
                 break;
             case ATTACK:
                 nextPhaseButton.setEnabled(true);
@@ -314,5 +321,12 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         }
         g2d.dispose();
         fgPictureLabel.repaint();
+    }
+
+    public void displayPlayerList( Vector<Player> playerList ){
+        dynamicPlayerListing.setRowCount ( 0 );
+        for( Player p : playerList ){
+            dynamicPlayerListing.addRow ( new Object[] { p.getPlayerName (), risk.getNumberOfCountriesOfPlayer ( p )} );
+        }
     }
 }

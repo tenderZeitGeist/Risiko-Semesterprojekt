@@ -5,8 +5,6 @@ import domain.Persistence.PersistenceManager;
 import domain.exceptions.PlayerAlreadyExistsException;
 import valueobjects.Player;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -16,7 +14,7 @@ public class PlayerVerwaltung {
 
 
     private PersistenceManager pm = new FilePersistenceManager();
-    private List<Player> playerList = new Vector<Player>();
+    private Vector < Player > playerList = new Vector<Player>();
     private  Player currentPlayer;
 
     public void createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException {
@@ -27,11 +25,11 @@ public class PlayerVerwaltung {
         currentPlayer = playerList.get(0);
     }
 
-    public List<Player> getPlayerList() {
+    public Vector < Player > getPlayerList() {
         return playerList;
     }
 
-    public void setPlayerList(List<Player> p) {
+    public void setPlayerList( Vector < Player > p) {
         this.playerList = p;
     }
 

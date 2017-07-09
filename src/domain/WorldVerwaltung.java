@@ -134,8 +134,8 @@ public class WorldVerwaltung {
         }
     }
 
-    public List<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
-        List<Player> playerList = new Vector<>();
+    public Vector < Player > deSerializePlayers() throws IOException, ClassNotFoundException {
+        Vector < Player > playerList = new Vector<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
 
             while (true) {

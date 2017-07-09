@@ -62,7 +62,7 @@ public class Risiko {
         worldManager.serializeCountries();
     }
 
-    public List<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
+    public Vector < Player > deSerializePlayers() throws IOException, ClassNotFoundException {
         return worldManager.deSerializePlayers();
     }
 
@@ -83,11 +83,11 @@ public class Risiko {
         return worldManager.getCardList();
     }
 
-    public List<Player> getPlayerList() {
+    public Vector < Player > getPlayerList() {
         return playerManager.getPlayerList();
     }
 
-    public void setPlayerList(List<Player> p) {
+    public void setPlayerList( Vector < Player > p) {
         playerManager.setPlayerList(p);
     }
 
@@ -214,5 +214,9 @@ public class Risiko {
 
     public Vector<Country> loadEnemyCountriesList( Player player ){
         return worldManager.loadEnemyCountryList ( player );
+    }
+
+    public int getNumberOfCountriesOfPlayer(Player player){
+        return worldManager.getNumberOfCountriesOfPlayer ( player );
     }
 }
