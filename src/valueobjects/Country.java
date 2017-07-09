@@ -15,6 +15,7 @@ public class Country implements Serializable {
     private int[] neighbouringCountriesByID;
     private String HEXvalue;
     private int[] coords;
+    private int x, y;
 
 
     public Country(String countryName, int countryID, int localForces, Player owningPlayer, int continentID, int[] neighbouringCountriesByID,String HEXvalue, int[] coords) {
@@ -26,6 +27,8 @@ public class Country implements Serializable {
         this.neighbouringCountriesByID = neighbouringCountriesByID;
         this.HEXvalue = HEXvalue;
         this.coords = coords;
+        this.x = coords[0];
+        this.y = coords[1];
     }
 
     public String getCountryName() {
@@ -95,11 +98,18 @@ public class Country implements Serializable {
 
 
     public int getX() {
-        return coords[0];
+        return x;
     }
 
     public int getY() {
-        return coords[1];
+        return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

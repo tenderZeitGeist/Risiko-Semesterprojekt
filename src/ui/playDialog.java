@@ -17,7 +17,6 @@ import java.util.*;
 public class playDialog {
 
     private ConnectionDataHandler handler = null;
-
     private Vector<String> connectionData = new Vector<>();
     private Risiko risk;
 

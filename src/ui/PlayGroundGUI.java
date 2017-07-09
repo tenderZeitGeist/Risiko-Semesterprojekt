@@ -27,6 +27,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Graphics canvas;
     private BufferedImage fgPicture;
     private JLabel fgPictureLabel = new JLabel();
+    private Image redFlag, greenFlag;
 
     private int gamePhase;
     private Player thisPlayer;
@@ -37,9 +38,9 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Vector<Country> enabledCountriesList;
     private Turn turn;
     int initForces;
-    private String[] connectionData = new String[4];
-    String connectionIp;
-    int connectionPort;
+
+    double scalingFactor = 0.3;
+    //private String[] connectionData = new String[4];
 
 
     @Override
@@ -102,20 +103,26 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             }
         });
 
-        JLabel fgPictureLabel = new JLabel();
-        BufferedImage fgPicture;
+
         BufferedImage bgPicture = null;
 
         try {
             //extremely redundant scaling...
+
+            Toolkit tk = this.getToolkit();
             bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
-            bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * 0.4), (int) (bgPicture.getHeight() * 0.4));
+            bgPicture = resizeBuffImg(bgPicture, (int) (bgPicture.getWidth() * scalingFactor), (int) (bgPicture.getHeight() * scalingFactor));
+            redFlag = tk.getImage("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png");
+            //redFlag = resizeBuffImg(redFlag, (int)(redFlag.getWidth() * 0.1), (int)(redFlag.getHeight() * 0.1));
+            greenFlag = tk.getImage("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png");
+            //greenFlag = resizeBuffImg(greenFlag, (int)(greenFlag.getWidth() * 0.1), (int)(greenFlag.getHeight() * 0.1));
 
             fgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
-            fgPicture = resizeBuffImg(fgPicture, (int) (fgPicture.getWidth() * 0.4), (int) (fgPicture.getHeight() * 0.4));
+            fgPicture = resizeBuffImg(fgPicture, (int) (fgPicture.getWidth() * scalingFactor), (int) (fgPicture.getHeight() * scalingFactor));
 
 
             fgPictureLabel = new JLabel(new ImageIcon(fgPicture));
+            //fgPictureLabel.paint();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -192,6 +199,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     }
 
     public void initGamelogic() {
+
+
         nextPhaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -199,6 +208,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             }
         });
         nextPhaseButton.setEnabled(false);
+        //fgPictureLabel.repaint();
 
 
         try {
@@ -206,9 +216,16 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+
+
+        for (Country c : risk.getCountryList()) {
+            c.setX((int) (c.getX() * scalingFactor));
+            c.setY((int) (c.getY() * scalingFactor));
+        }
+
         // this is meh
         //Collections.shuffle(risk.getPlayerList());
-        //risk.setPlayerIDs();
+        risk.setPlayerIDs();
         risk.distributeCountries();
         risk.distributeMissions();
         risk.startTurn(risk.getCurrentPlayer());
@@ -266,11 +283,9 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     public static BufferedImage resizeBuffImg(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
         BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-
         Graphics2D g2d = dimg.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
-
         return dimg;
     }
 
@@ -281,10 +296,19 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
     public void displayCountries(Vector<Country> ownedCountriesList) {
         //TODO show green glow(or sth) on countries that belong to you...
+
         for (Country country : ownedCountriesList) {
             System.out.println(country.getCountryName());
+            Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
+            g2d.setColor(Color.RED);
+            g2d.setStroke(new BasicStroke(10));
+            int x = country.getX();
+            int y = country.getY();
+            g2d.drawOval(x-10, y-10, 20, 20 );
+            g2d.drawImage(greenFlag, x, y, null);
+            g2d.dispose();
+            fgPictureLabel.repaint();
         }
+
     }
-
-
 }

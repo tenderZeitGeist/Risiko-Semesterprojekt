@@ -200,6 +200,17 @@ public class Risiko {
         playGround.startTurn(p);
     }
 
+    public Vector<Country> getCountryList() {
+        Vector<Country> countryList = new Vector<>();
+
+
+        for (Continent continent : worldManager.getContinentList()) {
+            for (Country country : continent.getContinentCountries()) {
+                countryList.add(country);
+            }
+        }
+        return countryList;
+    }
 
 
 
