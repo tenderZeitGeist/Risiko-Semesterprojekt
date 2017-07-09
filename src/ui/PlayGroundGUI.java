@@ -1,5 +1,6 @@
 package ui;
 
+import domain.PlayGround;
 import domain.Risiko;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
@@ -298,16 +299,15 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         //TODO show green glow(or sth) on countries that belong to you...
 
         for (Country country : ownedCountriesList) {
-            System.out.println(country.getCountryName());
+            System.out.println(country.getCountryName() + "  x: " + country.getX() + "  y: " + country.getY());
             Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
-            g2d.setColor(Color.RED);
-            g2d.setStroke(new BasicStroke(10));
+            g2d.setColor(Color.GREEN);
+            g2d.setStroke(new BasicStroke(3));
             int x = country.getX();
             int y = country.getY();
             g2d.drawOval(x-10, y-10, 20, 20 );
-            g2d.drawImage(greenFlag, x, y, this);
+            g2d.drawImage(greenFlag, x, y, PlayGroundGUI.this);
             g2d.dispose();
-
         }
         fgPictureLabel.repaint();
     }
