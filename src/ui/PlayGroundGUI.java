@@ -1,6 +1,7 @@
 package ui;
 
 import domain.Risiko;
+import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import ui.customUiElements.*;
@@ -77,11 +78,11 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
                     if (!(movedForces > forcesToMove)) {
                         forcesToMove -= movedForces;
                         System.out.println(selectedCountry.getLocalForces());
-                        System.out.println("du hast " + movedForces + " forces auf "+ selectedCountry.getCountryName() +" gesetzt ");
+                        System.out.println("du hast " + movedForces + " forces auf " + selectedCountry.getCountryName() + " gesetzt ");
                         selectedCountry.setLocalForces(selectedCountry.getLocalForces() + movedForces);
                         System.out.println(selectedCountry.getLocalForces());
 
-                        if(forcesToMove<1) {
+                        if (forcesToMove < 1) {
                             risk.nextPhase();
                             roundManager(risk.getCurrentPlayer());
                         }
@@ -278,13 +279,20 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         switch (risk.getTurn().getPhase()) {
             case DISTRIBUTE:
                 forcesToMove = risk.returnForcesPerRoundsPerPlayer(currentPlayer);
-                System.out.println("It's " + currentPlayer.getPlayerName() + "'s Turn right now! ("+forcesToMove+" forces)");
-                displayCountries(risk.loadOwnedCountryList(currentPlayer), risk.loadEnemyCountriesList(currentPlayer));
+                System.out.println("It's " + currentPlayer.getPlayerName() + "'s Turn right now! (" + forcesToMove + " forces)");
+                displayCountries(risk.getCountryList(), currentPlayer);
 
                 break;
             case ATTACK:
                 nextPhaseButton.setEnabled(true);
                 System.out.println("attack phase!");
+                this.repaint();
+                try {
+                    displayCountries(risk.loadAttackingCountriesList(currentPlayer), currentPlayer);
+                } catch (NoEnemyCountriesNearException e) {
+                    e.printStackTrace();
+                }
+
 
                 //risk.nextPhase();
                 break;
@@ -344,26 +352,27 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
         System.exit(this.EXIT_ON_CLOSE);
     }
 
-    public void displayCountries(Vector<Country> ownedCountriesList, Vector<Country> enemyCountriesList) {
+    public void displayCountries(Vector<Country> countriesList, Player currentPlayer) {
         //TODO show green glow(or sth) on countries that belong to you...
         Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
 
-        for (Country country : ownedCountriesList) {
-            //System.out.println(country.getCountryName());
-            //g2d.setColor(Color.RED);
-            //g2d.setStroke(new BasicStroke(10));
-            int x = country.getX();
-            int y = country.getY();
-            //g2d.drawOval(x-10, y-10, 20, 20 );
-            g2d.drawImage(greenFlag, (x - 23), (y - 40), this);
-        }
-
-        for (Country country : enemyCountriesList) {
-            int x = country.getX();
-            int y = country.getY();
-            g2d.drawImage(redFlag, (x - 23), (y - 40), this);
+        for (Country country : countriesList) {
+            if (country.getOwningPlayer().equals(currentPlayer)) {
+                //System.out.println(country.getCountryName());
+                //g2d.setColor(Color.RED);
+                //g2d.setStroke(new BasicStroke(10));
+                int x = country.getX();
+                int y = country.getY();
+                //g2d.drawOval(x-10, y-10, 20, 20 );
+                g2d.drawImage(greenFlag, (x - 23), (y - 40), this);
+            } else {
+                int x = country.getX();
+                int y = country.getY();
+                g2d.drawImage(redFlag, (x - 23), (y - 40), this);
+            }
         }
         g2d.dispose();
         fgPictureLabel.repaint();
+
     }
 }
