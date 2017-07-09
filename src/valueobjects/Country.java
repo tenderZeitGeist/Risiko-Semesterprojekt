@@ -95,8 +95,6 @@ public class Country implements Serializable {
         this.HEXvalue = HEXvalue;
     }
 
-
-
     public int getX() {
         return x;
     }

@@ -39,7 +39,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     private Turn turn;
     int initForces;
 
-    double scalingFactor = 0.3;
+    double scalingFactor = 0.5;
     //private String[] connectionData = new String[4];
 
 
@@ -219,8 +219,8 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
 
 
         for (Country c : risk.getCountryList()) {
-            c.setX((int) (c.getX() * scalingFactor));
-            c.setY((int) (c.getY() * scalingFactor));
+            c.setX((int) (c.getX() * scalingFactor*2));
+            c.setY((int) (c.getY() * scalingFactor*2));
         }
 
         // this is meh
@@ -305,10 +305,10 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
             int x = country.getX();
             int y = country.getY();
             g2d.drawOval(x-10, y-10, 20, 20 );
-            g2d.drawImage(greenFlag, x, y, null);
+            g2d.drawImage(greenFlag, x, y, this);
             g2d.dispose();
-            fgPictureLabel.repaint();
-        }
 
+        }
+        fgPictureLabel.repaint();
     }
 }
