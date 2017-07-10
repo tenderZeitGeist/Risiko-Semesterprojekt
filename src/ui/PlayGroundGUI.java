@@ -412,28 +412,28 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     public void displayCountries(Vector<Country> countriesList, Player currentPlayer) {
         //TODO show green glow(or sth) on countries that belong to you...
 
-        Graphics2D g2d = (Graphics2D) fgPicture.getGraphics();
+        Graphics2D g2d =  fgPictureLabel.createGraphics();
 
         for (Country country : countriesList) {
             if (country.getOwningPlayer().equals(currentPlayer)) {
-                //System.out.println(country.getCountryName());
-                //g2d.setColor(Color.RED);
-                //g2d.setStroke(new BasicStroke(10));
+
                 int x = country.getX();
                 int y = country.getY();
                 //g2d.drawOval(x-10, y-10, 20, 20 );
                 g2d.drawImage(greenFlag, (x - 25), (y - 45), this);
+
             } else {
                 int x = country.getX();
                 int y = country.getY();
                 g2d.drawImage(redFlag, (x - 25), (y - 45), this);
+
             }
         }
+        g2d.finalize();
         g2d.dispose();
-        fgPictureLabel = null;
-        fgPicture = null;
-        fgPicture = fgPictureFix;
-        fgPictureLabel = new JLabel(new ImageIcon(fgPicture));
+        this.repaint();
+
+
     }
 
     public void displayPlayerList(Vector<Player> playerList) {
