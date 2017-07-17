@@ -669,29 +669,29 @@ public class PlayGroundCUI {
                     selectedCountryIDTempFrom = new Integer(readInput());
 
                     if (selectedCountryIDTempFrom == 99) {
-                    }
-                    System.out.println("Do you want to save the game? y/n");
 
-                    try {
-                        System.out.print("##>");
-                        inputGameSave = readInput();
-                        if (inputGameSave.equals("y")) {
-                            //risiko.writeData();
+                        System.out.println("Do you want to save the game? y/n");
 
-                            risiko.serializePlayers(currentPlayer);
-                            risiko.serializeCountries();
-                            risiko.serializeMissions();
-                            throw new CancelDistributeForcesEndOfRound();
+                        try {
+                            System.out.print("##>");
+                            inputGameSave = readInput();
+                            if (inputGameSave.equals("y")) {
+                                //risiko.writeData();
 
-                            // maybe "exitGame function" here?
+                                risiko.serializePlayers(currentPlayer);
+                                risiko.serializeCountries();
+                                risiko.serializeMissions();
+                                return;
 
-                        } else if (inputGameSave.equals("n")) {
-                            throw new CancelDistributeForcesEndOfRound();
+                                // maybe "exitGame function" here?
+
+                            } else if (inputGameSave.equals("n")) {
+                                return;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-
                     selectedCountryIDTempFrom -= 1;
                     selectedCountryTempFrom = distributionCountriesList.get(selectedCountryIDTempFrom);
                     forcesToDistribute = distributionCountriesList.get(selectedCountryIDTempFrom).getLocalForces() - 1;

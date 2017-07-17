@@ -84,31 +84,33 @@ public class WorldVerwaltung {
         pm.close();
     }
 
-    public void serializePlayers(List<Player> plist, Player p) throws IOException {
-        List<Player> tempPlayerList = new Vector<>(plist);
-        plist.clear();
+    public void serializePlayers(Vector<Player> plist, Player p) throws IOException {
+        Vector<Player> tempPlayerList = new Vector<>(plist);
+        Vector<Player> tempPlayerList2 = new Vector<>();
+        //plist.clear();
 
         int playerNumber = p.getPlayerID();
 
         for (int i = 0; i < tempPlayerList.size(); i++) {
             if (i >= playerNumber) {
-                plist.add(tempPlayerList.get(i));
+                tempPlayerList2.add(plist.get(i));
             }
         }
 
         for (int i = 0; i < tempPlayerList.size(); i++) {
             if (i < playerNumber) {
-                plist.add(tempPlayerList.get(i));
+                tempPlayerList2.add(plist.get(i));
             }
         }
 
         try (FileOutputStream fos = new FileOutputStream("player.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
-            for (Player pl : plist) {
+            for (Player pl : tempPlayerList2) {
                 oos.writeObject(pl);
             }
         }
+        tempPlayerList2.clear();
     }
 
     public void serializeMissions(Vector<Mission> missionList) throws IOException {
@@ -151,7 +153,7 @@ public class WorldVerwaltung {
     }
 
     public void deSerializeCountries() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/countries.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("countries.ser"))) {
             while (true) {
                 Country c = (Country) ois.readObject();
                 //Following line stays the same
@@ -167,12 +169,12 @@ public class WorldVerwaltung {
 
     public Vector<Mission> deSerializeMissions() throws IOException, ClassNotFoundException {
         Vector<Mission> tempMissionList = new Vector<Mission>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Risiko-Semesterprojekt/missions.ser"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("missions.ser"))) {
             while (true) {
                 Mission m = (Mission) ois.readObject();
                 //Following line stays the same
                 tempMissionList.add(m);
-                System.out.println("Mission vom Typ " + m.getClass().getName() + " / " + m.getDescription());
+                //System.out.println("Mission vom Typ " + m.getClass().getName() + " / " + m.getDescription());
             }
         } catch (EOFException e) {
             System.out.println(e.getMessage());
