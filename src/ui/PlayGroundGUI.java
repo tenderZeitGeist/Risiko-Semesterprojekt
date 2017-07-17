@@ -1,5 +1,6 @@
 package ui;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
 import domain.Risiko;
 import domain.exceptions.NoEnemyCountriesNearException;
 import domain.exceptions.PlayerAlreadyExistsException;
@@ -412,7 +413,7 @@ public class PlayGroundGUI extends JFrame implements ConnectionDataHandler {
     public void displayCountries(Vector<Country> countriesList, Player currentPlayer) {
         //TODO show green glow(or sth) on countries that belong to you...
 
-        Graphics2D g2d =  fgPictureLabel.createGraphics();
+        Graphics2D g2d =  (Graphics2D) fgPictureLabel.getGraphics();
 
         for (Country country : countriesList) {
             if (country.getOwningPlayer().equals(currentPlayer)) {
