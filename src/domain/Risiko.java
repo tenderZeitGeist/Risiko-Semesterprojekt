@@ -18,7 +18,7 @@ public class Risiko {
     private WorldVerwaltung worldManager;
     private PlayerVerwaltung playerManager;
     private MissionVerwaltung missionVerwaltung;
-    private PlayGround playGround;
+    //private PlayGround playGround;
     private String file = "";
 
 
@@ -30,7 +30,7 @@ public class Risiko {
         playerManager = new PlayerVerwaltung();
         worldManager = new WorldVerwaltung();
         missionVerwaltung = new MissionVerwaltung();
-        playGround = new PlayGround();
+        //playGround = new PlayGround();
         //worldManager.writeData ( "CountryListTest.txt" );
         //worldManager.createGameFile ( );
         //worldManager.readData ( file );
@@ -138,8 +138,8 @@ public class Risiko {
     }
 
     public boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces) {
-        return playGround.battle(attackingCountry, defendingCountry, attackerForces, defenderForces);
-
+        //return playGround.battle(attackingCountry, defendingCountry, attackerForces, defenderForces);
+        return false;
     }
 
     public void moveForces(Country oldCountry, Country newCountry, int forces) {
@@ -148,7 +148,8 @@ public class Risiko {
 
 
     public boolean playerWon(Player p, WorldVerwaltung wv, MissionVerwaltung mv, PlayerVerwaltung pv) {
-        return playGround.playerWon( p, wv, mv, pv );
+        return false;
+        //return playGround.playerWon( p, wv, mv, pv );
     }
 
 
@@ -169,7 +170,8 @@ public class Risiko {
     }
 
     public boolean isCardStackFulfilled(Vector<Card> playersCards) {
-        return playGround.isCardStackFulfilled(playersCards);
+        //return playGround.isCardStackFulfilled(playersCards);
+        return false;
     }
 
     public Country compareHEX(String HEXvalue) {
@@ -177,15 +179,16 @@ public class Risiko {
     }
 
     public Turn getTurn() {
-        return playGround.getTurn();
+        //return playGround.getTurn();
+        return null;
     }
 
     public void nextTurn(Player p) {
-        playGround.nextTurn(p);
+        //playGround.nextTurn(p);
     }
 
     public void nextPhase() {
-        playGround.nextPhase();
+        //playGround.nextPhase();
     }
 
     public Player getCurrentPlayer() {
@@ -197,7 +200,7 @@ public class Risiko {
     }
 
     public void startTurn(Player p) {
-        playGround.startTurn(p);
+        //playGround.startTurn(p);
     }
 
     public Vector<Country> getCountryList() {
