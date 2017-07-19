@@ -8,6 +8,7 @@ import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import ui.customUiElements.JTextAreaOutputStream;
 import ui.customUiElements.ScalingSliderDialog;
+import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Player;
 import valueobjects.Turn;
@@ -20,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Vector;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
@@ -53,7 +55,7 @@ public class PlayGroundGUINew {
 
     //vars
     private Double scalingFactor;
-    boolean hovered = false;
+    private boolean hovered = false;
 
 
     public static void main(String[] args) {
@@ -182,6 +184,7 @@ public class PlayGroundGUINew {
         windowJFrame.setVisible(true);
 
         //this is some cool init stuffz:)
+        paintFlagLabel ( );
         String workingDir = System.getProperty("user.dir");
         System.out.println("Current working directory : " + workingDir);
 
@@ -318,6 +321,24 @@ public class PlayGroundGUINew {
                 }
             }
         });
+    }
+
+    public void paintFlagLabel( ){
+            for( Country currentCountry : risiko.getCountryList () ){
+                JLabel flag = new JLabel (  );
+                int x = currentCountry.getX ();
+                int y = currentCountry.getY ();
+                if( currentCountry.getOwningPlayer ().equals ( this.player ) ){
+                    flag.setIcon ( new ImageIcon ( greenFlag ) );
+                } else {
+                    flag.setIcon ( new ImageIcon ( redFlag ) );
+                }
+                String coordinates = "pos " + x + " " + y ;
+                fgPictureLabel.add ( flag, coordinates );
+                fgPictureLabel.revalidate ();
+                fgPictureLabel.repaint ();
+        }
+
     }
 
 
