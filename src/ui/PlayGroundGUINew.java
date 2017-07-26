@@ -6,6 +6,7 @@ import domain.events.GameControlEvent;
 import domain.events.GameEvent;
 import domain.exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
+import sun.swing.ImageIconUIResource;
 import ui.customUiElements.JTextAreaOutputStream;
 import ui.customUiElements.ScalingSliderDialog;
 import valueobjects.Continent;
@@ -15,6 +16,7 @@ import valueobjects.Turn;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -41,7 +43,9 @@ public class PlayGroundGUINew {
     private JButton saveGameButton;
     private JLabel fgPictureLabel = new JLabel();
     private JTextArea statusTextArea;
+    private JPanel gamePane;
     private JPanel statusPanel;
+    private JPanel glass;
     private JPanel buttonPanel;
     private JTextArea customSysout;
     private JScrollPane console;
@@ -102,8 +106,8 @@ public class PlayGroundGUINew {
 
 
         for (Country c : risiko.getCountryList()) {
-            c.setX((int) (c.getX() * scalingFactor * 2));
-            c.setY((int) (c.getY() * scalingFactor * 2));
+            c.setX((int) (c.getX() * scalingFactor));
+            c.setY((int) (c.getY() * scalingFactor));
         }
         initMainWindow();
 
@@ -145,10 +149,19 @@ public class PlayGroundGUINew {
         initSysout();
 
         //Picture Panel
-        JPanel gamePane = new JPanel();
+        gamePane = new JPanel();
         gamePane.add(fgPictureLabel);
         gamePane.setBackground(Color.BLACK);
         gamePane.setForeground(Color.WHITE);
+
+        // Glass Panel
+        Dimension glassPaneSize = fgPictureLabel.getPreferredSize ();
+        glass = (JPanel) windowJFrame.getGlassPane ();
+        glass.setSize ( glassPaneSize );
+        glass.setVisible ( true );
+        glass.setLayout ( null );
+
+
         //Status Panel
         initStatusPanel();
         //ButtonPanel
@@ -198,9 +211,9 @@ public class PlayGroundGUINew {
             bgPicture = resizeBuffImg(bgPicture, (int) ((bgPicture.getWidth() * 0.5) * scalingFactor), (int) ((bgPicture.getHeight() * 0.5) * scalingFactor));
 
             redFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
-            redFlag = redFlag.getScaledInstance(60, 60, 10);
+            redFlag = redFlag.getScaledInstance((int)(60 * scalingFactor), (int)(60 * scalingFactor), 100);
             greenFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png"));
-            greenFlag = greenFlag.getScaledInstance(60, 60, 10);
+            greenFlag = greenFlag.getScaledInstance((int)(60 * scalingFactor), (int)(60 * scalingFactor), 100);
 
             fgPictureFix = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
@@ -324,20 +337,23 @@ public class PlayGroundGUINew {
     }
 
     public void paintFlagLabel( ){
+
             for( Country currentCountry : risiko.getCountryList () ){
                 JLabel flag = new JLabel (  );
                 int x = currentCountry.getX ();
                 int y = currentCountry.getY ();
+
                 if( currentCountry.getOwningPlayer ().equals ( this.player ) ){
                     flag.setIcon ( new ImageIcon ( greenFlag ) );
                 } else {
                     flag.setIcon ( new ImageIcon ( redFlag ) );
                 }
-                String coordinates = "pos " + x + " " + y ;
-                fgPictureLabel.add ( flag, coordinates );
-                fgPictureLabel.revalidate ();
-                fgPictureLabel.repaint ();
+                Dimension size = flag.getPreferredSize ();
+                flag.setBounds ( x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height );
+                glass.add ( flag );
         }
+        windowJFrame.revalidate ();
+        windowJFrame.repaint (  );
 
     }
 
