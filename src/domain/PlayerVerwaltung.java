@@ -5,8 +5,6 @@ import domain.Persistence.PersistenceManager;
 import domain.exceptions.PlayerAlreadyExistsException;
 import valueobjects.Player;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -14,46 +12,40 @@ import java.util.Vector;
  */
 public class PlayerVerwaltung {
 
-    private PersistenceManager pm = new FilePersistenceManager ( );
-    private List < Player > playerList = new Vector < Player > ( );
 
-    public void createPlayer ( int newPlayerID, String newPlayerName ) throws PlayerAlreadyExistsException {
-        Player newPlayer = new Player ( newPlayerID, newPlayerName );
-        if ( playerList.contains ( newPlayer ) )
-            throw new PlayerAlreadyExistsException ( newPlayerName );
-        playerList.add ( newPlayer );
+    private PersistenceManager pm = new FilePersistenceManager();
+    private Vector < Player > playerList = new Vector<Player>();
+    private  Player currentPlayer;
+
+    public void createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException {
+        Player newPlayer = new Player(newPlayerID, newPlayerName);
+        if (playerList.contains(newPlayer))
+            throw new PlayerAlreadyExistsException(newPlayerName);
+        playerList.add(newPlayer);
+        currentPlayer = playerList.get(0);
     }
 
-    public List < Player > getPlayerList ( ) {
+    public Vector < Player > getPlayerList() {
         return playerList;
     }
 
-    public void readData ( String file ) throws IOException {
-        pm.openForReading ( file );
-
-        Player player;
-        do {
-            player = pm.loadPlayer ( );
-            if ( player != null ) {
-                playerList.add ( player );
-            }
-        } while ( player != null );
-
-        pm.close ();
+    public void setPlayerList( Vector < Player > p) {
+        this.playerList = p;
     }
 
-    public void writeData (  ) throws IOException{
-        pm.openForWriting ( "PlayerList.txt" );
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 
-        for ( Player player : playerList ){
-            pm.savePlayer ( player );
+    public void setNextPlayer() {
+        int nextPlayer = currentPlayer.getPlayerID() % playerList.size();
+        this.currentPlayer = playerList.get(nextPlayer);
+    }
+
+    public void setPlayerIDs(){
+        int playerID = 0;
+        for (Player p : playerList) {
+            p.setPlayerID ( playerID++ );
         }
-
-        pm.close ();
     }
-
-
-//check if this is correct!
-
-
 }

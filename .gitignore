@@ -4,3 +4,12 @@
 .idea
 *.iml
 .idea/vcs.xml
+*.idea
+*/workspare.xml
+.idea/workspace.xml
+out/*
+./out/*
+./out
+*/out
+out
+out*

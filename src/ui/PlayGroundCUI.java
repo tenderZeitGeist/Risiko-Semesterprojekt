@@ -1,13 +1,11 @@
 package ui;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import domain.Risiko;
 import domain.WorldVerwaltung;
 import domain.exceptions.*;
 
 
 import valueobjects.Card;
-import valueobjects.Continent;
 import valueobjects.Country;
 import valueobjects.Player;
 
@@ -33,19 +31,19 @@ public class PlayGroundCUI {
 
 
     private int playerInitialTurn = 0;
-
+    private int cardExchangeArmies = 4;
     private int roundNumber = 1;
     private int maxRoundNumber = 100;
 
 
-    public PlayGroundCUI(String file) throws IOException {
+    public PlayGroundCUI() throws IOException {
 
-        risiko = new Risiko(file);
+        risiko = new Risiko();
         in = new BufferedReader(new InputStreamReader(System.in));
     }
 
-    public static void main(String[] args) throws IOException {
-        PlayGroundCUI pCUI = new PlayGroundCUI("countryList.txt");
+    public static void main(String[] args) throws IOException, CountryAlreadyExistsException, ClassNotFoundException {
+        PlayGroundCUI pCUI = new PlayGroundCUI();
         IO io = new IO();
         pCUI.run();
 
@@ -63,7 +61,7 @@ public class PlayGroundCUI {
         return inputSTRING;
     }
 
-    public void run() {
+    public void run() throws IOException, CountryAlreadyExistsException, ClassNotFoundException {
         String input = "";
         do {
             printMenu();
@@ -75,12 +73,13 @@ public class PlayGroundCUI {
 
     }
 
-    public void processInput(String input) {
+    public void processInput(String input) throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
 
         switch (input) {
             case "n":       //start new game
                 //TODO start_new_game() should be called here
                 System.out.println("new game started!");
+                risiko.readData("Risiko-Semesterprojekt/countryList.txt");
                 startGameCUI();
 
                 break;
@@ -92,7 +91,14 @@ public class PlayGroundCUI {
                 break;
             case "k":       //dummy
                 break;
-            case "l":       //dummy
+            case "l":       //load game
+                System.out.println("load game");
+                //risiko.readGameData("runningGame.txt");
+                Vector < Player > playerList = risiko.deSerializePlayers();
+                risiko.setPlayerList(playerList);
+                risiko.writeMissionsFromFile();
+                risiko.deSerializeCountries();
+                round(playerList);
                 break;
             case "q":       //quit da shit
                 break;
@@ -108,6 +114,7 @@ public class PlayGroundCUI {
         System.out.println("- what do you want to do?");
         System.out.println("- start a new game    (enter 'n')");
         System.out.println("- join live game      (enter 'j')");
+        System.out.println("- load game           (enter 'l')");
         System.out.println("- check last scores   (enter 's')");
         System.out.println("-");
         System.out.println("- to quit enter 'q'");
@@ -115,7 +122,7 @@ public class PlayGroundCUI {
     }
 
 
-    public void startGameCUI() {
+    public void startGameCUI() throws IOException {
         // int playerCount = 1;
         int playerCount;
         boolean bool = true;
@@ -194,12 +201,14 @@ public class PlayGroundCUI {
 
         }
 
-        round(playerList);
+        round(risiko.getPlayerList());
 
     }
 
 
     public void round(List<Player> playerList) {
+
+
         System.out.println("Round: " + roundNumber);
 
 
@@ -264,12 +273,64 @@ public class PlayGroundCUI {
 
 
     public void distributeForcesMenu(Player currentPlayer, Vector<Country> ownedCountriesList) {
-        boolean cards = risiko.isCardStackFulfilled(worldManager.getPlayersCardList(currentPlayer));
-        int initForces = risiko.returnForcesPerRoundsPerPlayer(currentPlayer, cards);
+        //boolean cards = risiko.isCardStackFulfilled(worldManager.getPlayersCardList(currentPlayer));
+        int initForces = risiko.returnForcesPerRoundsPerPlayer(currentPlayer); //, cards);
         int forcesLeft = initForces;
         int selectedCountryIDTemp;
         int selectedForcesCountTemp = 0;
         int temp = 0;
+
+        /*if ( cards ) {
+            Vector < Card > currentCardList = worldManager.getPlayersCardList ( currentPlayer ), tempCardList = new Vector <> ( );
+            int selectedCardID;
+            boolean isFulfilled = false, checkInfantry = false, checkCavalry = false, checkArtillery = false, checkJoker = false;
+
+
+            printPlayersCardList ( currentPlayer );
+            System.out.println ( "" );
+            System.out.println ( "Please select up to three cards or 99 to skip this process." );
+            cardLoop:
+            while ( true ) {
+                do {
+                    System.out.println ( "#>" );
+                    selectedCardID = ( Integer.parseInt ( readInput ( ) ) ) - 1;
+                    if ( tempCardList.contains ( currentCardList.get ( selectedCardID ) ) ) {
+                        System.out.println ( "You have already selected this card. Please choose another one." );
+                        continue;
+                    } else {
+                        tempCardList.add ( currentCardList.get ( selectedCardID ) );
+                        System.out.println ( "You have selected " + currentCardList.get ( selectedCardID ).getCardName ( ) );
+                    }
+                } while ( tempCardList.size ( ) < 2 );
+
+                if ( risiko.isCardStackFulfilled ( tempCardList ) ) {
+                    System.out.println ( "Input correct!" );
+                    if ( cardExchangeArmies < 12 ) {
+                        cardExchangeArmies = + 2;
+                        forcesLeft += cardExchangeArmies;
+                    } else if ( cardExchangeArmies < 15 ) {
+                        cardExchangeArmies += 3;
+                        forcesLeft += cardExchangeArmies;
+                    } else {
+                        cardExchangeArmies += 5;
+                        forcesLeft += cardExchangeArmies;
+                    }
+
+                    Vector < Card > cardList = risiko.getCardList ();
+                    for ( Card c : tempCardList ) {
+                        cardList.remove ( c );
+                    }
+
+                    break cardLoop;
+                } else {
+                    System.out.println ( "Input incorrect! Please choose your cards again" );
+                    tempCardList.removeAllElements ( );
+                    tempCardList.trimToSize ( );
+                    continue;
+                }
+
+            }*/
+
 
         System.out.println("");
         System.out.println("Your mission for this game:");
@@ -336,6 +397,7 @@ public class PlayGroundCUI {
         //MOAR COMMANDS AFTER FORCE VERTEILUNG
         //
     }
+
 
     public void distribureForcesMenuInitial(Player currentPlayer, Vector<Country> ownedCountriesList) {
 
@@ -418,6 +480,7 @@ public class PlayGroundCUI {
         Country selectedDefenderCountryTemp = null;
         int selectedDefenderIDTemp;
         int distributeForces = 0;
+        String inputGameSave;
 
 
         try {
@@ -452,7 +515,6 @@ public class PlayGroundCUI {
 
                         if (selectedCountryIDTemp == 99) {
                             throw new CancelAttackException();
-
                         }
                         selectedCountryIDTemp -= 1;
 
@@ -583,6 +645,7 @@ public class PlayGroundCUI {
         int selectedCountryIDTempTo;
         int forcesToDistribute = 0;
         int selectedForcesCountTemp;
+        String inputGameSave;
         Vector<Country> distributionCountriesList = risiko.loadDistributionCountriesList(currentPlayer);
 
 
@@ -598,7 +661,7 @@ public class PlayGroundCUI {
                 printDistributionCountriesListList(currentPlayer);
 
                 System.out.println("");
-                System.out.println("Enter 99 to skip reditsribution of forces");
+                System.out.println("Enter 99 to end reditsribution of forces");
 
                 try {
 
@@ -606,9 +669,29 @@ public class PlayGroundCUI {
                     selectedCountryIDTempFrom = new Integer(readInput());
 
                     if (selectedCountryIDTempFrom == 99) {
-                        throw new CancelDistributeForcesEndOfRound();
-                    }
 
+                        System.out.println("Do you want to save the game? y/n");
+
+                        try {
+                            System.out.print("##>");
+                            inputGameSave = readInput();
+                            if (inputGameSave.equals("y")) {
+                                //risiko.writeData();
+
+                                risiko.serializePlayers(currentPlayer);
+                                risiko.serializeCountries();
+                                risiko.serializeMissions();
+                                return;
+
+                                // maybe "exitGame function" here?
+
+                            } else if (inputGameSave.equals("n")) {
+                                return;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     selectedCountryIDTempFrom -= 1;
                     selectedCountryTempFrom = distributionCountriesList.get(selectedCountryIDTempFrom);
                     forcesToDistribute = distributionCountriesList.get(selectedCountryIDTempFrom).getLocalForces() - 1;

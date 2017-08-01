@@ -1,0 +1,203 @@
+Epimetheus
+1
+null
+1
+1
+2, 3
+F6B6B2
+Thrymr
+2
+null
+1
+1
+1, 5
+EB5B45
+Mab
+3
+null
+1
+1
+1, 4, 5
+7AB929
+Kerberos
+4
+null
+1
+1
+3, 13, 7, 16
+4DAF50
+Makemake
+5
+null
+1
+1
+2, 3, 6
+E73B25
+Namaka
+6
+null
+1
+1
+5, 8
+C02418
+Charon
+7
+null
+1
+1
+4, 13, 16
+FFA200
+Laomedeia
+8
+null
+1
+1
+6, 9, 12, 14
+A31B16
+Psamathe
+9
+null
+1
+1
+8, 10
+75160E
+Perdita
+10
+null
+1
+2
+9, 11
+9F7C14
+Umbriel
+11
+null
+1
+2
+10, 12
+CCCC01
+Titania
+12
+null
+1
+2
+11, 8, 13
+C1D108
+Bianca
+13
+null
+1
+2
+12, 14, 4, 21
+E7E10F
+Puck
+14
+null
+1
+3
+13, 16, 15
+1BAA67
+Sycorax
+15
+null
+1
+3
+16, 14, 20
+24FF00
+Setebos
+16
+null
+1
+3
+4, 14, 15, 17, 7, 18
+74C2AD
+Trinculo
+17
+null
+1
+3
+16, 18, 29
+84CCD5
+Margaret
+18
+null
+1
+3
+16, 17, 19, 28
+0079B2
+HD 2638
+19
+null
+1
+3
+18, 20, 26, 27
+365EA9
+Cetus
+20
+null
+1
+3
+15, 19, 21, 24
+3D53A1
+Cassiopeia
+21
+null
+1
+4
+13, 20, 23, 22
+5B368C
+Tucana
+22
+null
+1
+4
+21, 23
+8F1D7A
+Hydrus
+23
+null
+1
+4
+21, 22, 24
+C60E80
+Aries
+24
+null
+1
+4
+20, 23, 25
+D64290
+Horologium
+25
+null
+1
+4
+24, 26
+E94476
+Eridanus
+26
+null
+1
+4
+19, 25, 27
+E62F32
+Fornax
+27
+null
+1
+5
+19, 26, 28
+7F1715
+82 G. Eridani
+28
+null
+1
+5
+18, 27, 29
+BEAED6
+Epsilon Eridani
+29
+null
+1
+5
+17, 28
+FC1F2F

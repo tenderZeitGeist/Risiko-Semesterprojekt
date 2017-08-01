@@ -8,6 +8,6 @@ public class NoAlliedCountriesNearException extends Throwable {
 
     public NoAlliedCountriesNearException() {
 
-    super("No allied country near you!");
+        super("No allied country near you!");
     }
 }
