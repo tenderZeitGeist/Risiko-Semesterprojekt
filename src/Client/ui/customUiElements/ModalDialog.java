@@ -1,4 +1,4 @@
-package ui.customUiElements;
+package Client.ui.customUiElements;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 09.07.2017.

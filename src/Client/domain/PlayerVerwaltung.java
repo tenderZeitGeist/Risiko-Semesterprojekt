@@ -1,7 +1,7 @@
-package domain;
+package Client.domain;
 
-import domain.Persistence.FilePersistenceManager;
-import domain.Persistence.PersistenceManager;
+import Client.domain.Persistence.FilePersistenceManager;
+import Client.domain.Persistence.PersistenceManager;
 import test.exceptions.PlayerAlreadyExistsException;
 import valueobjects.Player;
 

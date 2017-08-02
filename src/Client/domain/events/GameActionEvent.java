@@ -1,4 +1,4 @@
-package domain.events;
+package Client.domain.events;
 
 
 import valueobjects.Player;

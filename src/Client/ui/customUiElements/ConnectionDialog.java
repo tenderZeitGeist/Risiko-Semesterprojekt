@@ -1,4 +1,4 @@
-package ui.customUiElements;
+package Client.ui.customUiElements;
 
 import net.miginfocom.swing.MigLayout;
 import ui.customUiElements.ConnectionDataHandler;
