@@ -1,5 +1,5 @@
 
-
+//
 import customUiElements.JTextAreaOutputStream;
 import customUiElements.ScalingSliderDialog;
 import exceptions.PlayerAlreadyExistsException;
