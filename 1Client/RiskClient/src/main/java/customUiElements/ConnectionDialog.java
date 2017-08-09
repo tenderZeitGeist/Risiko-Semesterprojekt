@@ -1,7 +1,7 @@
 package customUiElements;
 
 import net.miginfocom.swing.MigLayout;
-import ui.customUiElements.ConnectionDataHandler;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ public class ConnectionDialog {
 
 
     public void createDialog() {
-        JDialog connectionDialog = new JDialog();
+        final JDialog connectionDialog = new JDialog();
         connectionDialog.setTitle("¯\\_(ツ)_/¯");
         connectionDialog.setSize(300, 180);
         connectionDialog.setLocationRelativeTo(null);
@@ -32,10 +32,10 @@ public class ConnectionDialog {
         JLabel inputIpLabel = new JLabel("enter IP please:");
         JLabel inputPortLabel = new JLabel("enter port please:");
 
-        JTextArea inputName = new JTextArea("", 1, 1);
+        final JTextArea inputName = new JTextArea("", 1, 1);
 
-        JTextArea inputPort = new JTextArea("", 1, 1);
-        JTextArea inputIp = new JTextArea("", 1, 1);
+        final JTextArea inputPort = new JTextArea("", 1, 1);
+        final JTextArea inputIp = new JTextArea("", 1, 1);
 
 
         connectionDialogPanel.add(inputNameLabel);

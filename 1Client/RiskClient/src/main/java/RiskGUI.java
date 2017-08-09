@@ -1,7 +1,11 @@
 
 //
+
 import customUiElements.JTextAreaOutputStream;
 import customUiElements.ScalingSliderDialog;
+import domain.events.GameActionEvent;
+import domain.events.GameControlEvent;
+import domain.events.GameEvent;
 import exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
@@ -17,18 +21,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
  */
-public class RiskGUI implements Remote{
+public class RiskGUI implements Remote {
 
     //Value Objects
     private Player player;
     //this should be replaced with server later
-    private RiskServer risiko;
+    private RemoteRisk risiko;
 
 
     //UI
@@ -59,21 +64,6 @@ public class RiskGUI implements Remote{
 
     public static void main(String[] args) {
         //catch exceptions maybe?!
-
-
-        String host = (args.length < 1) ? null : args[0];
-        try {
-            Registry registry = LocateRegistry.getRegistry(host);
-            //Hello stub = (Hello) registry.lookup("Hello");
-            //String response = stub.sayHello();
-            //System.out.println("response: " + response);
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
-        }
-
-
-
         try {
             new RiskGUI();
 
@@ -83,35 +73,33 @@ public class RiskGUI implements Remote{
     }
 
     public RiskGUI() throws IOException {
-        //create server connection in here
+        try {
+            String serviceName = "RiskServer";
+                Registry registry = LocateRegistry.getRegistry(1337);
+            risiko = (RemoteRisk) registry.lookup(serviceName);
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
 
-        //this should be replaced with server later
-        risiko = new RiskServer();
 
         ScalingSliderDialog sc = new ScalingSliderDialog();
-
-
-        scalingFactor = sc.createScalingSliderDialog()/100;
+        scalingFactor = sc.createScalingSliderDialog() / 100;
 
         System.out.println(scalingFactor);
         try {
             //IDEA: we use the code as is, but ask the player to
             //enter the name of his "alliance" (separatists, empire, rebels)
-            risiko.createPlayer(0, "Separatists");
-            player = new Player(0,"xXxPussyD3str0yazxXx");
+            player = new Player(0, "xXxPussyD3str0yazxXx");
+            risiko.createPlayer(player.getPlayerID(), player.getPlayerName());
+
         } catch (PlayerAlreadyExistsException e) {
             e.printStackTrace();
         }
         //init Pictures
         initPictureFiles();
-        try {
-            risiko.readData("Risiko-Semesterprojekt/countryList.txt");
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        for (Country c : risiko.getCountryList()) {
-            c.setOwningPlayer(risiko.getCurrentPlayer());
-        }
+
+        risiko.distributeCountries();
 
 
         for (Country c : risiko.getCountryList()) {
@@ -123,9 +111,9 @@ public class RiskGUI implements Remote{
 
     }
 
-    public void initMainWindow() {
+    public void initMainWindow() throws RemoteException {
 //Create Main windowJFrame
-        windowJFrame = new JFrame("Star Risk: "+player.getPlayerName()+"    [ALPHA VERSION NOT FOR PUBLIC]");
+        windowJFrame = new JFrame("Star Risk: " + player.getPlayerName() + "    [ALPHA VERSION NOT FOR PUBLIC]");
         //windowJFrame.setBounds(1000, 1000, 1000, 1000);
 
 
@@ -143,14 +131,13 @@ public class RiskGUI implements Remote{
 
         windowJFrame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
-                windowJFrame.revalidate();
+
                 windowJFrame.repaint();
                 windowJFrame.pack();
             }
         });
         windowJFrame.getContentPane().setForeground(Color.WHITE);
         windowJFrame.getContentPane().setBackground(Color.BLACK);
-
 
 
 //create new Elements
@@ -164,11 +151,11 @@ public class RiskGUI implements Remote{
         gamePane.setForeground(Color.WHITE);
 
         // Glass Panel
-        Dimension glassPaneSize = fgPictureLabel.getPreferredSize ();
-        glass = (JPanel) windowJFrame.getGlassPane ();
-        glass.setSize ( glassPaneSize );
-        glass.setVisible ( true );
-        glass.setLayout ( null );
+        Dimension glassPaneSize = fgPictureLabel.getPreferredSize();
+        glass = (JPanel) windowJFrame.getGlassPane();
+        glass.setSize(glassPaneSize);
+        glass.setVisible(true);
+        glass.setLayout(null);
 
 
         //Status Panel
@@ -199,14 +186,14 @@ public class RiskGUI implements Remote{
 
 //End Initialisation
 
-        windowJFrame.revalidate();
+
         windowJFrame.repaint();
         windowJFrame.pack();
         windowJFrame.setLocationRelativeTo(null);
         windowJFrame.setVisible(true);
 
         //this is some cool init stuffz:)
-        paintFlagLabel ( );
+        paintFlagLabel();
         String workingDir = System.getProperty("user.dir");
         System.out.println("Current working directory : " + workingDir);
 
@@ -216,15 +203,16 @@ public class RiskGUI implements Remote{
     public void initPictureFiles() {
         try {
             //extremely redundant scaling...
-            bgPicture = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/starRiskColorCoded.png"));
+            bgPicture = ImageIO.read(RiskGUI.class.getResourceAsStream("/starRiskColorCoded.png"));
             bgPicture = resizeBuffImg(bgPicture, (int) ((bgPicture.getWidth() * 0.5) * scalingFactor), (int) ((bgPicture.getHeight() * 0.5) * scalingFactor));
 
-            redFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_red.png"));
-            redFlag = redFlag.getScaledInstance((int)(60 * scalingFactor), (int)(60 * scalingFactor), 100);
-            greenFlag = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/flag_icons/flag_green.png"));
-            greenFlag = greenFlag.getScaledInstance((int)(60 * scalingFactor), (int)(60 * scalingFactor), 100);
 
-            fgPictureFix = ImageIO.read(new File("./Risiko-Semesterprojekt/src/ui/rescourcen/StarRiskBg.png"));
+            redFlag =  ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red.png"));
+            redFlag = redFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
+            greenFlag =  ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green.png"));
+            greenFlag = greenFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
+
+            fgPictureFix =  ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
             fgPicture = fgPictureFix;
 
@@ -270,21 +258,18 @@ public class RiskGUI implements Remote{
 
 
         nextPhaseButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
 
         saveGameButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
 
         loadGameButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
 
             }
@@ -320,18 +305,23 @@ public class RiskGUI implements Remote{
         return dimg;
     }
 
-    public void createMouseHoverListener(JLabel fgPanel, BufferedImage bgPicture) {
+    public void createMouseHoverListener(JLabel fgPanel, final BufferedImage bgPicturex) {
         fgPanel.addMouseMotionListener(new MouseAdapter() {
-            @Override
+
             public void mouseMoved(MouseEvent e) {
-                int packetInt = bgPicture.getRGB(e.getX(), e.getY());
+                int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, false);
                 //RGB to Hex
                 String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 
                 if (!hex.equals("000000")) {
                     if (!hovered) {
-                        Country tempSelectedCountry = risiko.compareHEX(hex);
+                        Country tempSelectedCountry = null;
+                        try {
+                            tempSelectedCountry = risiko.compareHEX(hex);
+                        } catch (RemoteException e1) {
+                            e1.printStackTrace();
+                        }
                         if (tempSelectedCountry != null) {
                             statusTextArea.setText("Star: " + tempSelectedCountry.getCountryName() + "\nMarines: " + tempSelectedCountry.getLocalForces() + "\nAlliance: " + tempSelectedCountry.getOwningPlayer().getPlayerName() + "");
                             hovered = true;
@@ -345,24 +335,23 @@ public class RiskGUI implements Remote{
         });
     }
 
-    public void paintFlagLabel( ){
+    public void paintFlagLabel() throws RemoteException {
+        for (Country currentCountry : risiko.getCountryList()) {
+            JLabel flag = new JLabel();
+            int x = currentCountry.getX();
+            int y = currentCountry.getY();
 
-        for( Country currentCountry : risiko.getCountryList () ){
-            JLabel flag = new JLabel (  );
-            int x = currentCountry.getX ();
-            int y = currentCountry.getY ();
-
-            if( currentCountry.getOwningPlayer ().equals ( this.player ) ){
-                flag.setIcon ( new ImageIcon ( greenFlag ) );
+            if (currentCountry.getOwningPlayer().equals(player)) {
+                flag.setIcon(new ImageIcon(greenFlag));
             } else {
-                flag.setIcon ( new ImageIcon ( redFlag ) );
+                flag.setIcon(new ImageIcon(redFlag));
             }
-            Dimension size = flag.getPreferredSize ();
-            flag.setBounds ( x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height );
-            glass.add ( flag );
+            Dimension size = flag.getPreferredSize();
+            flag.setBounds(x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height);
+            glass.add(flag);
         }
-        windowJFrame.revalidate ();
-        windowJFrame.repaint (  );
+
+        windowJFrame.repaint();
 
     }
 
@@ -412,7 +401,7 @@ public class RiskGUI implements Remote{
                             "Game Over",
                             JOptionPane.INFORMATION_MESSAGE);
                 /*try {
-					server.removeGameEventListener(this);
+                    server.removeGameEventListener(this);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
