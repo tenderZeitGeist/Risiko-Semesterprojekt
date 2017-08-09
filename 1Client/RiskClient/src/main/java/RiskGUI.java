@@ -20,15 +20,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
  */
-public class RiskGUI implements Remote {
+public class RiskGUI extends UnicastRemoteObject {
+
+    private static final long serialVersionUID = -1337133713371337L;
 
     //Value Objects
     private Player player;

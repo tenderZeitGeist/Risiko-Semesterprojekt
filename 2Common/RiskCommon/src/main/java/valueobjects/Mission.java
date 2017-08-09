@@ -2,13 +2,14 @@ package valueobjects;
 
 
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 27.04.2017.
  */
-public abstract class Mission implements Serializable {
+public abstract class Mission implements Serializable, Remote {
 
     protected Player player;
     protected String description;

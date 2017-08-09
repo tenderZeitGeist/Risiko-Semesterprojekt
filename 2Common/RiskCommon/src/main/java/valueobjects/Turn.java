@@ -2,10 +2,11 @@ package valueobjects;
 
 
 import java.io.Serializable;
+import java.rmi.Remote;
 
-public class Turn implements Serializable {
+public class Turn implements Serializable, Remote {
 
-    private static final long serialVersionUID = -9151181367801964822L;
+    private static final long serialVersionUID = -45673384614984L;
 
     public enum Phase {
 

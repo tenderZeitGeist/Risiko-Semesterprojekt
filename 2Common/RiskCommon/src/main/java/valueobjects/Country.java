@@ -1,11 +1,15 @@
 package valueobjects;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 23.03.2017.
  */
-public class Country implements Serializable {
+public class Country implements Serializable, Remote {
+
+    private static final long serialVersionUID = -56724784526L;
+
     private int localForces;
     private String countryName;
     private Player owningPlayer;

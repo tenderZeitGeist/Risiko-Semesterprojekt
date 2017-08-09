@@ -20,6 +20,7 @@ import java.util.Vector;
  */
 public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
+    private static final long serialVersionUID = -2345681367801964822L;
 
     private WorldVerwaltung worldManager;
     private PlayerVerwaltung playerManager;

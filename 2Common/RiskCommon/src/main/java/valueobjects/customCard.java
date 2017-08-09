@@ -1,11 +1,15 @@
 package valueobjects;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 
 /**
  * Created by Intersection on 27.04.2017.
  */
-public class customCard implements Serializable {
+public class customCard implements Serializable, Remote {
+
+    private static final long serialVersionUID = -875464645568L;
+
     private int cardID;
     private int cardType;
     private String cardName;

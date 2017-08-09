@@ -4,12 +4,15 @@ package valueobjects;
 import valueobjects.Country;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.util.Vector;
 
 /**
  * Created by Intersection on 30.03.2017.
  */
-public class Continent implements Serializable {
+public class Continent implements Serializable, Remote {
+
+    private static final long serialVersionUID = -46842316546564L;
 
     private String name;
     private int value;

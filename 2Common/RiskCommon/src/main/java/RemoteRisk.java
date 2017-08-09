@@ -18,6 +18,7 @@ interface RemoteRisk extends Remote {
 
 
 
+
     void setPlayerIDs() throws RemoteException;
 
     void readData(String file) throws IOException;
