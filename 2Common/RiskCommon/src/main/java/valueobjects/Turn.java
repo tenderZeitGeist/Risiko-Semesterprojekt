@@ -10,7 +10,7 @@ public class Turn implements Serializable, Remote {
 
     public enum Phase {
 
-        PHASE1, PHASE2, PHASE3, PHASE4, PHASE5;
+        DISTRIBUTE, ATTACK, REDISTRIBUTE;
 
         public Phase next() {
             // return next phase based on ordinal value (0, 1, 2, ..., number of phases)

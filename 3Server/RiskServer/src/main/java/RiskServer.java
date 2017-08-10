@@ -1,6 +1,9 @@
+
 import domain.MissionVerwaltung;
 import domain.PlayerVerwaltung;
 import domain.WorldVerwaltung;
+import events.GameControlEvent;
+import events.GameEvent;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
@@ -12,6 +15,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -27,6 +31,11 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     private MissionVerwaltung missionVerwaltung;
     //private PlayGround playGround;
     private String file = "";
+
+    private List<GameEventListener> listeners;
+
+    private int currentPlayerID;
+    private Turn currentTurn;
 
 
     public RiskServer() throws RemoteException {
@@ -64,8 +73,47 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         }
     }
 
+    @Override
+    public void startGame() throws RemoteException {
+        currentPlayerID = 0;
+        Player activePlayer = playerManager.getPlayerList().get(currentPlayerID);
+        currentTurn = new Turn(activePlayer, Turn.Phase.DISTRIBUTE);
+        notifyAll();
+    }
 
 
+    @Override
+    public void notifyPlayers(GameEvent g) throws RemoteException {
+        for (GameEventListener listener : listeners) {
+            // notify every listener in a dedicated thread
+            // (a notification should not block another one).
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listener.handleGameEvent(g);
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+        }
+    }
+
+    @Override
+    public void addGameEventListener(GameEventListener listener) throws RemoteException {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeGameEventListener(GameEventListener listener) throws RemoteException {
+        listeners.remove(listener);
+    }
+
+
+    //_____________________
     @Override
     public void setPlayerIDs() throws RemoteException {
         playerManager.setPlayerIDs();
@@ -109,8 +157,16 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
-    public void createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException, RemoteException {
+    public boolean createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException, RemoteException {
+        boolean admin = false;
+
+        if (playerManager.getPlayerList().size() < 1) {
+            System.out.println("admin created");
+            admin = true;
+        }
         playerManager.createPlayer(newPlayerID, newPlayerName);
+
+        return admin;
     }
 
     @Override
@@ -235,7 +291,17 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public void nextTurn(Player p) throws RemoteException {
-        //playGround.nextTurn(p);
+        Turn.Phase currentPhase = currentTurn.getPhase();
+        Turn.Phase nextPhase = currentPhase.next();
+
+        currentTurn.setPhase(nextPhase);
+        if (nextPhase == Turn.Phase.DISTRIBUTE) {
+            // Back to first phase? Switch players!
+            Player nextPlayer = playerManager.getPlayerList().get((++currentPlayerID) % playerManager.getPlayerList().size());
+            currentTurn.setPlayer(nextPlayer);
+        }
+
+        notifyPlayers(new GameControlEvent(currentTurn, GameControlEvent.GameControlEventType.NEXT_TURN));
     }
 
     @Override

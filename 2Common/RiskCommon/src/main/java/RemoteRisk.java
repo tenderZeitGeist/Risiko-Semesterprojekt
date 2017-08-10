@@ -1,3 +1,4 @@
+import events.GameEvent;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
@@ -18,6 +19,15 @@ interface RemoteRisk extends Remote {
 
 
 
+    void notifyPlayers(GameEvent g) throws RemoteException;
+
+    void startGame() throws RemoteException;
+
+    void addGameEventListener(GameEventListener listener) throws RemoteException;
+
+    void removeGameEventListener(GameEventListener listener) throws RemoteException;
+
+
 
     void setPlayerIDs() throws RemoteException;
 
@@ -35,7 +45,7 @@ interface RemoteRisk extends Remote {
 
     void writeMissionsFromFile() throws IOException, ClassNotFoundException, RemoteException;
 
-    void createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException, RemoteException;
+    boolean createPlayer(int newPlayerID, String newPlayerName) throws PlayerAlreadyExistsException, RemoteException;
 
     Vector<customCard> getCardList() throws RemoteException;
 

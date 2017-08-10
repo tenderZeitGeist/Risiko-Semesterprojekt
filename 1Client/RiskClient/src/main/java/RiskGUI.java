@@ -2,10 +2,9 @@
 //
 
 import customUiElements.JTextAreaOutputStream;
-import customUiElements.ScalingSliderDialog;
-import domain.events.GameActionEvent;
-import domain.events.GameControlEvent;
-import domain.events.GameEvent;
+import events.GameActionEvent;
+import events.GameControlEvent;
+import events.GameEvent;
 import exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
@@ -17,20 +16,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import static events.GameControlEvent.GameControlEventType.GAME_STARTED;
+import static events.GameControlEvent.GameControlEventType.NEXT_TURN;
+
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
  */
-public class RiskGUI extends UnicastRemoteObject {
+public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     private static final long serialVersionUID = -1337133713371337L;
 
@@ -42,6 +41,7 @@ public class RiskGUI extends UnicastRemoteObject {
 
     //UI
     private JFrame windowJFrame;
+    private JButton startGameButton;
     private JButton nextPhaseButton;
     private JButton loadGameButton;
     private JButton saveGameButton;
@@ -53,6 +53,7 @@ public class RiskGUI extends UnicastRemoteObject {
     private JPanel buttonPanel;
     private JTextArea customSysout;
     private JScrollPane console;
+    private boolean admin = false;
 
     //Objects
     private BufferedImage bgPicture;
@@ -79,31 +80,24 @@ public class RiskGUI extends UnicastRemoteObject {
     public RiskGUI() throws IOException {
         try {
             String serviceName = "RiskServer";
-                Registry registry = LocateRegistry.getRegistry(1337);
+            Registry registry = LocateRegistry.getRegistry(1337);
             risiko = (RemoteRisk) registry.lookup(serviceName);
+
+
+
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
+        risiko.addGameEventListener(this);
 
-
-        ScalingSliderDialog sc = new ScalingSliderDialog();
-        scalingFactor = sc.createScalingSliderDialog() / 100;
-
+        //ScalingSliderDialog sc = new ScalingSliderDialog();
+        //scalingFactor = sc.createScalingSliderDialog() / 100;
+        scalingFactor = 0.7;
         System.out.println(scalingFactor);
-        try {
-            //IDEA: we use the code as is, but ask the player to
-            //enter the name of his "alliance" (separatists, empire, rebels)
-            player = new Player(0, "xXxPussyD3str0yazxXx");
-            risiko.createPlayer(player.getPlayerID(), player.getPlayerName());
-
-        } catch (PlayerAlreadyExistsException e) {
-            e.printStackTrace();
-        }
+        createPlayerDialog();
         //init Pictures
         initPictureFiles();
-
-        risiko.distributeCountries();
 
 
         for (Country c : risiko.getCountryList()) {
@@ -113,6 +107,26 @@ public class RiskGUI extends UnicastRemoteObject {
         initMainWindow();
 
 
+    }
+
+
+    public void createPlayerDialog() throws RemoteException {
+        try {
+            //IDEA: we use the code as is, but ask the player to
+            //enter the name of his "alliance" (separatists, empire, rebels)
+
+
+            String name = JOptionPane.showInputDialog(windowJFrame, "Enter your alliances name:", "add alliance", JOptionPane.QUESTION_MESSAGE);
+
+            player = new Player(0, name);
+            if (risiko.createPlayer(player.getPlayerID(), player.getPlayerName())) {
+                admin = true;
+            }
+
+        } catch (PlayerAlreadyExistsException e) {
+            e.printStackTrace();
+            createPlayerDialog();
+        }
     }
 
     public void initMainWindow() throws RemoteException {
@@ -186,11 +200,7 @@ public class RiskGUI extends UnicastRemoteObject {
 //Init some Elements after adding them
         //Button Panel
         initButtonPanel();
-
-
 //End Initialisation
-
-
         windowJFrame.repaint();
         windowJFrame.pack();
         windowJFrame.setLocationRelativeTo(null);
@@ -211,12 +221,12 @@ public class RiskGUI extends UnicastRemoteObject {
             bgPicture = resizeBuffImg(bgPicture, (int) ((bgPicture.getWidth() * 0.5) * scalingFactor), (int) ((bgPicture.getHeight() * 0.5) * scalingFactor));
 
 
-            redFlag =  ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red.png"));
+            redFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red.png"));
             redFlag = redFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
-            greenFlag =  ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green.png"));
+            greenFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green.png"));
             greenFlag = greenFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
 
-            fgPictureFix =  ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
+            fgPictureFix = ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
             fgPicture = fgPictureFix;
 
@@ -247,29 +257,49 @@ public class RiskGUI extends UnicastRemoteObject {
     public void initButtonPanel() {
         //TODO change names of buttons maybe?!
         nextPhaseButton = new JButton("Next Phase");
+        startGameButton = new JButton("Start Game");
         saveGameButton = new JButton("Save Game");
         loadGameButton = new JButton("Load Game");
         nextPhaseButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
-
+        startGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         saveGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         loadGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         buttonPanel.add(nextPhaseButton, "wrap");
+        buttonPanel.add(startGameButton, "wrap");
         buttonPanel.add(saveGameButton, "wrap");
         buttonPanel.add(loadGameButton, "wrap");
+        if (admin) {
+            startGameButton.setEnabled(true);
+        } else {
+            startGameButton.setEnabled(false);
+        }
         nextPhaseButton.setEnabled(false);
         saveGameButton.setEnabled(false);
         loadGameButton.setEnabled(true);
 
+        startGameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    risiko.nextPhase();
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
 
         nextPhaseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                try {
+                    risiko.nextPhase();
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
         saveGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
             }
         });
 
@@ -369,7 +399,13 @@ public class RiskGUI extends UnicastRemoteObject {
     public void roundManger() {
     }
 
-    public void handleGameEvent(GameEvent event) {
+
+    /**
+     * WE DONT KNOW ANY OF THIS STUFF, ALL FROM TESCHKE
+     * @param event
+     * @throws RemoteException
+     */
+    public void handleGameEvent(GameEvent event) throws RemoteException{
         if (event instanceof GameControlEvent) {
             GameControlEvent gce = (GameControlEvent) event;
             switch (gce.getType()) {
@@ -447,5 +483,6 @@ public class RiskGUI extends UnicastRemoteObject {
             }
         }
     }
+
 
 }
