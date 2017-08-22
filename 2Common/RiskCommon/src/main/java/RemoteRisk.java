@@ -93,7 +93,7 @@ interface RemoteRisk extends Remote {
 
     Turn getTurn() throws RemoteException;
 
-    void nextTurn(Player p) throws RemoteException;
+    void nextTurn() throws RemoteException;
 
     void nextPhase() throws RemoteException;
 

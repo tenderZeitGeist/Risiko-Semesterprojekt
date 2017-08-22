@@ -4,6 +4,7 @@ import domain.PlayerVerwaltung;
 import domain.WorldVerwaltung;
 import events.GameControlEvent;
 import events.GameEvent;
+import events.GameControlEvent.GameControlEventType;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
@@ -39,6 +40,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
 
     public RiskServer() throws RemoteException {
+        listeners = new Vector<>();
         playerManager = new PlayerVerwaltung();
         worldManager = new WorldVerwaltung();
         missionVerwaltung = new MissionVerwaltung();
@@ -78,7 +80,9 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         currentPlayerID = 0;
         Player activePlayer = playerManager.getPlayerList().get(currentPlayerID);
         currentTurn = new Turn(activePlayer, Turn.Phase.DISTRIBUTE);
-        notifyAll();
+        notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_STARTED));
+
+        System.out.println("game started");
     }
 
 
@@ -104,6 +108,8 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public void addGameEventListener(GameEventListener listener) throws RemoteException {
+        System.out.println("xc");
+        System.out.println("xc");
         listeners.add(listener);
     }
 
@@ -188,6 +194,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     @Override
     public void distributeCountries() throws RemoteException {
         worldManager.distributeCountries(playerManager.getPlayerList());
+        System.out.println("countries distributed");
     }
 
     @Override
@@ -290,23 +297,21 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
-    public void nextTurn(Player p) throws RemoteException {
+    public void nextTurn() throws RemoteException {
         Turn.Phase currentPhase = currentTurn.getPhase();
         Turn.Phase nextPhase = currentPhase.next();
-
         currentTurn.setPhase(nextPhase);
         if (nextPhase == Turn.Phase.DISTRIBUTE) {
             // Back to first phase? Switch players!
             Player nextPlayer = playerManager.getPlayerList().get((++currentPlayerID) % playerManager.getPlayerList().size());
             currentTurn.setPlayer(nextPlayer);
         }
-
         notifyPlayers(new GameControlEvent(currentTurn, GameControlEvent.GameControlEventType.NEXT_TURN));
     }
 
     @Override
     public void nextPhase() throws RemoteException {
-        //playGround.nextPhase();
+
     }
 
     @Override

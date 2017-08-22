@@ -135,8 +135,8 @@ public class WorldVerwaltung {
         }
     }
 
-    public Vector < Player > deSerializePlayers() throws IOException, ClassNotFoundException {
-        Vector < Player > playerList = new Vector<>();
+    public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
+        Vector<Player> playerList = new Vector<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
 
             while (true) {
@@ -351,7 +351,6 @@ public class WorldVerwaltung {
 
 
     public void distributeCountries(List<Player> playerList) throws ArithmeticException {
-        //Thanks to nox
         int counter = 0;
         for (Continent continent : continentList) {
             Vector<Country> tempCountryList = new Vector<>(continent.getContinentCountries());
@@ -397,7 +396,7 @@ public class WorldVerwaltung {
 
     //OWNED
     public Vector<Country> loadOwnedCountryList(Player player) {
-        Vector<Country> ownedCountriesList = new Vector <Country> (  );
+        Vector<Country> ownedCountriesList = new Vector<Country>();
 
         for (Continent continent : continentList) {
             for (Country country : continent.getContinentCountries()) {
@@ -409,12 +408,12 @@ public class WorldVerwaltung {
         return ownedCountriesList;
     }
 
-    public Vector<Country> loadEnemyCountryList(Player player){
-        Vector<Country> enemyCountriesList = new Vector <> (  );
-        for ( Continent continent : continentList ){
-            for ( Country currentCountry : continent.getContinentCountries () ){
-                if( ! currentCountry.getOwningPlayer ( ).equals(player) ){
-                    enemyCountriesList.add(  currentCountry );
+    public Vector<Country> loadEnemyCountryList(Player player) {
+        Vector<Country> enemyCountriesList = new Vector<>();
+        for (Continent continent : continentList) {
+            for (Country currentCountry : continent.getContinentCountries()) {
+                if (!currentCountry.getOwningPlayer().equals(player)) {
+                    enemyCountriesList.add(currentCountry);
                 }
             }
         }
@@ -534,7 +533,7 @@ public class WorldVerwaltung {
             if (!country.getOwningPlayer().equals(player))
                 return false;
         }
-        if(index!=0) {
+        if (index != 0) {
             return true;
         }
         return false;
@@ -590,11 +589,11 @@ public class WorldVerwaltung {
         }
     }
 
-    public boolean annihilation ( Player p ) {
+    public boolean annihilation(Player p) {
 
-        for ( Continent currentContinent : continentList ) {
-            for ( Country currentCountry : currentContinent.getContinentCountries ( ) ) {
-                if ( ! p.equals ( currentCountry.getOwningPlayer ( ) ) ) {
+        for (Continent currentContinent : continentList) {
+            for (Country currentCountry : currentContinent.getContinentCountries()) {
+                if (!p.equals(currentCountry.getOwningPlayer())) {
                     return false;
                 }
             }
@@ -623,9 +622,6 @@ public class WorldVerwaltung {
         }
         return countryList;
     }
-
-
-
 
 
 }

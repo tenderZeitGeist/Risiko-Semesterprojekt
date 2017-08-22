@@ -2,6 +2,7 @@
 //
 
 import customUiElements.JTextAreaOutputStream;
+import customUiElements.ScalingSliderDialog;
 import events.GameActionEvent;
 import events.GameControlEvent;
 import events.GameEvent;
@@ -22,9 +23,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-
-import static events.GameControlEvent.GameControlEventType.GAME_STARTED;
-import static events.GameControlEvent.GameControlEventType.NEXT_TURN;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
@@ -82,31 +80,21 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             String serviceName = "RiskServer";
             Registry registry = LocateRegistry.getRegistry(1337);
             risiko = (RemoteRisk) registry.lookup(serviceName);
-
-
-
+            risiko.addGameEventListener(this);
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
-        risiko.addGameEventListener(this);
 
-        //ScalingSliderDialog sc = new ScalingSliderDialog();
-        //scalingFactor = sc.createScalingSliderDialog() / 100;
-        scalingFactor = 0.7;
+
+        ScalingSliderDialog sc = new ScalingSliderDialog();
+        scalingFactor = sc.createScalingSliderDialog() / 100;
+        //scalingFactor = 0.7;
         System.out.println(scalingFactor);
         createPlayerDialog();
         //init Pictures
         initPictureFiles();
-
-
-        for (Country c : risiko.getCountryList()) {
-            c.setX((int) (c.getX() * scalingFactor));
-            c.setY((int) (c.getY() * scalingFactor));
-        }
         initMainWindow();
-
-
     }
 
 
@@ -158,7 +146,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         windowJFrame.getContentPane().setBackground(Color.BLACK);
 
 
-//create new Elements
+        //create new Elements
         //Init new Systemout
         initSysout();
 
@@ -175,9 +163,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         glass.setVisible(true);
         glass.setLayout(null);
 
-
         //Status Panel
         initStatusPanel();
+
         //ButtonPanel
         buttonPanel = new JPanel(new MigLayout(
                 "ins 5",
@@ -186,28 +174,24 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         ));
         buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setForeground(Color.WHITE);
-        //mouse hover effects init
-        createMouseHoverListener(fgPictureLabel, bgPicture);
 
-
-//Add those Elements to main Frame
-
+        //Add those Elements to main Frame
         windowJFrame.add(gamePane, "span 1 2");
         windowJFrame.add(statusPanel, "wrap");
         windowJFrame.add(buttonPanel, "aligny top, center, wrap");
         windowJFrame.add(console, "grow");
 
-//Init some Elements after adding them
+        //Init some Elements after adding them
         //Button Panel
         initButtonPanel();
-//End Initialisation
+        //End Initialisation
         windowJFrame.repaint();
         windowJFrame.pack();
         windowJFrame.setLocationRelativeTo(null);
         windowJFrame.setVisible(true);
 
         //this is some cool init stuffz:)
-        paintFlagLabel();
+        //paintFlagLabel();
         String workingDir = System.getProperty("user.dir");
         System.out.println("Current working directory : " + workingDir);
 
@@ -270,15 +254,23 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         buttonPanel.add(loadGameButton, "wrap");
         if (admin) {
             startGameButton.setEnabled(true);
+            windowJFrame.setTitle(windowJFrame.getTitle() + " ADMIN ");
         } else {
             startGameButton.setEnabled(false);
         }
         nextPhaseButton.setEnabled(false);
         saveGameButton.setEnabled(false);
-        loadGameButton.setEnabled(true);
+        loadGameButton.setEnabled(false);
 
         startGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                try {
+                    risiko.distributeCountries();
+                    risiko.startGame();
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+
                 try {
                     risiko.nextPhase();
                 } catch (RemoteException e1) {
@@ -287,11 +279,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             }
         });
 
-
         nextPhaseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    risiko.nextPhase();
+                    risiko.nextTurn();
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -305,7 +296,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
         loadGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
             }
         });
     }
@@ -323,9 +313,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         console.setBorder(null);
         JTextAreaOutputStream out = new JTextAreaOutputStream(customSysout);
         System.setOut(new PrintStream(out));
-        //following does not work, the window must be painted before!
-        //String workingDir = System.getProperty("user.dir");
-        //System.out.println("Current working directory : " + workingDir);
     }
     //End of init functions
 
@@ -370,10 +357,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
     public void paintFlagLabel() throws RemoteException {
+        glass.removeAll();
         for (Country currentCountry : risiko.getCountryList()) {
             JLabel flag = new JLabel();
-            int x = currentCountry.getX();
-            int y = currentCountry.getY();
+            int x = (int) (currentCountry.getX() * scalingFactor);
+            int y = (int) (currentCountry.getY() * scalingFactor);
 
             if (currentCountry.getOwningPlayer().equals(player)) {
                 flag.setIcon(new ImageIcon(greenFlag));
@@ -384,9 +372,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             flag.setBounds(x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height);
             glass.add(flag);
         }
-
         windowJFrame.repaint();
-
     }
 
 
@@ -402,50 +388,40 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     /**
      * WE DONT KNOW ANY OF THIS STUFF, ALL FROM TESCHKE
+     *
      * @param event
      * @throws RemoteException
      */
-    public void handleGameEvent(GameEvent event) throws RemoteException{
+    public void handleGameEvent(GameEvent event) throws RemoteException {
         if (event instanceof GameControlEvent) {
             GameControlEvent gce = (GameControlEvent) event;
             switch (gce.getType()) {
                 case GAME_STARTED:
-                    JOptionPane.showMessageDialog(windowJFrame,
-                            "The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.",
-                            "Game Started",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    // break statement deliberately omitted,
-                    // since game event also carries information on next turn
-                    //	  break;
+                    createMouseHoverListener(fgPictureLabel, bgPicture);
+                    startGameButton.setEnabled(false);
+                    System.out.println("GO GO GO MOTHERFUCKER");
+                    System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
+
                 case NEXT_TURN:
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
                     if (currentPlayer.equals(player)) {
-                        // It is this player's turn!
-                        // Update UI, e.g. enable UI elements such as buttons
                         System.out.println("Game Action: Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-                        //btnGameAction.setEnabled(true);
+                        phaseHandler(currentTurn.getPhase());
                         nextPhaseButton.setEnabled(true);
                     } else {
-                        // It is another player's turn!
-                        // Nothing to do; just deactivate UI...
-                        System.out.println("Waiting for my turn...");
-                        //btnGameAction.setEnabled(false);
+
+                        System.out.println("Still not my turner");
+
                         nextPhaseButton.setEnabled(false);
                     }
                     break;
                 case GAME_OVER:
-                    //btnGameAction.setEnabled(false);
                     JOptionPane.showMessageDialog(windowJFrame,
                             "Game over. Winner is " + gce.getPlayer().getPlayerName() + ".",
                             "Game Over",
                             JOptionPane.INFORMATION_MESSAGE);
-                /*try {
-                    server.removeGameEventListener(this);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
+
                     System.exit(0);
                     break;
                 default:
@@ -481,6 +457,27 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     default:
                 }
             }
+        }
+    }
+
+    public void phaseHandler(Turn.Phase p) throws RemoteException {
+        switch (p) {
+            case DISTRIBUTE:
+                glass.removeAll();
+                paintFlagLabel();
+
+                break;
+            case ATTACK:
+                glass.removeAll();
+                windowJFrame.repaint();
+
+
+                break;
+            case REDISTRIBUTE:
+                glass.removeAll();
+                windowJFrame.repaint();
+
+                break;
         }
     }
 
