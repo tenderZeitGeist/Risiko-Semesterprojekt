@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../1Client/RiskClient/Risk-Client.iml" filepath="$PROJECT_DIR$/../../1Client/RiskClient/Risk-Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../2Common/RiskCommon/Risk-Common.iml" filepath="$PROJECT_DIR$/../../2Common/RiskCommon/Risk-Common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../3Server/RiskServer/Risk-Server.iml" filepath="$PROJECT_DIR$/../../3Server/RiskServer/Risk-Server.iml" />
+    </modules>
+  </component>
+</project>

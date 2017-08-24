@@ -1,12 +1,4 @@
-.idea/misc.xml
-*.xml
-*.xml___jb_tmp___
-.idea
-*.iml
-.idea/vcs.xml
-*.idea
-*/workspare.xml
-.idea/workspace.xml
+
 out/*
 ./out/*
 ./out
@@ -15,5 +7,4 @@ out
 out*
 
 1Client/RiskClient/target/classes/
-
 *.class
