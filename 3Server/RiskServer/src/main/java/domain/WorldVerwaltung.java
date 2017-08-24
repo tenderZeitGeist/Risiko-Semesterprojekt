@@ -308,8 +308,13 @@ public class WorldVerwaltung {
     }
 
     public void setForcesToCountry(Country country, int forces) {
-        int n = country.getLocalForces();
-        country.setLocalForces(n + forces);
+        for (Continent continent : continentList) {
+            for (Country currentCountry : continent.getContinentCountries()) {
+                if (currentCountry.getCountryName().equals(country.getCountryName())) {
+                    currentCountry.setLocalForces(currentCountry.getLocalForces() + forces);
+                }
+            }
+        }
     }
 
     public int returnForcesPerRoundsPerPlayer(Player player) { //, boolean cards ) {

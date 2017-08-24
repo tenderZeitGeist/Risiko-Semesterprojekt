@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Vector;
 
 /**
  * Created by YEAH BOIIIIIIIIIIIIIII on 17.07.2017.
@@ -36,6 +37,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     //this should be replaced with server later
     private RemoteRisk risiko;
 
+    private Turn.Phase currentPhase = null;
+    private int forcesLeft = 0;
 
     //UI
     private JFrame windowJFrame;
@@ -356,14 +359,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         });
     }
 
-    public void paintFlagLabel() throws RemoteException {
+
+    public void paintFlagLabel(Vector<Country> countriesToPaint, boolean state) throws RemoteException {
         glass.removeAll();
-        for (Country currentCountry : risiko.getCountryList()) {
+        for (Country currentCountry : countriesToPaint) {
             JLabel flag = new JLabel();
             int x = (int) (currentCountry.getX() * scalingFactor);
             int y = (int) (currentCountry.getY() * scalingFactor);
 
-            if (currentCountry.getOwningPlayer().equals(player)) {
+            if (state) {
                 flag.setIcon(new ImageIcon(greenFlag));
             } else {
                 flag.setIcon(new ImageIcon(redFlag));
@@ -403,12 +407,18 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
 
                 case NEXT_TURN:
+
+                    forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
                     if (currentPlayer.equals(player)) {
-                        System.out.println("Game Action: Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-                        phaseHandler(currentTurn.getPhase());
-                        nextPhaseButton.setEnabled(true);
+                        System.out.println("Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
+
+
+                        currentPhase = currentTurn.getPhase();
+                        phaseHandler();
+
+                        //nextPhaseButton.setEnabled(true);
                     } else {
 
                         System.out.println("Still not my turner");
@@ -460,11 +470,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         }
     }
 
-    public void phaseHandler(Turn.Phase p) throws RemoteException {
-        switch (p) {
+    public void phaseHandler() throws RemoteException {
+        switch (currentPhase) {
             case DISTRIBUTE:
                 glass.removeAll();
-                paintFlagLabel();
+                System.out.println("you have " + forcesLeft + " forces left this round");
+                distributeForces();
+
 
                 break;
             case ATTACK:
@@ -476,6 +488,93 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             case REDISTRIBUTE:
                 glass.removeAll();
                 windowJFrame.repaint();
+
+                break;
+        }
+    }
+
+    public void distributeForces() throws RemoteException {
+
+        paintFlagLabel(risiko.loadOwnedCountryList(player), true);
+        createMouseClickListener(fgPictureLabel, bgPicture);
+
+    }
+
+    public void createMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
+        fgPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
+                Color color = new Color(packetInt, false);
+
+
+                String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+
+                if (!hex.equals("000000")) {
+                    Country tempSelectedCountry = null;
+                    try {
+                        tempSelectedCountry = risiko.compareHEX(hex);
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
+                    if (tempSelectedCountry != null && tempSelectedCountry.getOwningPlayer().equals(player)) {
+                        hovered = true;
+
+                        try {
+                            countryClicked(tempSelectedCountry);
+                        } catch (RemoteException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                } else if (hex.equals("000000")) {
+
+                }
+            }
+        });
+    }
+
+    public void deleteMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
+        fgPanel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+        });
+    }
+
+    /**
+     * executed when u clicked a country that belongs to you
+     *
+     * @param c
+     */
+    public void countryClicked(Country c) throws RemoteException {
+        switch (currentPhase) {
+            case DISTRIBUTE:
+                boolean t = true;
+                while (t) {
+                    int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame, "how many forces do you want to set? /n you have " + forcesLeft + " forces", "set forces!", 0));
+                    if (forcesSet <= forcesLeft) {
+                        forcesLeft -= forcesSet;
+                        risiko.setForcesToCountry(c,forcesSet);
+
+                        t = false;
+                        System.out.println("you have " + forcesLeft + " forces left this round");
+                        if(forcesLeft == 0) {
+                            nextPhaseButton.setEnabled(true);
+                        }
+
+                    } else {
+                        JOptionPane.showMessageDialog(windowJFrame,
+                                "you did not enter a valid value",
+                                "shit!",
+                                JOptionPane.QUESTION_MESSAGE);
+                    }
+                }
+                break;
+            case ATTACK:
+
+                break;
+            case REDISTRIBUTE:
 
                 break;
         }
