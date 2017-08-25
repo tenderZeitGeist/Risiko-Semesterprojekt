@@ -11,9 +11,9 @@
         <module name="Risk-Server" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Risk-Client" target="1.5" />
-      <module name="Risk-Common" target="1.7" />
+    <bytecodeTargetLevel target="1.9">
+      <module name="Risk-Client" target="1.8" />
+      <module name="Risk-Common" target="1.8" />
       <module name="Risk-Server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
