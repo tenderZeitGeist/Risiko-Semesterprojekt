@@ -66,7 +66,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private boolean hovered = false;
 
     private MouseMotionListener mml = null;
-    private boolean attacking = false;
+    private boolean isClicked = false;
 
     public static void main(String[] args) {
         //catch exceptions maybe?!
@@ -107,7 +107,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             //enter the name of his "alliance" (separatists, empire, rebels)
 
 
-            String name = JOptionPane.showInputDialog(windowJFrame, "Enter your alliances name:", "add alliance", JOptionPane.QUESTION_MESSAGE);
+            String name = JOptionPane.showInputDialog(windowJFrame, "Enter your alliances name:",
+                    "add alliance",
+                    JOptionPane.QUESTION_MESSAGE);
 
             player = new Player(0, name);
             if (risiko.createPlayer(player.getPlayerID(), player.getPlayerName())) {
@@ -329,6 +331,88 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         return dimg;
     }
 
+    public void createMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
+        fgPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
+                Color color = new Color(packetInt, false);
+
+                String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+
+                Country tempSelectedCountry = null;
+                try {
+                    tempSelectedCountry = risiko.compareHEX(hex);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+
+                if (!hex.equals("000000")) {
+                    switch (currentPhase) {
+                        case DISTRIBUTE:
+                            if(tempSelectedCountry != null){
+                                isClicked = true;
+                            }
+                            break;
+                        case ATTACK:
+                            isClicked = false;
+                            glass.removeAll();
+
+                            try {
+                                for (Country c1 : risiko.loadAttackingCountriesList(player)) {
+
+                                    if (c1.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                                        glass.removeAll();
+                                        Vector<Country> cV = new Vector<>();
+                                        cV.add(c1);
+                                        paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(c1), "red");
+                                        paintFlagLabel(cV, "green");
+                                        isClicked = true;
+                                    }
+                                }
+                            } catch (NoEnemyCountriesNearException | RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            break;
+                        case REDISTRIBUTE:
+                            break;
+                        default:
+                            break;
+                    }
+                } else if (hex.equals("000000") || isClicked) {
+                    switch (currentPhase) {
+                        case DISTRIBUTE:
+                            break;
+                        case ATTACK:
+                            glass.removeAll();
+                            try {
+                                paintFlagLabel(risiko.loadAttackingCountriesList(player), "green");
+                            } catch (RemoteException | NoEnemyCountriesNearException e1) {
+                                e1.printStackTrace();
+                            }
+                            isClicked = false;
+                            break;
+                        case REDISTRIBUTE:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+
+                if ( tempSelectedCountry.getOwningPlayer().equals(player) && isClicked) {
+                    hovered = true;
+                    try {
+                        countryClicked(tempSelectedCountry);
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     public void createMouseHoverListener(JLabel fgPanel, final BufferedImage bgPicturex) {
         fgPanel.removeMouseMotionListener(mml);
         mml = new MouseAdapter() {
@@ -353,7 +437,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                 case DISTRIBUTE:
                                     break;
                                 case ATTACK:
-                                    if (!attacking) {
+                                    if (!isClicked) {
                                         try {
                                             for (Country c : risiko.loadAttackingCountriesList(player)) {
                                                 if (c.getCountryName().equals(tempSelectedCountry.getCountryName())) {
@@ -364,9 +448,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                     paintFlagLabel(cV, "green");
                                                 }
                                             }
-                                        } catch (NoEnemyCountriesNearException e1) {
-
-                                        } catch (RemoteException e1) {
+                                        } catch (NoEnemyCountriesNearException | RemoteException e1) {
                                             e1.printStackTrace();
                                         }
                                     }
@@ -385,13 +467,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         case DISTRIBUTE:
                             break;
                         case ATTACK:
-                            if (!attacking) {
+                            if (!isClicked) {
                                 try {
                                     glass.removeAll();
                                     paintFlagLabel(risiko.loadAttackingCountriesList(player), "green");
                                 } catch (RemoteException | NoEnemyCountriesNearException e1) {
 
                                 }
+                            } else {
+
                             }
                             break;
                         case REDISTRIBUTE:
@@ -542,7 +626,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             case ATTACK:
                 glass.removeAll();
                 windowJFrame.repaint();
-
+                isClicked = false;
                 attackPhase();
 
                 break;
@@ -552,47 +636,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                 break;
         }
-    }
-
-    public void distributeForces() throws RemoteException {
-
-        paintFlagLabel(risiko.loadOwnedCountryList(player), "green");
-        createMouseClickListener(fgPictureLabel, bgPicture);
-
-    }
-
-    public void createMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
-        fgPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
-                Color color = new Color(packetInt, false);
-
-
-                String hex = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
-
-                if (!hex.equals("000000")) {
-                    Country tempSelectedCountry = null;
-                    try {
-                        tempSelectedCountry = risiko.compareHEX(hex);
-                    } catch (RemoteException e1) {
-                        e1.printStackTrace();
-                    }
-                    if (tempSelectedCountry != null && tempSelectedCountry.getOwningPlayer().equals(player)) {
-                        hovered = true;
-
-                        try {
-                            countryClicked(tempSelectedCountry);
-                        } catch (RemoteException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-                } else if (hex.equals("000000")) {
-                    //repaint shit here
-                }
-            }
-        });
     }
 
     public void deleteMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
@@ -606,52 +649,46 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     /**
      * executed when u clicked a country that belongs to you
      *
-     * @param c
+     * @param country
      */
-    public void countryClicked(Country c) throws RemoteException {
+    public void countryClicked(Country country) throws RemoteException {
+        boolean t = true;
         switch (currentPhase) {
             case DISTRIBUTE:
-                boolean t = true;
                 while (t) {
-                    int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame, "how many forces do you want to set? /n you have " + forcesLeft + " forces", "set forces!", 0));
+                    int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
+                            "How many forces do you want to set?\n"
+                                    + "You have " + forcesLeft + " forces.",
+                            "Set forces!",
+                            JOptionPane.OK_CANCEL_OPTION));
                     if (forcesSet <= forcesLeft) {
                         forcesLeft -= forcesSet;
-                        risiko.setForcesToCountry(c, forcesSet);
+                        risiko.setForcesToCountry(country, forcesSet);
 
                         t = false;
-                        System.out.println("you have " + forcesLeft + " forces left this round");
+                        System.out.println("You have " + forcesLeft + " forces left this round");
                         if (forcesLeft == 0) {
                             nextPhaseButton.setEnabled(true);
                         }
 
                     } else {
                         JOptionPane.showMessageDialog(windowJFrame,
-                                "you did not enter a valid value",
-                                "shit!",
+                                "You did not enter a valid value",
+                                "Wrong amount!",
                                 JOptionPane.QUESTION_MESSAGE);
                     }
                 }
                 break;
             case ATTACK:
-                attacking = false;
-                glass.removeAll();
-                windowJFrame.repaint();
-                try {
-                    for (Country c1 : risiko.loadAttackingCountriesList(player)) {
+/*                while(t){
+                    Vector<String> possibilities = new Vector<String>();
+                    Country enemyCountry;
+                    for( int i : country.getNeighbouringCountries()){
+                        for ( Country currentCountry : risiko.getCountryList()){
 
-                        if (c1.getCountryName().equals(c.getCountryName())) {
-                            Vector<Country> cV = new Vector<>();
-                            cV.add(c1);
-                            paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(c), "red");
-                            paintFlagLabel(cV, "green");
-                            attacking = true;
                         }
                     }
-                } catch (NoEnemyCountriesNearException e1) {
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                }
-
+                }*/
                 break;
             case REDISTRIBUTE:
 
@@ -659,13 +696,20 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         }
     }
 
-
+    // TODO Put those methods inside the phaseHandler?
     public void attackPhase() throws RemoteException {
         try {
             paintFlagLabel(risiko.loadAttackingCountriesList(player), "green");
         } catch (NoEnemyCountriesNearException e) {
 
         }
+
+    }
+
+    public void distributeForces() throws RemoteException {
+
+        paintFlagLabel(risiko.loadOwnedCountryList(player), "green");
+        createMouseClickListener(fgPictureLabel, bgPicture);
 
     }
 
