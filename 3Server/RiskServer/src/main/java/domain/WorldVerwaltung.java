@@ -311,7 +311,7 @@ public class WorldVerwaltung {
         for (Continent continent : continentList) {
             for (Country currentCountry : continent.getContinentCountries()) {
                 if (currentCountry.getCountryName().equals(country.getCountryName())) {
-                    currentCountry.setLocalForces(currentCountry.getLocalForces() + forces);
+                    currentCountry.setLocalForces(forces);
                 }
             }
         }

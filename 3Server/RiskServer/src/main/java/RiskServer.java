@@ -2,9 +2,11 @@
 import domain.MissionVerwaltung;
 import domain.PlayerVerwaltung;
 import domain.WorldVerwaltung;
+import events.GameActionEvent;
+import events.GameActionEvent.GameActionEventType;
 import events.GameControlEvent;
-import events.GameEvent;
 import events.GameControlEvent.GameControlEventType;
+import events.GameEvent;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
@@ -16,6 +18,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -96,6 +100,26 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
                 public void run() {
                     try {
                         listener.handleGameEvent(g);
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+        }
+    }
+
+
+    public void broadCastText(String s) throws RemoteException {
+        for (GameEventListener listener : listeners) {
+            // notify every listener in a dedicated thread
+            // (a notification should not block another one).
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listener.broadcast(s);
                     } catch (RemoteException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -248,8 +272,34 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
-    public boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces) throws RemoteException {
-        //return playGround.battle(attackingCountry, defendingCountry, attackerForces, defenderForces);
+    public boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces) throws RemoteException {
+        int defendingForces;
+
+        if (defendingCountry.getLocalForces() < 2) {
+            defendingForces = 1;
+        } else {
+            defendingForces = 2;
+        }
+        int[] forcesArray = compareDice(attackerForces, defendingForces);
+        attackerForces -= forcesArray[0];
+        defendingForces -= forcesArray[1];
+        if (defendingForces < 1) {
+            //country lost
+        } else {
+            //just subtract forces
+            setForcesToCountry(attackingCountry, attackerForces);
+            setForcesToCountry(defendingCountry, defendingForces);
+
+            broadCastText(defendingCountry.getCountryName() + "looses " + forcesArray[1]
+                    + ".\n " + attackingCountry.getCountryName() + " looses " + forcesArray[0]
+                    + "forces. \n But " + attackingCountry.getOwningPlayer() + " does not conquer "
+                    + defendingCountry.getCountryName() + ".");
+
+            GameActionEventType type = GameActionEventType.values()[0];
+            notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
+        }
+
+
         return false;
     }
 
@@ -343,5 +393,50 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     public int getNumberOfCountriesOfPlayer(Player player) throws RemoteException {
         return worldManager.getNumberOfCountriesOfPlayer(player);
     }
+
+    public int[] compareDice(int attackerRolls, int defenderRolls) {
+
+        int[] forcesArray = new int[]{0, 0};
+        Integer[] attackerDice = new Integer[attackerRolls];
+        Integer[] defenderDice = new Integer[defenderRolls];
+
+        for (int i = 0; i < defenderDice.length; i++) {
+            defenderDice[i] = (int) (Math.random() * 6) + 1;
+        }
+
+
+        for (int i = 0; i < attackerDice.length; i++) {
+            attackerDice[i] = (int) (Math.random() * 6) + 1;
+        }
+
+
+        Arrays.sort(attackerDice, Collections.reverseOrder());
+        Arrays.sort(defenderDice, Collections.reverseOrder());
+
+        if (attackerDice.length < defenderDice.length) {
+            for (int i = 0; i < attackerDice.length; i++) {
+                System.out.println("Attacker rolls " + attackerDice[i + 1] + " with the " + i + " roll"
+                        + " while Defender rolls a " + defenderDice[i + 1] + ".");
+                if (attackerDice[i] <= defenderDice[i]) {
+                    forcesArray[0]++;
+                } else {
+                    forcesArray[1]++;
+                }
+            }
+
+        } else {
+            for (int k = 0; k < defenderDice.length; k++) {
+                System.out.println("Attacker rolls " + attackerDice[k] + " with the " + k + " roll"
+                        + " while Defender rolls a " + defenderDice[k] + ".");
+                if (attackerDice[k] <= defenderDice[k]) {
+                    forcesArray[0]++;
+                } else {
+                    forcesArray[1]++;
+                }
+            }
+        }
+        return forcesArray;
+    }
+
 
 }

@@ -73,7 +73,7 @@ interface RemoteRisk extends Remote {
 
     Vector<Country> loadAttackingCountriesList(Player player) throws NoEnemyCountriesNearException, RemoteException;
 
-    boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces, int defenderForces) throws RemoteException;
+    boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces) throws RemoteException;
 
     void moveForces(Country oldCountry, Country newCountry, int forces) throws RemoteException;
 

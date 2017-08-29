@@ -68,6 +68,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private MouseMotionListener mml = null;
     private boolean isClicked = false;
 
+    private Country tempCountry1 = null, TempCountry2 = null;
+
+
     public static void main(String[] args) {
         //catch exceptions maybe?!
         try {
@@ -347,10 +350,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     e1.printStackTrace();
                 }
 
-                if (!hex.equals("000000")) {
+                if (!hex.equals("000000") || !isClicked) {
                     switch (currentPhase) {
                         case DISTRIBUTE:
-                            if(tempSelectedCountry != null){
+                            if (tempSelectedCountry != null) {
                                 isClicked = true;
                             }
                             break;
@@ -399,9 +402,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             break;
                     }
                 }
-
-
-                if ( tempSelectedCountry.getOwningPlayer().equals(player) && isClicked) {
+                if (isClicked) {
                     hovered = true;
                     try {
                         countryClicked(tempSelectedCountry);
@@ -587,7 +588,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 switch (gae.getType()) {
                     case ATTACK:
                         JOptionPane.showMessageDialog(windowJFrame,
-                                "You are attacked by player " + gae.getPlayer().getPlayerName() + ".",
+                                "You are were by player " + gae.getPlayer().getPlayerName() + ".",
                                 "Attack!",
                                 JOptionPane.WARNING_MESSAGE);
                         break;
@@ -619,15 +620,19 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             case DISTRIBUTE:
                 glass.removeAll();
                 System.out.println("you have " + forcesLeft + " forces left this round");
-                distributeForces();
-
+                paintFlagLabel(risiko.loadOwnedCountryList(player), "green");
+                createMouseClickListener(fgPictureLabel, bgPicture);
 
                 break;
             case ATTACK:
                 glass.removeAll();
                 windowJFrame.repaint();
                 isClicked = false;
-                attackPhase();
+                try {
+                    paintFlagLabel(risiko.loadAttackingCountriesList(player), "green");
+                } catch (NoEnemyCountriesNearException e) {
+
+                }
 
                 break;
             case REDISTRIBUTE:
@@ -663,7 +668,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             JOptionPane.OK_CANCEL_OPTION));
                     if (forcesSet <= forcesLeft) {
                         forcesLeft -= forcesSet;
-                        risiko.setForcesToCountry(country, forcesSet);
+                        risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
                         t = false;
                         System.out.println("You have " + forcesLeft + " forces left this round");
@@ -680,15 +685,22 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 }
                 break;
             case ATTACK:
-/*                while(t){
-                    Vector<String> possibilities = new Vector<String>();
-                    Country enemyCountry;
-                    for( int i : country.getNeighbouringCountries()){
-                        for ( Country currentCountry : risiko.getCountryList()){
+                if(tempCountry1 == null) {
+                    tempCountry1 = country;
+                } else {
 
-                        }
-                    }
-                }*/
+                    int attackingForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
+                            "How many forces do you want to use for the attack?\n" +
+                                    country.getCountryName() + " has "+country.getLocalForces()+" forces\n" +
+                                    "You can use up to " + (country.getLocalForces()-1) + " forces.",
+                            "Set forces!",
+                            JOptionPane.WARNING_MESSAGE));
+
+                    risiko.battle(tempCountry1, country, attackingForces);
+
+                    tempCountry1 = null;
+                }
+
                 break;
             case REDISTRIBUTE:
 
@@ -696,21 +708,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         }
     }
 
-    // TODO Put those methods inside the phaseHandler?
-    public void attackPhase() throws RemoteException {
-        try {
-            paintFlagLabel(risiko.loadAttackingCountriesList(player), "green");
-        } catch (NoEnemyCountriesNearException e) {
-
-        }
-
-    }
-
-    public void distributeForces() throws RemoteException {
-
-        paintFlagLabel(risiko.loadOwnedCountryList(player), "green");
-        createMouseClickListener(fgPictureLabel, bgPicture);
-
+    @Override
+    public void broadcast(String broadcastText) {
+        System.out.println(broadcastText);
     }
 
 }
