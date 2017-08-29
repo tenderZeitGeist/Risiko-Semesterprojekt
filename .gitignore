@@ -8,3 +8,5 @@ out*
 
 1Client/RiskClient/target/classes/
 *.class
+
+0Risk/Risk-Root/\.idea/workspace\.xml
