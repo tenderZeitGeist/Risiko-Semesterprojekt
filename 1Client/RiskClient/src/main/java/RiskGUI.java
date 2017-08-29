@@ -3,7 +3,6 @@ import customUiElements.ScalingSliderDialog;
 import events.GameActionEvent;
 import events.GameControlEvent;
 import events.GameEvent;
-import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
 import exceptions.PlayerAlreadyExistsException;
 import net.miginfocom.swing.MigLayout;
@@ -380,16 +379,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                             break;
                         case REDISTRIBUTE:
-                        try {
-                            for (Country c2 : risiko.loadDistributionCountriesList(player)) {
-                                if (c2.getCountryName().equals(tempSelectedCountry.getCountryName())) {
-
-                                }
-                            }
-                        } catch (NoAlliedCountriesNearException | RemoteException e1) {
-                            e1.printStackTrace();
-                        }
-
                             break;
                         default:
                             break;
@@ -408,9 +397,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             isClicked = false;
                             break;
                         case REDISTRIBUTE:
-                            glass.removeAll();
-
-
                             break;
                         default:
                             break;
@@ -653,15 +639,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 glass.removeAll();
                 windowJFrame.repaint();
 
-                try {
-                    paintFlagLabel(risiko.loadDistributionCountriesList(player), "green");
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                } catch (NoAlliedCountriesNearException e1) {
-                    e1.printStackTrace();
-                }
-
-
                 break;
         }
     }
@@ -708,14 +685,14 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 }
                 break;
             case ATTACK:
-                if (tempCountry1 == null) {
+                if(tempCountry1 == null) {
                     tempCountry1 = country;
                 } else {
 
                     int attackingForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to use for the attack?\n" +
-                                    country.getCountryName() + " has " + country.getLocalForces() + " forces\n" +
-                                    "You can use up to " + (country.getLocalForces() - 1) + " forces.",
+                                    country.getCountryName() + " has "+country.getLocalForces()+" forces\n" +
+                                    "You can use up to " + (country.getLocalForces()-1) + " forces.",
                             "Set forces!",
                             JOptionPane.WARNING_MESSAGE));
 

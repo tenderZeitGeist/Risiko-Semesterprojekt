@@ -44,20 +44,20 @@
       <file leaf-file-name="RiskGUI.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../1Client/RiskClient/src/main/java/RiskGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="381" column="42" lean-forward="false" selection-start-line="381" selection-start-column="42" selection-end-line="381" selection-end-column="42" />
+            <state relative-caret-position="511">
+              <caret line="403" column="17" lean-forward="false" selection-start-line="403" selection-start-column="17" selection-end-line="403" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4205#4409#0" expanded="true" />
-                <element signature="e#4408#4409#0" expanded="true" />
-                <element signature="e#4455#4642#0" expanded="true" />
-                <element signature="e#4641#4642#0" expanded="true" />
-                <element signature="e#11908#15743#0" expanded="true" />
-                <element signature="e#15742#15743#0" expanded="true" />
-                <element signature="e#15906#19615#0" expanded="true" />
-                <element signature="e#19614#19615#0" expanded="true" />
-                <element signature="e#28250#28251#0" expanded="true" />
-                <element signature="e#28299#28300#0" expanded="true" />
+                <element signature="e#4155#4359#0" expanded="true" />
+                <element signature="e#4358#4359#0" expanded="true" />
+                <element signature="e#4405#4592#0" expanded="true" />
+                <element signature="e#4591#4592#0" expanded="true" />
+                <element signature="e#11858#15186#0" expanded="true" />
+                <element signature="e#15185#15186#0" expanded="true" />
+                <element signature="e#15349#19058#0" expanded="true" />
+                <element signature="e#19057#19058#0" expanded="true" />
+                <element signature="e#27360#27361#0" expanded="true" />
+                <element signature="e#27409#27410#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1103,12 +1103,12 @@
       <workItem from="1503409822195" duration="3953000" />
       <workItem from="1503582822234" duration="9607000" />
       <workItem from="1503669283678" duration="5035000" />
-      <workItem from="1504011556394" duration="6178000" />
+      <workItem from="1504011556394" duration="4273000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49638000" />
+    <option name="totallyTimeSpent" value="47733000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1133,12 +1133,12 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297689" sideWeight="0.49710566" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1881356" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1881356" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5023295" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13134569" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13134569" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948986" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2498253" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1175,19 +1175,19 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2498253" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24974129" sideWeight="0.4942113" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39918256" sideWeight="0.49767047" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39942113" sideWeight="0.49767047" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19860847" sideWeight="0.5013976" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32794118" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329233" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1881356" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24946466" sideWeight="0.5057887" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25470334" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24974129" sideWeight="0.5057887" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.49847496" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5023295" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13134569" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2825112" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -1444,6 +1444,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../3Server/RiskServer/src/main/java/RiskServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="274" column="25" lean-forward="false" selection-start-line="274" selection-start-column="19" selection-end-line="274" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../../2Common/RiskCommon/src/main/java/RemoteRisk.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="364">
@@ -1468,32 +1478,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../3Server/RiskServer/src/main/java/RiskServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="274" column="25" lean-forward="false" selection-start-line="274" selection-start-column="19" selection-end-line="274" selection-end-column="25" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../1Client/RiskClient/src/main/java/RiskGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="381" column="42" lean-forward="false" selection-start-line="381" selection-start-column="42" selection-end-line="381" selection-end-column="42" />
+        <state relative-caret-position="511">
+          <caret line="403" column="17" lean-forward="false" selection-start-line="403" selection-start-column="17" selection-end-line="403" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4205#4409#0" expanded="true" />
-            <element signature="e#4408#4409#0" expanded="true" />
-            <element signature="e#4455#4642#0" expanded="true" />
-            <element signature="e#4641#4642#0" expanded="true" />
-            <element signature="e#11908#15743#0" expanded="true" />
-            <element signature="e#15742#15743#0" expanded="true" />
-            <element signature="e#15906#19615#0" expanded="true" />
-            <element signature="e#19614#19615#0" expanded="true" />
-            <element signature="e#28250#28251#0" expanded="true" />
-            <element signature="e#28299#28300#0" expanded="true" />
+            <element signature="e#4155#4359#0" expanded="true" />
+            <element signature="e#4358#4359#0" expanded="true" />
+            <element signature="e#4405#4592#0" expanded="true" />
+            <element signature="e#4591#4592#0" expanded="true" />
+            <element signature="e#11858#15186#0" expanded="true" />
+            <element signature="e#15185#15186#0" expanded="true" />
+            <element signature="e#15349#19058#0" expanded="true" />
+            <element signature="e#19057#19058#0" expanded="true" />
+            <element signature="e#27360#27361#0" expanded="true" />
+            <element signature="e#27409#27410#0" expanded="true" />
           </folding>
         </state>
       </provider>
