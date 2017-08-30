@@ -308,10 +308,20 @@ public class WorldVerwaltung {
     }
 
     public void setForcesToCountry(Country country, int forces) {
-        for (Continent continent : continentList) {
-            for (Country currentCountry : continent.getContinentCountries()) {
-                if (currentCountry.getCountryName().equals(country.getCountryName())) {
+        for (Continent currentContinent : continentList) {
+            for (Country currentCountry : currentContinent.getContinentCountries()){
+                if(country.getCountryName().equals(currentCountry.getCountryName())){
                     currentCountry.setLocalForces(forces);
+                }
+            }
+        }
+    }
+
+    public void setOwnerToCountry(Country country, Player player){
+        for(Continent currentContinent : continentList){
+            for(Country currentCountry : currentContinent.getContinentCountries()){
+                if(country.getCountryName().equals(currentCountry.getCountryName())){
+                    currentCountry.setOwningPlayer(player);
                 }
             }
         }

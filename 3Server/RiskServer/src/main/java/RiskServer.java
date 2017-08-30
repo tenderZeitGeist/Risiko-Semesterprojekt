@@ -13,7 +13,9 @@ import exceptions.NoEnemyCountriesNearException;
 import exceptions.PlayerAlreadyExistsException;
 import valueobjects.*;
 
+import javax.swing.*;
 import java.io.IOException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -257,6 +259,11 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
+    public void setOwnerToCountry(Country country, Player player) throws RemoteException{
+        worldManager.setOwnerToCountry(country, player);
+    }
+
+    @Override
     public Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException, RemoteException {
         return worldManager.loadDistributionCountriesList(player);
     }
@@ -273,6 +280,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces) throws RemoteException {
+        boolean isConquered = false;
         int defendingForces;
 
         if (defendingCountry.getLocalForces() < 2) {
@@ -285,22 +293,34 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         defendingForces -= forcesArray[1];
         if (defendingForces < 1) {
             //country lost
-        } else {
-            //just subtract forces
-            setForcesToCountry(attackingCountry, attackerForces);
-            setForcesToCountry(defendingCountry, defendingForces);
+            isConquered = true;
+            setOwnerToCountry(defendingCountry, attackingCountry.getOwningPlayer());
+            setForcesToCountry(defendingCountry, attackerForces);
+            setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - (attackerForces + forcesArray[0]));
 
-            broadCastText(defendingCountry.getCountryName() + "looses " + forcesArray[1]
-                    + ".\n " + attackingCountry.getCountryName() + " looses " + forcesArray[0]
-                    + "forces. \n But " + attackingCountry.getOwningPlayer() + " does not conquer "
+            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + ".\n "
+                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + "forces. \n"
+                    + "But " + attackingCountry.getOwningPlayerName() + " does not conquer "
                     + defendingCountry.getCountryName() + ".");
 
-            GameActionEventType type = GameActionEventType.values()[0];
+            GameActionEventType type = GameActionEventType.NEW_OWNER;
+            notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
+        } else {
+            //just subtract forces
+            setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - forcesArray[0]);
+            setForcesToCountry(defendingCountry, defendingCountry.getLocalForces() - forcesArray[1]);
+
+            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + ".\n "
+                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + "forces. \n"
+                    + "But " + attackingCountry.getOwningPlayerName() + " does not conquer "
+                    + defendingCountry.getCountryName() + ".");
+
+            GameActionEventType type = GameActionEventType.ATTACK;
             notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
         }
 
 
-        return false;
+        return isConquered;
     }
 
     @Override

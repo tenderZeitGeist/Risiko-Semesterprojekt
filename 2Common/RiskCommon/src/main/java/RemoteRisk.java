@@ -27,8 +27,6 @@ interface RemoteRisk extends Remote {
 
     void removeGameEventListener(GameEventListener listener) throws RemoteException;
 
-
-
     void setPlayerIDs() throws RemoteException;
 
     void readData(String file) throws IOException;
@@ -66,6 +64,8 @@ interface RemoteRisk extends Remote {
     int returnForcesPerRoundsPerPlayer(Player player) throws RemoteException;
 
     void setForcesToCountry(Country country, int forces) throws RemoteException;
+
+    void setOwnerToCountry(Country country, Player player) throws RemoteException;
 
     Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException, RemoteException;
 

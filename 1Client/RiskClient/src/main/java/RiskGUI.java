@@ -363,16 +363,35 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             glass.removeAll();
 
                             try {
-                                for (Country c1 : risiko.loadAttackingCountriesList(player)) {
+                                if (tempCountry1 == null) {
 
-                                    if (c1.getCountryName().equals(tempSelectedCountry.getCountryName())) {
-                                        glass.removeAll();
-                                        Vector<Country> cV = new Vector<>();
-                                        cV.add(c1);
-                                        paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(c1), "red");
-                                        paintFlagLabel(cV, "green");
-                                        isClicked = true;
+                                    for (Country c1 : risiko.loadAttackingCountriesList(player)) {
+
+                                        if (c1.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                                            glass.removeAll();
+                                            Vector<Country> cV = new Vector<>();
+                                            cV.add(c1);
+                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(c1), "red");
+                                            paintFlagLabel(cV, "green");
+                                            isClicked = true;
+                                        }
                                     }
+
+                                } else {
+                                    for (int i : tempCountry1.getNeighbouringCountries()) {
+                                        if (tempSelectedCountry.getCountryID() == i) {
+                                            if (tempCountry1.getOwningPlayer().equals(player) && !tempSelectedCountry.getOwningPlayer().equals(player)) {
+                                                isClicked = true;
+                                                System.out.println("Player made a correct selection.");
+                                            } else {
+                                                isClicked = false;
+                                                tempCountry1 = null;
+                                                System.out.println("Deleting tempCountry1.");
+                                            }
+                                        }
+
+                                    }
+
                                 }
                             } catch (NoEnemyCountriesNearException | RemoteException e1) {
                                 e1.printStackTrace();
@@ -380,15 +399,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                             break;
                         case REDISTRIBUTE:
-                        try {
-                            for (Country c2 : risiko.loadDistributionCountriesList(player)) {
-                                if (c2.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                            try {
+                                for (Country c2 : risiko.loadDistributionCountriesList(player)) {
+                                    if (c2.getCountryName().equals(tempSelectedCountry.getCountryName())) {
 
+                                    }
                                 }
+                            } catch (NoAlliedCountriesNearException | RemoteException e1) {
+                                e1.printStackTrace();
                             }
-                        } catch (NoAlliedCountriesNearException | RemoteException e1) {
-                            e1.printStackTrace();
-                        }
 
                             break;
                         default:
@@ -602,7 +621,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 switch (gae.getType()) {
                     case ATTACK:
                         JOptionPane.showMessageDialog(windowJFrame,
-                                "You are were by player " + gae.getPlayer().getPlayerName() + ".",
+                                "You are were attacked by player " + gae.getPlayer().getPlayerName() + ".",
                                 "Attack!",
                                 JOptionPane.WARNING_MESSAGE);
                         break;
@@ -680,10 +699,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
      * @param country
      */
     public void countryClicked(Country country) throws RemoteException {
-        boolean t = true;
+        boolean t = false;
+
         switch (currentPhase) {
             case DISTRIBUTE:
-                while (t) {
+                while (!t) {
                     int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to set?\n"
                                     + "You have " + forcesLeft + " forces.",
@@ -693,7 +713,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         forcesLeft -= forcesSet;
                         risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
-                        t = false;
+                        t = true;
                         System.out.println("You have " + forcesLeft + " forces left this round");
                         if (forcesLeft == 0) {
                             nextPhaseButton.setEnabled(true);
@@ -703,28 +723,55 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         JOptionPane.showMessageDialog(windowJFrame,
                                 "You did not enter a valid value",
                                 "Wrong amount!",
-                                JOptionPane.QUESTION_MESSAGE);
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 }
                 break;
+
             case ATTACK:
+
                 if (tempCountry1 == null) {
                     tempCountry1 = country;
                 } else {
-
+                    boolean isConquered = false;
                     int attackingForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to use for the attack?\n" +
                                     country.getCountryName() + " has " + country.getLocalForces() + " forces\n" +
-                                    "You can use up to " + (country.getLocalForces() - 1) + " forces.",
-                            "Set forces!",
+                                    "You can use a total " + (tempCountry1.getLocalForces() - 1) + " forces.\n" +
+                                    "But you may only select up to 3 forces per roll.",
+                            "!",
                             JOptionPane.WARNING_MESSAGE));
+                    if (!(attackingForces < 1 && attackingForces > 3)) {
+                        isConquered = risiko.battle(tempCountry1, country, attackingForces);
+                    } else {
+                        JOptionPane.showMessageDialog(windowJFrame,
+                                "You did not enter a valid value",
+                                "Wrong amount!",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
 
-                    risiko.battle(tempCountry1, country, attackingForces);
-
+                    if (isConquered) {
+                        while (!t) {
+                            int redistributeForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
+                                    "How many forces do you want to move from" + tempCountry1.getCountryName() + " to " + country.getCountryName() + "?\n"
+                                            + tempCountry1.getCountryName() + " has " + tempCountry1.getLocalForces() + " forces. "
+                                            + "You can move about " + (tempCountry1.getLocalForces() - 1) + ".",
+                                    "!",
+                                    JOptionPane.QUESTION_MESSAGE));
+                            if (redistributeForces > (tempCountry1.getLocalForces() - 1) && redistributeForces < 1) {
+                                JOptionPane.showMessageDialog(windowJFrame,
+                                        "You did not enter a valid value",
+                                        "Wrong amount!",
+                                        JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                t = true;
+                            }
+                        }
+                    }
                     tempCountry1 = null;
                 }
-
                 break;
+
             case REDISTRIBUTE:
 
                 break;
