@@ -365,22 +365,22 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             try {
                                 if (tempCountry1 == null) {
 
-                                    for (Country c1 : risiko.loadAttackingCountriesList(player)) {
-
-                                        if (c1.getCountryName().equals(tempSelectedCountry.getCountryName())) {
-                                            glass.removeAll();
+                                    for (Country currentCountry : risiko.loadAttackingCountriesList(player)) {
+                                        if (currentCountry.getCountryName().equals(tempSelectedCountry.getCountryName())) {
                                             Vector<Country> cV = new Vector<>();
-                                            cV.add(c1);
-                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(c1), "red");
+                                            cV.add(tempSelectedCountry);
+                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
                                             paintFlagLabel(cV, "green");
                                             isClicked = true;
                                         }
                                     }
 
+
                                 } else {
                                     for (int i : tempCountry1.getNeighbouringCountries()) {
-                                        if (tempSelectedCountry.getCountryID() == i) {
-                                            if (tempCountry1.getOwningPlayer().equals(player) && !tempSelectedCountry.getOwningPlayer().equals(player)) {
+                                        if (i == tempSelectedCountry.getCountryID()) {
+                                            if (tempCountry1.getOwningPlayerName().equals(player.getPlayerName())
+                                                    && !tempSelectedCountry.getOwningPlayer().equals(player)) {
                                                 isClicked = true;
                                                 System.out.println("Player made a correct selection.");
                                             } else {
@@ -389,9 +389,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                 System.out.println("Deleting tempCountry1.");
                                             }
                                         }
-
                                     }
-
                                 }
                             } catch (NoEnemyCountriesNearException | RemoteException e1) {
                                 e1.printStackTrace();
@@ -399,16 +397,39 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                             break;
                         case REDISTRIBUTE:
+                            glass.removeAll();
+                            isClicked = false;
                             try {
-                                for (Country c2 : risiko.loadDistributionCountriesList(player)) {
-                                    if (c2.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                                if (tempCountry1 == null) {
+                                    for (Country currentCountry : risiko.loadOwnedCountryListWithMoreThanOneForce(player)) {
+                                        if (currentCountry.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                                            Vector<Country> countryVector = new Vector<>();
+                                            countryVector.add(tempSelectedCountry);
+                                            glass.removeAll();
+                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), "green");
+                                            paintFlagLabel(countryVector, "red");
+                                            isClicked = true;
+                                        }
+                                    }
 
+                                } else {
+                                    for (int i : tempCountry1.getNeighbouringCountries()) {
+                                        if (i == tempSelectedCountry.getCountryID()) {
+                                            if (tempSelectedCountry.getOwningPlayerName().equals(player.getPlayerName())
+                                                    && tempCountry1.getOwningPlayerName().equals(player.getPlayerName())) {
+                                                isClicked = true;
+                                                System.out.println("Player made a correct selection!");
+                                            } else {
+                                                isClicked = false;
+                                                tempSelectedCountry = null;
+                                                System.out.println("Wrong selection!");
+                                            }
+                                        }
                                     }
                                 }
                             } catch (NoAlliedCountriesNearException | RemoteException e1) {
                                 e1.printStackTrace();
                             }
-
                             break;
                         default:
                             break;
@@ -424,12 +445,20 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             } catch (RemoteException | NoEnemyCountriesNearException e1) {
                                 e1.printStackTrace();
                             }
+                            hovered = false;
                             isClicked = false;
+                            tempCountry1 = null;
                             break;
                         case REDISTRIBUTE:
                             glass.removeAll();
-
-
+                            try {
+                                paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), "green");
+                            } catch (RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+                            isClicked = false;
+                            hovered = false;
+                            tempCountry1 = null;
                             break;
                         default:
                             break;
@@ -466,7 +495,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             e1.printStackTrace();
                         }
                         if (tempSelectedCountry != null) {
-                            statusTextArea.setText("Star: " + tempSelectedCountry.getCountryName() + "\nMarines: " + tempSelectedCountry.getLocalForces() + "\nAlliance: " + tempSelectedCountry.getOwningPlayer().getPlayerName() + "");
+                            statusTextArea.setText("Star: " + tempSelectedCountry.getCountryName()
+                                    + "\nMarines: " + tempSelectedCountry.getLocalForces()
+                                    + "\nAlliance: " + tempSelectedCountry.getOwningPlayer().getPlayerName() + "");
+
                             switch (currentPhase) {
                                 case DISTRIBUTE:
                                     break;
@@ -475,11 +507,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                         try {
                                             for (Country c : risiko.loadAttackingCountriesList(player)) {
                                                 if (c.getCountryName().equals(tempSelectedCountry.getCountryName())) {
-                                                    Vector<Country> cV = new Vector<>();
-                                                    cV.add(tempSelectedCountry);
-                                                    glass.removeAll();
-                                                    paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
-                                                    paintFlagLabel(cV, "green");
+                                                    if (tempSelectedCountry.getOwningPlayer().equals(player)) {
+                                                        Vector<Country> countryVector = new Vector<>();
+                                                        countryVector.add(tempSelectedCountry);
+                                                        glass.removeAll();
+                                                        paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
+                                                        paintFlagLabel(countryVector, "green");
+                                                    }
                                                 }
                                             }
                                         } catch (NoEnemyCountriesNearException | RemoteException e1) {
@@ -487,8 +521,25 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                         }
                                     }
                                     break;
+
                                 case REDISTRIBUTE:
+                                    if (!isClicked) {
+                                        try {
+                                            for (Country currentCountry : risiko.loadOwnedCountryListWithMoreThanOneForce(player)) {
+                                                if (currentCountry.getCountryName().equals(tempSelectedCountry.getCountryName())) {
+                                                    Vector<Country> countryVector = new Vector<>();
+                                                    countryVector.add(tempSelectedCountry);
+                                                    glass.removeAll();
+                                                    paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), "green");
+                                                    paintFlagLabel(countryVector, "red");
+                                                }
+                                            }
+                                        } catch (NoAlliedCountriesNearException | RemoteException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                    }
                                     break;
+
                                 default:
                                     break;
                             }
@@ -513,6 +564,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             }
                             break;
                         case REDISTRIBUTE:
+                            glass.removeAll();
+                            if (!isClicked)
+                                try {
+                                    paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), "green");
+                                } catch (RemoteException e1) {
+                                    e1.printStackTrace();
+                                }
                             break;
                         default:
                             break;
@@ -671,15 +729,12 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             case REDISTRIBUTE:
                 glass.removeAll();
                 windowJFrame.repaint();
-
+                isClicked = false;
                 try {
-                    paintFlagLabel(risiko.loadDistributionCountriesList(player), "green");
+                    paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), "green");
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
-                } catch (NoAlliedCountriesNearException e1) {
-                    e1.printStackTrace();
                 }
-
 
                 break;
         }
@@ -709,7 +764,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     + "You have " + forcesLeft + " forces.",
                             "Set forces!",
                             JOptionPane.OK_CANCEL_OPTION));
-                    if (forcesSet <= forcesLeft) {
+                    if (forcesSet <= forcesLeft && forcesSet > 0) {
                         forcesLeft -= forcesSet;
                         risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
@@ -741,7 +796,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     "But you may only select up to 3 forces per roll.",
                             "!",
                             JOptionPane.WARNING_MESSAGE));
-                    if (!(attackingForces < 1 && attackingForces > 3)) {
+                    if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces <= tempCountry1.getLocalForces()) {
                         isConquered = risiko.battle(tempCountry1, country, attackingForces);
                     } else {
                         JOptionPane.showMessageDialog(windowJFrame,
@@ -752,28 +807,54 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                     if (isConquered) {
                         while (!t) {
+
+                            Country attackingCountry = risiko.getCountryByID(tempCountry1.getCountryID());
+                            Country defendingCountry = risiko.getCountryByID(country.getCountryID());
                             int redistributeForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
-                                    "How many forces do you want to move from" + tempCountry1.getCountryName() + " to " + country.getCountryName() + "?\n"
-                                            + tempCountry1.getCountryName() + " has " + tempCountry1.getLocalForces() + " forces. "
-                                            + "You can move about " + (tempCountry1.getLocalForces() - 1) + ".",
+                                    "How many forces do you want to move from " + attackingCountry.getCountryName() + " to " + defendingCountry.getCountryName() + "?\n"
+                                            + attackingCountry.getCountryName() + " has " + attackingCountry.getLocalForces() + " forces. "
+                                            + "You can move about " + (attackingCountry.getLocalForces() - 1) + ".",
                                     "!",
                                     JOptionPane.QUESTION_MESSAGE));
-                            if (redistributeForces > (tempCountry1.getLocalForces() - 1) && redistributeForces < 1) {
+                            if ((redistributeForces > (attackingCountry.getLocalForces() - 1)) && !(redistributeForces < 0)) {
                                 JOptionPane.showMessageDialog(windowJFrame,
                                         "You did not enter a valid value",
                                         "Wrong amount!",
                                         JOptionPane.WARNING_MESSAGE);
                             } else {
                                 t = true;
+                                risiko.setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - redistributeForces);
+                                risiko.setForcesToCountry(defendingCountry, defendingCountry.getLocalForces() + redistributeForces);
                             }
                         }
                     }
                     tempCountry1 = null;
+                    isClicked = false;
                 }
                 break;
 
             case REDISTRIBUTE:
-
+                if (tempCountry1 == null) {
+                    tempCountry1 = country;
+                } else {
+                    int forces = (tempCountry1.getLocalForces() - 1);
+                    int redistributeForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
+                            "How many forces do you want to set?\n"
+                                    + "You have " + forcesLeft + " forces.",
+                            "Set forces!",
+                            JOptionPane.OK_CANCEL_OPTION));
+                    if (redistributeForces > forces && !(redistributeForces < 0)) {
+                        JOptionPane.showMessageDialog(windowJFrame,
+                                "You did not enter a valid value",
+                                "Wrong amount!",
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        risiko.setForcesToCountry(tempCountry1, tempCountry1.getLocalForces() - redistributeForces);
+                        risiko.setForcesToCountry(country, country.getLocalForces() + redistributeForces);
+                    }
+                    tempCountry1 = null;
+                    isClicked = false;
+                }
                 break;
         }
     }

@@ -67,6 +67,8 @@ interface RemoteRisk extends Remote {
 
     void setOwnerToCountry(Country country, Player player) throws RemoteException;
 
+    Country getCountryByID(int countryID) throws RemoteException;
+
     Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException, RemoteException;
 
     Vector<Country> loadNeighbouringCountriesListForAttackingPhase(Country country) throws NoEnemyCountriesNearException, RemoteException;

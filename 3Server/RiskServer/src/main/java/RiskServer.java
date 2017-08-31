@@ -264,6 +264,11 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
+    public Country getCountryByID( int countryID ) throws RemoteException{
+        return worldManager.getCountryByID(countryID);
+    }
+
+    @Override
     public Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException, RemoteException {
         return worldManager.loadDistributionCountriesList(player);
     }
@@ -298,10 +303,9 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
             setForcesToCountry(defendingCountry, attackerForces);
             setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - (attackerForces + forcesArray[0]));
 
-            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + ".\n "
-                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + "forces. \n"
-                    + "But " + attackingCountry.getOwningPlayerName() + " does not conquer "
-                    + defendingCountry.getCountryName() + ".");
+            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + ".\n"
+                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + " forces.\n"
+                    + attackingCountry.getOwningPlayerName() + " conquers " + defendingCountry.getCountryName());
 
             GameActionEventType type = GameActionEventType.NEW_OWNER;
             notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
@@ -310,8 +314,8 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
             setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - forcesArray[0]);
             setForcesToCountry(defendingCountry, defendingCountry.getLocalForces() - forcesArray[1]);
 
-            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + ".\n "
-                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + "forces. \n"
+            broadCastText(defendingCountry.getOwningPlayerName() + " looses " + forcesArray[1] + " forces.\n"
+                    + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + " forces.\n"
                     + "But " + attackingCountry.getOwningPlayerName() + " does not conquer "
                     + defendingCountry.getCountryName() + ".");
 
@@ -434,8 +438,8 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         Arrays.sort(defenderDice, Collections.reverseOrder());
 
         if (attackerDice.length < defenderDice.length) {
-            for (int i = 0; i < attackerDice.length; i++) {
-                System.out.println("Attacker rolls " + attackerDice[i + 1] + " with the " + i + " roll"
+            for (int i = 0, j = 0; i < attackerDice.length; i++) {
+                System.out.println("Attacker rolls " + attackerDice[i + 1] + " with the " + (i + 1) + " roll"
                         + " while Defender rolls a " + defenderDice[i + 1] + ".");
                 if (attackerDice[i] <= defenderDice[i]) {
                     forcesArray[0]++;
@@ -446,7 +450,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
         } else {
             for (int k = 0; k < defenderDice.length; k++) {
-                System.out.println("Attacker rolls " + attackerDice[k] + " with the " + k + " roll"
+                System.out.println("Attacker rolls " + attackerDice[k] + " with the " + (k + 1) + " roll"
                         + " while Defender rolls a " + defenderDice[k] + ".");
                 if (attackerDice[k] <= defenderDice[k]) {
                     forcesArray[0]++;

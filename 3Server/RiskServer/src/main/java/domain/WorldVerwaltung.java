@@ -310,7 +310,7 @@ public class WorldVerwaltung {
     public void setForcesToCountry(Country country, int forces) {
         for (Continent currentContinent : continentList) {
             for (Country currentCountry : currentContinent.getContinentCountries()){
-                if(country.getCountryName().equals(currentCountry.getCountryName())){
+                if(country.getCountryID() == currentCountry.getCountryID()){
                     currentCountry.setLocalForces(forces);
                 }
             }
@@ -320,12 +320,13 @@ public class WorldVerwaltung {
     public void setOwnerToCountry(Country country, Player player){
         for(Continent currentContinent : continentList){
             for(Country currentCountry : currentContinent.getContinentCountries()){
-                if(country.getCountryName().equals(currentCountry.getCountryName())){
+                if(country.getCountryID() == currentCountry.getCountryID()){
                     currentCountry.setOwningPlayer(player);
                 }
             }
         }
     }
+
 
     public int returnForcesPerRoundsPerPlayer(Player player) { //, boolean cards ) {
         int forcesCount = 0;
@@ -463,7 +464,7 @@ public class WorldVerwaltung {
     public Vector<Country> loadOwnedCountryListWithMoreThanOneForce(Player player) {
         // ConcurrentModificationException?
         Vector<Country> ownedCountriesList = loadOwnedCountryList(player);
-        ownedCountriesList.removeIf(country -> country.getLocalForces() > 2);
+        ownedCountriesList.removeIf(country -> country.getLocalForces() < 2);
         ownedCountriesList.trimToSize();
 
         return ownedCountriesList;
@@ -499,7 +500,7 @@ public class WorldVerwaltung {
     public Vector<Country> loadNeighbouringCountriesListForDistributionPhase(Country country) throws
             NoAlliedCountriesNearException {
 
-        resetNeighbouringCountriesList();
+        Vector<Country> neighbouringCountriesList = new Vector<>();
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries();
         for (int n : neighbouringCountriesListIDs) {
@@ -518,7 +519,7 @@ public class WorldVerwaltung {
     public Vector<Country> loadNeighbouringCountryListForAttackingPhase(Country country) throws
             NoEnemyCountriesNearException {
 
-        resetNeighbouringCountriesList();
+        Vector<Country> neighbouringCountriesList = new Vector<>();
 
         int[] neighbouringCountriesListIDs = country.getNeighbouringCountries();
         for (int n : neighbouringCountriesListIDs) {
