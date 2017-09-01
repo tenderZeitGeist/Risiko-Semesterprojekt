@@ -796,7 +796,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     "But you may only select up to 3 forces per roll.",
                             "!",
                             JOptionPane.WARNING_MESSAGE));
-                    if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces <= tempCountry1.getLocalForces()) {
+                    if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces < tempCountry1.getLocalForces()) {
                         isConquered = risiko.battle(tempCountry1, country, attackingForces);
                     } else {
                         JOptionPane.showMessageDialog(windowJFrame,
@@ -816,7 +816,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             + "You can move about " + (attackingCountry.getLocalForces() - 1) + ".",
                                     "!",
                                     JOptionPane.QUESTION_MESSAGE));
-                            if ((redistributeForces > (attackingCountry.getLocalForces() - 1)) && !(redistributeForces < 0)) {
+                            if ((redistributeForces > (attackingCountry.getLocalForces() - 1)) || (redistributeForces < 0)) {
                                 JOptionPane.showMessageDialog(windowJFrame,
                                         "You did not enter a valid value",
                                         "Wrong amount!",
@@ -840,10 +840,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     int forces = (tempCountry1.getLocalForces() - 1);
                     int redistributeForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to set?\n"
-                                    + "You have " + forcesLeft + " forces.",
+                                    + "You have " + forces + " forces.",
                             "Set forces!",
                             JOptionPane.OK_CANCEL_OPTION));
-                    if (redistributeForces > forces && !(redistributeForces < 0)) {
+                    if (redistributeForces > forces || !(redistributeForces >= 0)) {
                         JOptionPane.showMessageDialog(windowJFrame,
                                 "You did not enter a valid value",
                                 "Wrong amount!",
