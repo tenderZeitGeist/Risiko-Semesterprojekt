@@ -13,9 +13,7 @@ import exceptions.NoEnemyCountriesNearException;
 import exceptions.PlayerAlreadyExistsException;
 import valueobjects.*;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -259,12 +257,12 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
-    public void setOwnerToCountry(Country country, Player player) throws RemoteException{
+    public void setOwnerToCountry(Country country, Player player) throws RemoteException {
         worldManager.setOwnerToCountry(country, player);
     }
 
     @Override
-    public Country getCountryByID( int countryID ) throws RemoteException{
+    public Country getCountryByID(int countryID) throws RemoteException {
         return worldManager.getCountryByID(countryID);
     }
 
@@ -321,6 +319,13 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
             GameActionEventType type = GameActionEventType.ATTACK;
             notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
+        }
+
+        if (isConquered) {
+            boolean missionFullfilled = missionFulfilled(attackingCountry.getOwningPlayer());
+            if (missionFullfilled) {
+                notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_OVER));
+            }
         }
 
 

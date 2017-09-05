@@ -276,6 +276,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             public void actionPerformed(ActionEvent e) {
                 try {
                     risiko.distributeCountries();
+                    risiko.distributeMissions();
                     risiko.setPlayerIDs();
                     risiko.startGame();
                 } catch (RemoteException e1) {
@@ -689,7 +690,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             "Your color is: " + playerColor + "\n" +
                             "\n");
                     System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
-
+                    System.out.println("Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
                     forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
@@ -876,6 +877,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             + "You can move about " + (attackingCountry.getLocalForces() - 1) + ".",
                                     "!",
                                     JOptionPane.QUESTION_MESSAGE));
+
                             if ((redistributeForces > (attackingCountry.getLocalForces() - 1)) || (redistributeForces < 0)) {
                                 JOptionPane.showMessageDialog(windowJFrame,
                                         "You did not enter a valid value",

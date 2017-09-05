@@ -8,6 +8,7 @@ import valueobjects.Missions.CountryMissions;
 import valueobjects.Missions.PlayerMission;
 import valueobjects.Player;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,7 +50,15 @@ public class MissionVerwaltung {
     __________________*/
 
     public void distributeMissions(List<Player> playerList) {
+        Vector<Mission> tempMissionList = new Vector<>(missionList);
 
+        Collections.shuffle(missionList);
+        int counter = 0;
+        for (Player currentPlayer : playerList) {
+            tempMissionList.get(counter++).setPlayer(currentPlayer);
+        }
+
+    }/*
         for (int i = 0; i < playerList.size(); i++) {
 
             int randomMission = (int) (Math.random() * missionList.size());
@@ -62,8 +71,8 @@ public class MissionVerwaltung {
             } else {
                 i--;
             }
-        }
-    }
+        }*/
+
 
     public void overwriteMissions(Vector<Mission> missionList) {
         this.missionList = missionList;
