@@ -6,11 +6,11 @@ import java.rmi.Remote;
 
 public class Turn implements Serializable, Remote {
 
-    private static final long serialVersionUID = -45673384614984L;
+    private static final long serialVersionUID = -45673384614786984L;
 
     public enum Phase {
 
-        DISTRIBUTE, ATTACK, REDISTRIBUTE;
+        DISTRIBUTE, ATTACK, REDISTRIBUTE, SAVE;
 
         public Phase next() {
             // return next phase based on ordinal value (0, 1, 2, ..., number of phases)
@@ -20,7 +20,6 @@ public class Turn implements Serializable, Remote {
         }
     }
 
-    ;
 
     private Player player;
     private Phase phase;

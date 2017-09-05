@@ -87,9 +87,7 @@ public class WorldVerwaltung {
         Vector<Player> tempPlayerList = new Vector<>(plist);
         Vector<Player> tempPlayerList2 = new Vector<>();
         //plist.clear();
-
         int playerNumber = p.getPlayerID();
-
         for (int i = 0; i < tempPlayerList.size(); i++) {
             if (i >= playerNumber) {
                 tempPlayerList2.add(plist.get(i));
@@ -138,14 +136,13 @@ public class WorldVerwaltung {
     public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
         Vector<Player> playerList = new Vector<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
-
             while (true) {
                 Player p = (Player) ois.readObject();
                 //Following line stays the same
                 playerList.add(p);
             }
         } catch (EOFException e) {
-            System.out.println(e.getMessage());
+            e.getMessage();
 
         }
         return playerList;

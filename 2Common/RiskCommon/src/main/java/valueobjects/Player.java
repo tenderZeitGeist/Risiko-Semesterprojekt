@@ -13,16 +13,18 @@ public class Player implements Serializable, Remote {
     private int playerID;
     private String playerName;
 
-
     public Player(int newPlayerID, String newPlayerName) {
         this.playerID = newPlayerID;
         this.playerName = newPlayerName;
+
     }
 
 
     public String getPlayerName() {
         return this.playerName;
     }
+
+
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
