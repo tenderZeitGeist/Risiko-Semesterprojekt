@@ -47,9 +47,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private JButton loadGameButton;
     private JButton saveGameButton;
     private JLabel fgPictureLabel = new JLabel();
-    private JTextArea statusTextArea;
+    private JTextArea planetTextArea;
     private JPanel gamePane;
+    private JPanel planetPanel;
+
     private JPanel statusPanel;
+    private JTextArea statusPanelTextArea;
+
     private JPanel glass;
     private JPanel buttonPanel;
     private JTextArea customSysout;
@@ -124,7 +128,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
     public void initMainWindow() throws RemoteException {
-//Create Main windowJFrame
+        //Create Main windowJFrame
         windowJFrame = new JFrame("Star Risk: " + player.getPlayerName() + "  [ALPHA VERSION NOT FOR PUBLIC]");
         //windowJFrame.setBounds(1000, 1000, 1000, 1000);
 
@@ -180,9 +184,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         buttonPanel.setForeground(Color.WHITE);
 
         //Add those Elements to main Frame
-        windowJFrame.add(gamePane, "span 1 2");
-        windowJFrame.add(statusPanel, "wrap");
-        windowJFrame.add(buttonPanel, "aligny top, center, wrap");
+        windowJFrame.add(gamePane, "span 1 3");
+        windowJFrame.add(planetPanel, "wrap");
+        windowJFrame.add(buttonPanel, "aligny top, wrap");
+        windowJFrame.add(statusPanel, "aligny, top, wrap");
         windowJFrame.add(console, "grow");
 
         //Init some Elements after adding them
@@ -232,17 +237,36 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
     public void initStatusPanel() {
-        statusPanel = new JPanel();
-        statusTextArea = new JTextArea("Star: none \nMarines: none \nAlliance: none", 3, 18);
-        statusPanel.add(statusTextArea, "growx growy");
+        planetPanel = new JPanel();
+        planetTextArea = new JTextArea("Star: none \nMarines: none \nAlliance: none", 3, 18);
+        planetPanel.add(planetTextArea, "growx growy");
         int scale = (int) (40 * scalingFactor);
         Font f = new Font("Arial", 0, scale);
+        planetPanel.setForeground(Color.WHITE);
+        planetPanel.setBackground(Color.BLACK);
+        planetTextArea.setFont(f);
+        planetTextArea.setForeground(Color.WHITE);
+        planetTextArea.setBackground(Color.BLACK);
+        planetTextArea.setEditable(false);
+
+        statusPanel = new JPanel();
+        statusPanelTextArea = new JTextArea("" +
+                "alliance Name:   none \n" +
+                "spare Marines:   none \n" +
+                "alliance Color:  none \n" +
+                "current Phase:   none \n" +
+                "pending Mission: none \n" +
+                "collected Cards: none \n" +
+                "", 3, 18);
+        statusPanel.add(statusPanelTextArea, "growx growy");
         statusPanel.setForeground(Color.WHITE);
         statusPanel.setBackground(Color.BLACK);
-        statusTextArea.setFont(f);
-        statusTextArea.setForeground(Color.WHITE);
-        statusTextArea.setBackground(Color.BLACK);
-        statusTextArea.setEditable(false);
+        statusPanelTextArea.setFont(f);
+        statusPanelTextArea.setForeground(Color.WHITE);
+        statusPanelTextArea.setBackground(Color.BLACK);
+        statusPanelTextArea.setEditable(false);
+
+
     }
 
     public void initButtonPanel() {
@@ -355,7 +379,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     public void createMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
 
-        fgPanel.addMouseListener( mcl = new MouseAdapter() {
+        fgPanel.addMouseListener(mcl = new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -401,7 +425,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             if (tempCountry1.getOwningPlayerName().equals(player.getPlayerName())
                                                     && !tempSelectedCountry.getOwningPlayer().equals(player)) {
                                                 isClicked = true;
-                                                System.out.println("Player made a correct selection.");
+                                                //System.out.println("Player made a correct selection.");
                                             } else {
                                                 isClicked = false;
                                                 tempCountry1 = null;
@@ -437,11 +461,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             if (tempSelectedCountry.getOwningPlayerName().equals(player.getPlayerName())
                                                     && tempCountry1.getOwningPlayerName().equals(player.getPlayerName())) {
                                                 isClicked = true;
-                                                System.out.println("Player made a correct selection!");
+                                                //System.out.println("Player made a correct selection!");
                                             } else {
                                                 isClicked = false;
                                                 tempSelectedCountry = null;
-                                                System.out.println("Wrong selection!");
+                                                //System.out.println("Wrong selection!");
                                             }
                                         }
                                     }
@@ -504,9 +528,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     public void createMouseHoverListener(JLabel fgPanel, final BufferedImage bgPicturex) {
 
-        fgPanel.addMouseMotionListener( mml = new MouseAdapter() {
+        fgPanel.addMouseMotionListener(mml = new MouseAdapter() {
 
             public void mouseMoved(MouseEvent e) {
+                updateStatusPanel();
                 int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
                 Color color = new Color(packetInt, false);
                 //RGB to Hex
@@ -521,7 +546,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             e1.printStackTrace();
                         }
                         if (tempSelectedCountry != null) {
-                            statusTextArea.setText("Star: " + tempSelectedCountry.getCountryName()
+                            planetTextArea.setText("Star: " + tempSelectedCountry.getCountryName()
                                     + "\nMarines: " + tempSelectedCountry.getLocalForces()
                                     + "\nAlliance: " + tempSelectedCountry.getOwningPlayer().getPlayerName() + "");
 
@@ -574,7 +599,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         }
                     }
                 } else if (hex.equals("000000")) {
-                    statusTextArea.setText("Star: none \nMarines: none \nAlliance: none");
+                    planetTextArea.setText("Star: none \nMarines: none \nAlliance: none");
                     switch (currentPhase) {
                         case DISTRIBUTE:
                             break;
@@ -677,11 +702,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     }
                     playerColor = getPlayerColor(player.getPlayerID());
 
-                    System.out.println("You are: " + player.getPlayerName() + "\n" +
-                            "Your id is: " + player.getPlayerID() + "\n" +
-                            "Your color is: " + playerColor + "\n" +
-                            "\n");
-                    System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
                     System.out.println("Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
@@ -690,7 +710,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
                     if (currentPlayer.equals(player)) {
-                        System.out.println("Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
+
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
 
@@ -942,6 +962,22 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
         }
         return null;
+    }
+
+    public void updateStatusPanel() {
+        try {
+            statusPanelTextArea.setText("" +
+                    "Alliance:\t"+player.getPlayerName()+" \n" +
+                    "Marines:\t"+forcesLeft+" \n" +
+                    "Color:\t"+playerColor+" \n" +
+                    "Phase:\t"+currentPhase.toString().toLowerCase()+" \n" +
+                    "Cards:\ttmp \n" +
+                    "Mission: \n"+risiko.getMissionPerPlayer(player).getDescription()+
+                    "");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
