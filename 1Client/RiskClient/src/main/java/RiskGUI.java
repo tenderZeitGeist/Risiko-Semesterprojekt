@@ -65,7 +65,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private BufferedImage fgPicture;
     private BufferedImage fgPictureFix;
     private Image redFlag, greenFlag, yellowFlag, blueFlag, purpleFlag;
+    private Image redFlag2, greenFlag2, yellowFlag2, blueFlag2, purpleFlag2;
     private String playerColor = "";
+    private String playerColorHighlight = "";
 
     //vars
     private Double scalingFactor;
@@ -224,6 +226,17 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             yellowFlag = yellowFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
             blueFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_blue.png"));
             blueFlag = blueFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+
+            blueFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_blue_green.png"));
+            blueFlag2 = blueFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            yellowFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_yellow_green.png"));
+            yellowFlag2 = yellowFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            purpleFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_purple_green.png"));
+            purpleFlag2 = purpleFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            greenFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green_green.png"));
+            greenFlag2 = greenFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            redFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red_green.png"));
+            redFlag2 = redFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
 
             fgPictureFix = ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
@@ -415,7 +428,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             Vector<Country> cV = new Vector<>();
                                             cV.add(tempSelectedCountry);
                                             paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
-                                            paintFlagLabel(cV, playerColor);
+                                            paintFlagLabel(cV, playerColorHighlight);
                                             isClicked = true;
                                         }
                                     }
@@ -451,8 +464,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             Vector<Country> countryVector = new Vector<>();
                                             countryVector.add(tempSelectedCountry);
                                             glass.removeAll();
-                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), "blue");
-                                            paintFlagLabel(countryVector, playerColor);
+                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerColorHighlight);
+                                            paintFlagLabel(countryVector, playerColorHighlight);
                                             isClicked = true;
                                         }
                                     }
@@ -489,7 +502,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         case ATTACK:
                             glass.removeAll();
                             try {
-                                paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColor);
+                                paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerColor);
+                                paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColorHighlight);
                             } catch (RemoteException | NoEnemyCountriesNearException e1) {
                                 e1.printStackTrace();
                             }
@@ -500,7 +514,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         case REDISTRIBUTE:
                             glass.removeAll();
                             try {
-                                paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerColor);
+                                paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerColorHighlight);
                             } catch (RemoteException e1) {
                                 e1.printStackTrace();
                             }
@@ -565,7 +579,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                         countryVector.add(tempSelectedCountry);
                                                         glass.removeAll();
                                                         paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
-                                                        paintFlagLabel(countryVector, playerColor);
+                                                        paintFlagLabel(countryVector, playerColorHighlight);
                                                     }
                                                 }
                                             }
@@ -583,8 +597,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                     Vector<Country> countryVector = new Vector<>();
                                                     countryVector.add(tempSelectedCountry);
                                                     glass.removeAll();
-                                                    paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), "blue");
-                                                    paintFlagLabel(countryVector, playerColor);
+                                                    paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerColor);
+                                                    paintFlagLabel(countryVector, playerColorHighlight
+                                                    );
                                                 }
                                             }
                                         } catch (NoAlliedCountriesNearException | RemoteException e1) {
@@ -609,7 +624,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             if (!isClicked) {
                                 try {
                                     glass.removeAll();
-                                    paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColor);
+                                    paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerColor);
+                                    paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColorHighlight);
                                 } catch (RemoteException | NoEnemyCountriesNearException e1) {
 
                                 }
@@ -662,6 +678,22 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 case "purple":
                     flag.setIcon(new ImageIcon(purpleFlag));
                     break;
+
+                case "redE":
+                    flag.setIcon(new ImageIcon(redFlag2));
+                    break;
+                case "greenE":
+                    flag.setIcon(new ImageIcon(greenFlag2));
+                    break;
+                case "blueE":
+                    flag.setIcon(new ImageIcon(blueFlag2));
+                    break;
+                case "yellowE":
+                    flag.setIcon(new ImageIcon(yellowFlag2));
+                    break;
+                case "purpleE":
+                    flag.setIcon(new ImageIcon(purpleFlag2));
+                    break;
                 default:
                     break;
             }
@@ -703,6 +735,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         }
                     }
                     playerColor = getPlayerColor(player.getPlayerID());
+                    playerColorHighlight = getPlayerColor((player.getPlayerID()) + 6);
 
                     System.out.println("> Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
@@ -728,6 +761,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         if (p.getPlayerName().equals(player.getPlayerName())) {
                             player.setPlayerID(p.getPlayerID());
                             playerColor = getPlayerColor(player.getPlayerID());
+                            playerColorHighlight = getPlayerColor((player.getPlayerID()) + 6);
                         }
                     }
                     break;
@@ -790,7 +824,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 windowJFrame.repaint();
                 isClicked = false;
                 try {
-                    paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColor);
+                    paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerColor);
+                    paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColorHighlight);
                 } catch (NoEnemyCountriesNearException e) {
                     e.printStackTrace();
                 }
@@ -938,30 +973,37 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     @Override
     public void broadcast(String broadcastText) {
-        System.out.println("> "+broadcastText);
+        System.out.println("> " + broadcastText);
     }
 
 
     public String getPlayerColor(int playerID) {
         switch (playerID) {
             case 0:
-                return "blue";
-
+                return "purple";
             case 1:
                 return "green";
-
             case 2:
-                return "purple";
-
+                return "blue";
             case 3:
                 return "yellow";
-
             case 4:
                 return "red";
-
             case 5:
                 return "white";
 
+            case 6:
+                return "purpleE";
+            case 7:
+                return "greenE";
+            case 8:
+                return "blueE";
+            case 9:
+                return "yellowE";
+            case 10:
+                return "redE";
+            case 11:
+                return "whiteE";
         }
         return null;
     }
@@ -969,17 +1011,24 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     public void updateStatusPanel() {
         try {
             statusPanelTextArea.setText("" +
-                    "Alliance:\t"+player.getPlayerName()+" \n" +
-                    "Marines:\t"+forcesLeft+" \n" +
-                    "Color:\t"+playerColor+" \n" +
-                    "Phase:\t"+currentPhase.toString().toLowerCase()+" \n" +
+                    "Alliance:\t" + player.getPlayerName() + " \n" +
+                    "Marines:\t" + forcesLeft + " \n" +
+                    "Color:\t" + playerColor + " \n" +
+                    "Phase:\t" + currentPhase.toString().toLowerCase() + " \n" +
                     "Cards:\ttmp \n" +
-                    "Mission: \n"+risiko.getMissionPerPlayer(player).getDescription()+
+                    "Mission: \n" + risiko.getMissionPerPlayer(player).getDescription() +
                     "");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Vector<Country> excludeCountryListShit(Vector<Country> removeThisVector, Vector<Country> keepThisVector) {
+        for (Country c2 : removeThisVector) {
+            keepThisVector.removeIf(country -> country.getCountryName().equals(c2.getCountryName()));
+        }
+        return keepThisVector;
     }
 
 }
