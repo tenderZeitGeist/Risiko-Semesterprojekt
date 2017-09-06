@@ -23,11 +23,11 @@ interface RemoteRisk extends Remote {
 
     void startGame() throws RemoteException;
 
+    void loadGame() throws IOException, ClassNotFoundException, CountryAlreadyExistsException;
+
     void addGameEventListener(GameEventListener listener) throws RemoteException;
 
     void removeGameEventListener(GameEventListener listener) throws RemoteException;
-
-
 
     void setPlayerIDs() throws RemoteException;
 
@@ -66,6 +66,10 @@ interface RemoteRisk extends Remote {
     int returnForcesPerRoundsPerPlayer(Player player) throws RemoteException;
 
     void setForcesToCountry(Country country, int forces) throws RemoteException;
+
+    void setOwnerToCountry(Country country, Player player) throws RemoteException;
+
+    Country getCountryByID(int countryID) throws RemoteException;
 
     Vector<Country> loadDistributionCountriesList(Player player) throws NoAlliedCountriesNearException, RemoteException;
 
