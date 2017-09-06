@@ -58,7 +58,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private JPanel buttonPanel;
     private JTextArea customSysout;
     private JScrollPane console;
-    private boolean admin = false;
 
     //Objects
     private BufferedImage bgPicture;
@@ -68,16 +67,18 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private Image redFlag2, greenFlag2, yellowFlag2, blueFlag2, purpleFlag2;
     private String playerColor = "";
     private String playerColorHighlight = "";
+    private MouseListener mcl = null;
+    private MouseMotionListener mml = null;
+    private Country tempCountry1 = null;
 
     //vars
     private Double scalingFactor;
     private boolean hovered = false;
-
-    private MouseListener mcl = null;
-    private MouseMotionListener mml = null;
     private boolean isClicked = false;
+    private boolean loadedGame = false;
+    private boolean admin = false;
 
-    private Country tempCountry1 = null, TempCountry2 = null;
+
 
 
     public static void main(String[] args) {
@@ -314,10 +315,14 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         startGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    risiko.distributeCountries();
-                    risiko.distributeMissions();
-                    risiko.setPlayerIDs();
-                    risiko.startGame();
+                    if(!loadedGame) {
+                        risiko.distributeCountries();
+                        risiko.distributeMissions();
+                        risiko.setPlayerIDs();
+                        risiko.startGame();
+                    } else {
+                        risiko.startGame();
+                    }
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -357,8 +362,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         loadGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    risiko.deSerializePlayers();
-                    risiko.deSerializeCountries();
+                    risiko.loadGame();
                 } catch (IOException | ClassNotFoundException | CountryAlreadyExistsException e1) {
                     e1.printStackTrace();
                 }
@@ -728,6 +732,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     loadGameButton.setEnabled(false);
                     startGameButton.setEnabled(false);
                     System.out.println("GO GO GO MOTHERFUCKER");
+                    System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
 
                     for (Player p : risiko.getPlayerList()) {
                         if (p.getPlayerName().equals(player.getPlayerName())) {
@@ -745,6 +750,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
                     if (currentPlayer.equals(player)) {
+                        System.out.println("Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
+
 
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
@@ -757,14 +764,17 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     }
                     break;
                 case GAME_LOADED:
+                    loadGameButton.setEnabled(false);
+                    loadedGame = true;
                     for (Player p : risiko.getPlayerList()) {
                         if (p.getPlayerName().equals(player.getPlayerName())) {
-                            player.setPlayerID(p.getPlayerID());
+                            player = p;
                             playerColor = getPlayerColor(player.getPlayerID());
                             playerColorHighlight = getPlayerColor((player.getPlayerID()) + 6);
                         }
                     }
                     break;
+
                 case GAME_OVER:
                     JOptionPane.showMessageDialog(windowJFrame,
                             "Game over. Winner is " + gce.getPlayer().getPlayerName() + ".",

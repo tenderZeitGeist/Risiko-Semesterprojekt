@@ -23,6 +23,8 @@ interface RemoteRisk extends Remote {
 
     void startGame() throws RemoteException;
 
+    void loadGame() throws IOException, ClassNotFoundException, CountryAlreadyExistsException;
+
     void addGameEventListener(GameEventListener listener) throws RemoteException;
 
     void removeGameEventListener(GameEventListener listener) throws RemoteException;

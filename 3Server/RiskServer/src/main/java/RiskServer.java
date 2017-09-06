@@ -1,4 +1,3 @@
-
 import domain.MissionVerwaltung;
 import domain.PlayerVerwaltung;
 import domain.WorldVerwaltung;
@@ -87,6 +86,34 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_STARTED));
 
         System.out.println("game started");
+    }
+
+    @Override
+    public void loadGame() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
+
+        int counter = 0;
+        Vector<Player> loadedPlayerList = new Vector<>(deSerializePlayers());
+        Vector<Player> currentPlayerList = getPlayerList();
+
+        if (currentPlayerList.size() == loadedPlayerList.size()) {
+            for (Player currentPlayer : currentPlayerList) {
+                for (Player loadedPlayer : loadedPlayerList) {
+                    if (currentPlayer.getPlayerName().equals(loadedPlayer.getPlayerName())){
+                        counter++;
+                    }
+                }
+            }
+        }
+
+        if (counter == currentPlayerList.size()) {
+            System.out.println("Players do match... prepare to resume the game!");
+            deSerializeCountries();
+            setPlayerList(loadedPlayerList);
+        } else {
+            System.out.println("The connected players do not match. " +
+                    "Please retry with another instance of the game!");
+        }
+        notifyPlayers(new GameControlEvent(new Turn(loadedPlayerList.get(0), Turn.Phase.SAVE), GameControlEventType.GAME_LOADED));
     }
 
 
