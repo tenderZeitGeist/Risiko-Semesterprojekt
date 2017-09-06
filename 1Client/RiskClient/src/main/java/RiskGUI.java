@@ -202,8 +202,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
         //this is some cool init stuffz:)
         //paintFlagLabel();
-        String workingDir = System.getProperty("user.dir");
-        System.out.println("Current working directory : " + workingDir);
+        //String workingDir = System.getProperty("user.dir");
+        //System.out.println("Current working directory : " + workingDir);
 
     }
 
@@ -259,6 +259,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 "collected Cards: none \n" +
                 "", 3, 18);
         statusPanel.add(statusPanelTextArea, "growx growy");
+        scale = (int) (35 * scalingFactor);
+        f = new Font("Arial", 0, scale);
         statusPanel.setForeground(Color.WHITE);
         statusPanel.setBackground(Color.BLACK);
         statusPanelTextArea.setFont(f);
@@ -702,7 +704,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     }
                     playerColor = getPlayerColor(player.getPlayerID());
 
-                    System.out.println("Missions: " + risiko.getMissionPerPlayer(player).getDescription());
+                    System.out.println("> Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
                     forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
@@ -716,7 +718,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                         //nextPhaseButton.setEnabled(true);
                     } else {
-                        System.out.println("Still not my turner");
+
                         saveGameButton.setEnabled(false);
                         nextPhaseButton.setEnabled(false);
                     }
@@ -777,7 +779,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         switch (currentPhase) {
             case DISTRIBUTE:
                 glass.removeAll();
-                System.out.println("you have " + forcesLeft + " forces left this round");
+                System.out.println("> you have " + forcesLeft + " forces this round");
                 paintFlagLabel(risiko.loadOwnedCountryList(player), playerColor);
                 createMouseClickListener(fgPictureLabel, bgPicture);
                 createMouseHoverListener(fgPictureLabel, bgPicture);
@@ -807,7 +809,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 saveGameButton.setEnabled(true);
                 glass.removeAll();
                 windowJFrame.repaint();
-                System.out.println("you can save if you want! \n otherwise press nextPhase");
+                System.out.println("> you can save if you want! \n otherwise press nextPhase");
                 fgPictureLabel.removeMouseListener(mcl);
                 fgPictureLabel.removeMouseMotionListener(mml);
                 break;
@@ -843,7 +845,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
                         t = true;
-                        System.out.println("You have " + forcesLeft + " forces left this round");
+                        System.out.println("> You have " + forcesLeft + " forces left this round");
                         if (forcesLeft == 0) {
                             nextPhaseButton.setEnabled(true);
                         }
@@ -936,7 +938,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     @Override
     public void broadcast(String broadcastText) {
-        System.out.println(broadcastText);
+        System.out.println("> "+broadcastText);
     }
 
 
