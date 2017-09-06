@@ -67,7 +67,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private Double scalingFactor;
     private boolean hovered = false;
 
-
+    private MouseListener mcl = null;
     private MouseMotionListener mml = null;
     private boolean isClicked = false;
 
@@ -320,11 +320,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 try {
                     risiko.deSerializePlayers();
                     risiko.deSerializeCountries();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (CountryAlreadyExistsException e1) {
+                } catch (IOException | ClassNotFoundException | CountryAlreadyExistsException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -358,7 +354,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
     public void createMouseClickListener(JLabel fgPanel, final BufferedImage bgPicturex) {
-        fgPanel.addMouseListener(new MouseAdapter() {
+
+        fgPanel.addMouseListener( mcl = new MouseAdapter() {
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
@@ -505,8 +503,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
     public void createMouseHoverListener(JLabel fgPanel, final BufferedImage bgPicturex) {
-        fgPanel.removeMouseMotionListener(mml);
-        mml = new MouseAdapter() {
+
+        fgPanel.addMouseMotionListener( mml = new MouseAdapter() {
 
             public void mouseMoved(MouseEvent e) {
                 int packetInt = bgPicturex.getRGB(e.getX(), e.getY());
@@ -610,9 +608,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     hovered = false;
                 }
             }
-        };
-
-        fgPanel.addMouseMotionListener(mml);
+        });
     }
 
 
@@ -657,9 +653,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
      * (dixhuxen)
      */
 
-    public void roundManger() {
-    }
-
 
     /**
      * WE DONT KNOW ANY OF THIS STUFF, ALL FROM TESCHKE
@@ -673,7 +666,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             switch (gce.getType()) {
                 case GAME_STARTED:
 
-                    createMouseHoverListener(fgPictureLabel, bgPicture);
                     loadGameButton.setEnabled(false);
                     startGameButton.setEnabled(false);
                     System.out.println("GO GO GO MOTHERFUCKER");
@@ -699,8 +691,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     Player currentPlayer = gce.getPlayer();
                     if (currentPlayer.equals(player)) {
                         System.out.println("Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-
-
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
 
@@ -713,7 +703,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     break;
                 case GAME_LOADED:
                     for (Player p : risiko.getPlayerList()) {
-                        if (p.getPlayerName().equals(player.getPlayerName())){
+                        if (p.getPlayerName().equals(player.getPlayerName())) {
                             player.setPlayerID(p.getPlayerID());
                             playerColor = getPlayerColor(player.getPlayerID());
                         }
@@ -770,6 +760,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 System.out.println("you have " + forcesLeft + " forces left this round");
                 paintFlagLabel(risiko.loadOwnedCountryList(player), playerColor);
                 createMouseClickListener(fgPictureLabel, bgPicture);
+                createMouseHoverListener(fgPictureLabel, bgPicture);
 
                 break;
             case ATTACK:
@@ -779,7 +770,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 try {
                     paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColor);
                 } catch (NoEnemyCountriesNearException e) {
-
+                    e.printStackTrace();
                 }
                 break;
             case REDISTRIBUTE:
@@ -797,6 +788,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 glass.removeAll();
                 windowJFrame.repaint();
                 System.out.println("you can save if you want! \n otherwise press nextPhase");
+                fgPictureLabel.removeMouseListener(mcl);
+                fgPictureLabel.removeMouseMotionListener(mml);
                 break;
         }
     }
