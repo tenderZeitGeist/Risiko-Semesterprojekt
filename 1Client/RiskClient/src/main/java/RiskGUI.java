@@ -104,10 +104,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         scalingFactor = sc.createScalingSliderDialog() / 100;
         //scalingFactor = 0.7;
         System.out.println(scalingFactor);
-        createPlayerDialog();
-        //init Pictures
-        initPictureFiles();
-        initMainWindow();
+
+        if (risiko.getPlayerList().size() < 7) {
+            createPlayerDialog();
+            //init Pictures
+            initPictureFiles();
+            initMainWindow();
+        } else {
+            JOptionPane.showMessageDialog(null, "You can't joind this game. There are already 6 players.");
+        }
     }
 
 
