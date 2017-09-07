@@ -79,8 +79,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     private boolean admin = false;
 
 
-
-
     public static void main(String[] args) {
         //catch exceptions maybe?!
         try {
@@ -315,7 +313,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         startGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    if(!loadedGame) {
+                    if (!loadedGame) {
                         risiko.distributeCountries();
                         risiko.distributeMissions();
                         risiko.setPlayerIDs();
@@ -417,6 +415,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 if (!hex.equals("000000") || !isClicked) {
                     switch (currentPhase) {
                         case DISTRIBUTE:
+                            updateStatusPanel();
                             if (tempSelectedCountry != null) {
                                 isClicked = true;
                             }
@@ -424,7 +423,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         case ATTACK:
                             isClicked = false;
                             glass.removeAll();
-
+                            updateStatusPanel();
                             try {
                                 if (tempCountry1 == null) {
                                     for (Country currentCountry : risiko.loadAttackingCountriesList(player)) {
@@ -460,6 +459,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             break;
                         case REDISTRIBUTE:
                             glass.removeAll();
+                            updateStatusPanel();
                             isClicked = false;
                             try {
                                 if (tempCountry1 == null) {
@@ -572,6 +572,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                             switch (currentPhase) {
                                 case DISTRIBUTE:
+                                    updateStatusPanel();
                                     break;
                                 case ATTACK:
                                     if (!isClicked) {
@@ -749,13 +750,14 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
+
                     if (currentPlayer.equals(player)) {
-                        System.out.println("Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
+                        System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
 
 
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
-
+                        updateStatusPanel();
                         //nextPhaseButton.setEnabled(true);
                     } else {
 
@@ -764,6 +766,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     }
                     break;
                 case GAME_LOADED:
+
                     loadGameButton.setEnabled(false);
                     loadedGame = true;
                     for (Player p : risiko.getPlayerList()) {
@@ -773,9 +776,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             playerColorHighlight = getPlayerColor((player.getPlayerID()) + 6);
                         }
                     }
+
                     break;
 
                 case GAME_OVER:
+                    updateStatusPanel();
                     JOptionPane.showMessageDialog(windowJFrame,
                             "Game over. Winner is " + gce.getPlayer().getPlayerName() + ".",
                             "Game Over",
@@ -791,12 +796,14 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 // Event originates from other player and is relevant for me:
                 switch (gae.getType()) {
                     case ATTACK:
+                        updateStatusPanel();
                         JOptionPane.showMessageDialog(windowJFrame,
                                 "You are were attacked by player " + gae.getPlayer().getPlayerName() + ".",
                                 "Attack!",
                                 JOptionPane.WARNING_MESSAGE);
                         break;
                     case NEW_OWNER:
+                        updateStatusPanel();
                         JOptionPane.showMessageDialog(windowJFrame,
                                 "Some territory has been conquered by player " + gae.getPlayer().getPlayerName() + ".",
                                 "UI Update!",
@@ -1025,6 +1032,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     "Marines:\t" + forcesLeft + " \n" +
                     "Color:\t" + playerColor + " \n" +
                     "Phase:\t" + currentPhase.toString().toLowerCase() + " \n" +
+                    "Planets:\t" + risiko.loadOwnedCountryList(player).size() + " \n" +
                     "Cards:\ttmp \n" +
                     "Mission: \n" + risiko.getMissionPerPlayer(player).getDescription() +
                     "");

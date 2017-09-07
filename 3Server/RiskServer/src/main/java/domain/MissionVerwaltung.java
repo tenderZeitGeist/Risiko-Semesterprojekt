@@ -3,6 +3,7 @@ package domain;
 
 import valueobjects.Continent;
 import valueobjects.Mission;
+import valueobjects.Missions.ContinentMissions;
 import valueobjects.Missions.CountryMissions;
 import valueobjects.Missions.PlayerMission;
 import valueobjects.Player;
@@ -21,18 +22,13 @@ public class MissionVerwaltung {
 
     public MissionVerwaltung() {
         missionList.removeAllElements();
-        //missionList.add(new CountryMissions(null, "Conquer 24 Countries of your choice.", 1, 24, 0));
-        missionList.add(new CountryMissions(null, "Conquer 18 Countries of your choice with at least 2 forces on each one", 2, 18, 0));
-        missionList.add(new CountryMissions(null, "Conquer 18 Countries of your choice with at least 2 forces on each one", 2, 18, 0));
-
-
-        //        missionList.add(new ContinentMissions(null, "Conquer Asia and Africa!", 3, new int[]{4, 5}));
-//        missionList.add(new ContinentMissions(null, "Conquer Asia and South-America!", 4, new int[]{2, 5}));
-//        missionList.add(new ContinentMissions(null, "Conquer North-America and Australia!", 5, new int[]{1, 7}));
-//        missionList.add(new ContinentMissions(null, "Conquer North-America and Africa!", 6, new int[]{1, 4}));
-//        missionList.add(new ContinentMissions(null, "Conquer Europe, Australia and a third one of your choice!", 7, new int[]{3, 6, 0}));
-//        missionList.add(new ContinentMissions(null, "Conquer Europe, South-America and a third one of your choice!", 8, new int[]{3, 2, 0}));
-//        missionList.add(new ContinentMissions(null, "Conquer Europe, Africa and a third one of your choice!", 9, new int[]{3, 4, 0}));
+        missionList.add(new CountryMissions(null, "Conquer 18 Countries of your choice.", 1, 18, 0));
+        missionList.add(new CountryMissions(null, "Conquer 12 Countries of your choice with at least 2 forces on each one", 2, 12, 2));
+        missionList.add(new ContinentMissions(null, "Conquer Dagobah System and Republic System!", 3, new int[]{1, 4}));
+        missionList.add(new ContinentMissions(null, "Conquer The Outer Rim and The Colonies!", 4, new int[]{2, 5}));
+        missionList.add(new ContinentMissions(null, "Conquer Delta Quad and The Republic System!", 6, new int[]{3, 4}));
+        missionList.add(new ContinentMissions(null, "Conquer The Outer Rim, Delta Quad and a third one of your choice!", 8, new int[]{3, 2, 0}));
+        missionList.add(new ContinentMissions(null, "Conquer Dagobah, The Colonies and a third one of your choice!", 9, new int[]{1, 5, 0}));
 /*      missionList.add(new KillPlayerMissions(null, "Capture all countries of player 1", 10, 1));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 2", 11, 2));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 3", 12, 3));
