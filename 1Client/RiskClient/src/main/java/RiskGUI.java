@@ -351,9 +351,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         saveGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    risiko.serializeCountries();
-                    risiko.serializePlayers(risiko.getCurrentPlayer());
-                    //risiko.serializeMissions();
+                    risiko.saveGame(player);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -751,6 +749,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     System.out.println("> Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
+
                     forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
 
                     Turn currentTurn = gce.getTurn();
@@ -758,14 +757,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                     if (currentPlayer.equals(player)) {
                         System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-
-
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
                         updateStatusPanel();
                         //nextPhaseButton.setEnabled(true);
                     } else {
-
                         saveGameButton.setEnabled(false);
                         nextPhaseButton.setEnabled(false);
                     }
@@ -779,9 +775,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             player = p;
                             playerColor = getPlayerColor(player.getPlayerID());
                             playerColorHighlight = getPlayerColor((player.getPlayerID()) + 6);
+                            JOptionPane.showMessageDialog(windowJFrame,
+                                    "A previous instance of Star Risk has been successfully loaded.\n" +
+                                            "Prepare to resume your last game.",
+                                    "Loaded game.",
+                                    JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
-
                     break;
 
                 case GAME_OVER:

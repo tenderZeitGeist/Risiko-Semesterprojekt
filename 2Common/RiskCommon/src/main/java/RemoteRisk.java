@@ -1,3 +1,4 @@
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import events.GameEvent;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
@@ -24,6 +25,8 @@ interface RemoteRisk extends Remote {
     void startGame() throws RemoteException;
 
     void loadGame() throws IOException, ClassNotFoundException, CountryAlreadyExistsException;
+
+    void saveGame(Player currentPlayer) throws IOException ;
 
     void addGameEventListener(GameEventListener listener) throws RemoteException;
 

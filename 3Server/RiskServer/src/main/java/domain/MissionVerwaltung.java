@@ -8,6 +8,7 @@ import valueobjects.Missions.CountryMissions;
 import valueobjects.Missions.PlayerMission;
 import valueobjects.Player;
 
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -122,5 +123,31 @@ public class MissionVerwaltung {
         }
     }
 
+    public void serializeMissions() throws IOException {
 
+        try (FileOutputStream fos = new FileOutputStream("missions.ser");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            for (Mission m : missionList) {
+                oos.writeObject(m);
+            }
+        }
+    }
+
+    public Vector<Mission> deSerializeMissions() throws IOException, ClassNotFoundException {
+        Vector<Mission> tempMissionList = new Vector<Mission>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("missions.ser"))) {
+            while (true) {
+                Mission m = (Mission) ois.readObject();
+                //Following line stays the same
+                tempMissionList.add(m);
+                //System.out.println("Mission vom Typ " + m.getClass().getName() + " / " + m.getDescription());
+            }
+        } catch (EOFException e) {
+            System.out.println(e.getMessage());
+            //Following line stays the same
+        }
+        //Following line stays the same
+        return tempMissionList;
+    }
 }
