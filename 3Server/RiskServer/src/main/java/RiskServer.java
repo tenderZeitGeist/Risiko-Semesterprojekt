@@ -84,7 +84,6 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         Player activePlayer = playerManager.getPlayerList().get(currentPlayerID);
         currentTurn = new Turn(activePlayer, Turn.Phase.DISTRIBUTE);
         notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_STARTED));
-
         System.out.println("game started");
     }
 

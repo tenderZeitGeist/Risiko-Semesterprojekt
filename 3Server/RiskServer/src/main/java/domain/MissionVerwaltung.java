@@ -28,8 +28,8 @@ public class MissionVerwaltung {
         missionList.add(new ContinentMissions(null, "Conquer Dagobah System and Republic System!", 3, new int[]{1, 4}));
         missionList.add(new ContinentMissions(null, "Conquer The Outer Rim and The Colonies!", 4, new int[]{2, 5}));
         missionList.add(new ContinentMissions(null, "Conquer Delta Quad and The Republic System!", 6, new int[]{3, 4}));
-        missionList.add(new ContinentMissions(null, "Conquer The Outer Rim, Delta Quad and a third one of your choice!", 8, new int[]{3, 2, 0}));
-        missionList.add(new ContinentMissions(null, "Conquer Dagobah, The Colonies and a third one of your choice!", 9, new int[]{1, 5, 0}));
+        missionList.add(new ContinentMissions(null, "Conquer The Outer Rim, Delta Quad and a third system of your choice!", 8, new int[]{3, 2, 0}));
+        missionList.add(new ContinentMissions(null, "Conquer Dagobah, The Colonies and a system of your choice!", 9, new int[]{1, 5, 0}));
 /*      missionList.add(new KillPlayerMissions(null, "Capture all countries of player 1", 10, 1));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 2", 11, 2));
         missionList.add(new KillPlayerMissions(null, "Capture all countries of player 3", 12, 3));
@@ -51,7 +51,7 @@ public class MissionVerwaltung {
     public void distributeMissions(List<Player> playerList) {
         Vector<Mission> tempMissionList = new Vector<>(missionList);
 
-        Collections.shuffle(missionList);
+        Collections.shuffle(tempMissionList);
         int counter = 0;
         for (Player currentPlayer : playerList) {
             tempMissionList.get(counter++).setPlayer(currentPlayer);
