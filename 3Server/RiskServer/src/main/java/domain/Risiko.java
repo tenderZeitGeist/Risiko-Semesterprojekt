@@ -51,11 +51,11 @@ public class Risiko {
     }*/
 
     public void serializePlayers(Player p) throws IOException {
-        worldManager.serializePlayers(playerManager.getPlayerList(), p);
+        playerManager.serializePlayers(p);
     }
 
     public void serializeMissions() throws IOException {
-        worldManager.serializeMissions(missionVerwaltung.getUsedMissions());
+        missionVerwaltung.serializeMissions();
     }
 
     public void serializeCountries() throws IOException {
@@ -63,7 +63,7 @@ public class Risiko {
     }
 
     public Vector < Player > deSerializePlayers() throws IOException, ClassNotFoundException {
-        return worldManager.deSerializePlayers();
+        return playerManager.deSerializePlayers();
     }
 
     public void deSerializeCountries() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
@@ -71,7 +71,7 @@ public class Risiko {
     }
 
     public void writeMissionsFromFile() throws IOException, ClassNotFoundException {
-        Vector<Mission> v = worldManager.deSerializeMissions();
+        Vector<Mission> v = missionVerwaltung.deSerializeMissions();
         missionVerwaltung.overwriteMissions(v);
     }
 

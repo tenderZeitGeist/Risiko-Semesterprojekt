@@ -5,6 +5,7 @@ import domain.Persistence.PersistenceManager;
 import exceptions.PlayerAlreadyExistsException;
 import valueobjects.Player;
 
+import java.io.*;
 import java.util.Vector;
 
 /**
@@ -47,5 +48,47 @@ public class PlayerVerwaltung {
         for (Player p : playerList) {
             p.setPlayerID ( playerID++ );
         }
+    }
+
+    public void serializePlayers(Player p) throws IOException {
+        Vector<Player> tempPlayerList = new Vector<>(playerList);
+        Vector<Player> tempPlayerList2 = new Vector<>();
+        //plist.clear();
+        int playerNumber = p.getPlayerID();
+        for (int i = 0; i < tempPlayerList.size(); i++) {
+            if (i >= playerNumber) {
+                tempPlayerList2.add(playerList.get(i));
+            }
+        }
+
+        for (int i = 0; i < tempPlayerList.size(); i++) {
+            if (i < playerNumber) {
+                tempPlayerList2.add(playerList.get(i));
+            }
+        }
+
+        try (FileOutputStream fos = new FileOutputStream("player.ser");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            for (Player pl : tempPlayerList2) {
+                oos.writeObject(pl);
+            }
+        }
+        tempPlayerList2.clear();
+    }
+
+    public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
+        Vector<Player> playerList = new Vector<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
+            while (true) {
+                Player p = (Player) ois.readObject();
+                //Following line stays the same
+                playerList.add(p);
+            }
+        } catch (EOFException e) {
+            e.getMessage();
+
+        }
+        return playerList;
     }
 }

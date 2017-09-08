@@ -36,7 +36,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     //private PlayGround playGround;
     private String file = "";
 
-    private List<GameEventListener> listeners;
+    private Vector<GameEventListener> listeners;
 
     private int currentPlayerID;
     private Turn currentTurn;
@@ -89,6 +89,13 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     }
 
     @Override
+    public void saveGame(Player currentPlayer) throws IOException {
+        serializeCountries();
+        serializePlayers(currentPlayer);
+        serializeMissions();
+    }
+
+    @Override
     public void loadGame() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
 
         int counter = 0;
@@ -108,12 +115,13 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         if (counter == currentPlayerList.size()) {
             System.out.println("Players do match... prepare to resume the game!");
             deSerializeCountries();
+            writeMissionsFromFile();
             setPlayerList(loadedPlayerList);
+            notifyPlayers(new GameControlEvent(new Turn(getPlayerList().get(0), Turn.Phase.SAVE), GameControlEventType.GAME_LOADED));
         } else {
             System.out.println("The connected players do not match. " +
                     "Please retry with another instance of the game!");
         }
-        notifyPlayers(new GameControlEvent(new Turn(loadedPlayerList.get(0), Turn.Phase.SAVE), GameControlEventType.GAME_LOADED));
     }
 
 
@@ -160,7 +168,6 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     @Override
     public void addGameEventListener(GameEventListener listener) throws RemoteException {
         System.out.println("xc");
-        System.out.println("xc");
         listeners.add(listener);
     }
 
@@ -184,12 +191,12 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public void serializePlayers(Player p) throws IOException, RemoteException {
-        worldManager.serializePlayers(playerManager.getPlayerList(), p);
+        playerManager.serializePlayers(p);
     }
 
     @Override
     public void serializeMissions() throws IOException, RemoteException {
-        worldManager.serializeMissions(missionVerwaltung.getUsedMissions());
+        missionVerwaltung.serializeMissions();
     }
 
     @Override
@@ -199,7 +206,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException, RemoteException {
-        return worldManager.deSerializePlayers();
+        return playerManager.deSerializePlayers();
     }
 
     @Override
@@ -209,7 +216,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public void writeMissionsFromFile() throws IOException, ClassNotFoundException, RemoteException {
-        Vector<Mission> v = worldManager.deSerializeMissions();
+        Vector<Mission> v = missionVerwaltung.deSerializeMissions();
         missionVerwaltung.overwriteMissions(v);
     }
 
@@ -354,8 +361,6 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
                 notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_OVER));
             }
         }
-
-
         return isConquered;
     }
 
@@ -493,6 +498,4 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         }
         return forcesArray;
     }
-
-
 }

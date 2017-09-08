@@ -83,44 +83,6 @@ public class WorldVerwaltung {
         pm.close();
     }
 
-    public void serializePlayers(Vector<Player> plist, Player p) throws IOException {
-        Vector<Player> tempPlayerList = new Vector<>(plist);
-        Vector<Player> tempPlayerList2 = new Vector<>();
-        //plist.clear();
-        int playerNumber = p.getPlayerID();
-        for (int i = 0; i < tempPlayerList.size(); i++) {
-            if (i >= playerNumber) {
-                tempPlayerList2.add(plist.get(i));
-            }
-        }
-
-        for (int i = 0; i < tempPlayerList.size(); i++) {
-            if (i < playerNumber) {
-                tempPlayerList2.add(plist.get(i));
-            }
-        }
-
-        try (FileOutputStream fos = new FileOutputStream("player.ser");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            for (Player pl : tempPlayerList2) {
-                oos.writeObject(pl);
-            }
-        }
-        tempPlayerList2.clear();
-    }
-
-    public void serializeMissions(Vector<Mission> missionList) throws IOException {
-
-        try (FileOutputStream fos = new FileOutputStream("missions.ser");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            for (Mission m : missionList) {
-                oos.writeObject(m);
-            }
-        }
-    }
-
     public void serializeCountries() throws IOException {
 
         try (FileOutputStream fos = new FileOutputStream("countries.ser");
@@ -133,22 +95,10 @@ public class WorldVerwaltung {
         }
     }
 
-    public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
-        Vector<Player> playerList = new Vector<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("player.ser"))) {
-            while (true) {
-                Player p = (Player) ois.readObject();
-                //Following line stays the same
-                playerList.add(p);
-            }
-        } catch (EOFException e) {
-            e.getMessage();
-
-        }
-        return playerList;
-    }
-
     public void deSerializeCountries() throws IOException, ClassNotFoundException, CountryAlreadyExistsException {
+
+        eraseAllCountriesAndContinents();
+
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("countries.ser"))) {
             while (true) {
                 Country c = (Country) ois.readObject();
@@ -162,24 +112,6 @@ public class WorldVerwaltung {
         }
         addCountriesListsToContinentList();
     }
-
-    public Vector<Mission> deSerializeMissions() throws IOException, ClassNotFoundException {
-        Vector<Mission> tempMissionList = new Vector<Mission>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("missions.ser"))) {
-            while (true) {
-                Mission m = (Mission) ois.readObject();
-                //Following line stays the same
-                tempMissionList.add(m);
-                //System.out.println("Mission vom Typ " + m.getClass().getName() + " / " + m.getDescription());
-            }
-        } catch (EOFException e) {
-            System.out.println(e.getMessage());
-            //Following line stays the same
-        }
-        //Following line stays the same
-        return tempMissionList;
-    }
-
 
     /**
      * Adds the amount of countries from the .txt into the a countryList
@@ -219,6 +151,15 @@ public class WorldVerwaltung {
         else
             throw new CountryAlreadyExistsException ( country, " - in 'einfuegen()'" );
     }*/
+    }
+
+    public void eraseAllCountriesAndContinents(){
+        for (Continent currentContinent : continentList) {
+            currentContinent.getContinentCountries().removeAllElements();
+            currentContinent.getContinentCountries().trimToSize();
+        }
+        continentList.removeAllElements();
+        continentList.trimToSize();
     }
 
     public void checkCountriesForPlayer(Vector<Player> playerList) throws IllegalStateException {
@@ -306,18 +247,18 @@ public class WorldVerwaltung {
 
     public void setForcesToCountry(Country country, int forces) {
         for (Continent currentContinent : continentList) {
-            for (Country currentCountry : currentContinent.getContinentCountries()){
-                if(country.getCountryID() == currentCountry.getCountryID()){
+            for (Country currentCountry : currentContinent.getContinentCountries()) {
+                if (country.getCountryID() == currentCountry.getCountryID()) {
                     currentCountry.setLocalForces(forces);
                 }
             }
         }
     }
 
-    public void setOwnerToCountry(Country country, Player player){
-        for(Continent currentContinent : continentList){
-            for(Country currentCountry : currentContinent.getContinentCountries()){
-                if(country.getCountryID() == currentCountry.getCountryID()){
+    public void setOwnerToCountry(Country country, Player player) {
+        for (Continent currentContinent : continentList) {
+            for (Country currentCountry : currentContinent.getContinentCountries()) {
+                if (country.getCountryID() == currentCountry.getCountryID()) {
                     currentCountry.setOwningPlayer(player);
                 }
             }
