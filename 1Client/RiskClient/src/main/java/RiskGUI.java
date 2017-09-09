@@ -220,27 +220,27 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             bgPicture = ImageIO.read(RiskGUI.class.getResourceAsStream("/starRiskColorCoded.png"));
             bgPicture = resizeBuffImg(bgPicture, (int) ((bgPicture.getWidth() * 0.5) * scalingFactor), (int) ((bgPicture.getHeight() * 0.5) * scalingFactor));
 
-            redFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red.png"));
-            redFlag = redFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            greenFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green.png"));
-            greenFlag = greenFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            purpleFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_purple.png"));
-            purpleFlag = purpleFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            yellowFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_yellow.png"));
-            yellowFlag = yellowFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            blueFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_blue.png"));
-            blueFlag = blueFlag.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            redFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_red.png"));
+            redFlag = redFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            greenFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_green.png"));
+            greenFlag = greenFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            purpleFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_purple.png"));
+            purpleFlag = purpleFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            yellowFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_yellow.png"));
+            yellowFlag = yellowFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            blueFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue.png"));
+            blueFlag = blueFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
 
-            blueFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_blue_green.png"));
-            blueFlag2 = blueFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            yellowFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_yellow_green.png"));
-            yellowFlag2 = yellowFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            purpleFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_purple_green.png"));
-            purpleFlag2 = purpleFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            greenFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_green_green.png"));
-            greenFlag2 = greenFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
-            redFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/flag_icons/flag_red_green.png"));
-            redFlag2 = redFlag2.getScaledInstance((int) (40 * scalingFactor), (int) (40 * scalingFactor), 100);
+            blueFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue_green.png"));
+            blueFlag2 = blueFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            yellowFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_yellow_green.png"));
+            yellowFlag2 = yellowFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            purpleFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_purple_green.png"));
+            purpleFlag2 = purpleFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            greenFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_green_green.png"));
+            greenFlag2 = greenFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            redFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_red_green.png"));
+            redFlag2 = redFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
 
             fgPictureFix = ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
@@ -433,9 +433,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                         if (currentCountry.getCountryName().equals(tempSelectedCountry.getCountryName())) {
                                             Vector<Country> cV = new Vector<>();
                                             cV.add(tempSelectedCountry);
-                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
                                             paintFlagLabel(cV, playerColorHighlight);
                                             isClicked = true;
+                                        }
+                                    }
+                                    for (Country c2 : risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry)) {
+                                        if (!(c2.getOwningPlayer().getPlayerName().equals(player.getPlayerName()))) {
+                                            Vector<Country> tempCountryList2 = new Vector<>();
+                                            tempCountryList2.add(c2);
+                                            paintFlagLabel(tempCountryList2, getPlayerColor(c2.getOwningPlayer().getPlayerID()));
                                         }
                                     }
 
@@ -586,8 +592,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                         Vector<Country> countryVector = new Vector<>();
                                                         countryVector.add(tempSelectedCountry);
                                                         glass.removeAll();
-                                                        paintFlagLabel(risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry), "red");
+
                                                         paintFlagLabel(countryVector, playerColorHighlight);
+                                                    }
+                                                    for (Country c2 : risiko.loadNeighbouringCountriesListForAttackingPhase(tempSelectedCountry)) {
+                                                        if (!(c2.getOwningPlayer().getPlayerName().equals(player.getPlayerName()))) {
+                                                            Vector<Country> tempCountryList2 = new Vector<>();
+                                                            tempCountryList2.add(c2);
+                                                            paintFlagLabel(tempCountryList2, getPlayerColor(c2.getOwningPlayer().getPlayerID()));
+                                                        }
                                                     }
                                                 }
                                             }
@@ -634,6 +647,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     glass.removeAll();
                                     paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerColor);
                                     paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColorHighlight);
+                                    paintEnemyCountries();
+
                                 } catch (RemoteException | NoEnemyCountriesNearException e1) {
 
                                 }
@@ -707,7 +722,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             }
 
             Dimension size = flag.getPreferredSize();
-            flag.setBounds(x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height);
+            flag.setBounds(x - ((int) (17 * scalingFactor)), y - ((int) (17 * scalingFactor)), size.width, size.height);
             glass.add(flag);
         }
         windowJFrame.repaint();
@@ -837,6 +852,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 glass.removeAll();
                 System.out.println("> you have " + forcesLeft + " forces this round");
                 paintFlagLabel(risiko.loadOwnedCountryList(player), playerColor);
+                paintEnemyCountries();
                 createMouseClickListener(fgPictureLabel, bgPicture);
                 createMouseHoverListener(fgPictureLabel, bgPicture);
 
@@ -848,6 +864,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 try {
                     paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerColor);
                     paintFlagLabel(risiko.loadAttackingCountriesList(player), playerColorHighlight);
+                    paintEnemyCountries();
                 } catch (NoEnemyCountriesNearException e) {
                     e.printStackTrace();
                 }
@@ -858,6 +875,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 isClicked = false;
                 try {
                     paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerColor);
+                    paintEnemyCountries();
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -1052,6 +1070,19 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             keepThisVector.removeIf(country -> country.getCountryName().equals(c2.getCountryName()));
         }
         return keepThisVector;
+    }
+
+    public void paintEnemyCountries() throws RemoteException {
+        Vector<Country> tempCountryList = risiko.getCountryList();
+
+        for (Country c : tempCountryList) {
+            if (!(c.getOwningPlayer().getPlayerName().equals(player.getPlayerName()))) {
+                Vector<Country> tempCountryList2 = new Vector<>();
+                tempCountryList2.add(c);
+                paintFlagLabel(tempCountryList2, getPlayerColor(c.getOwningPlayer().getPlayerID()));
+
+            }
+        }
     }
 
 }
