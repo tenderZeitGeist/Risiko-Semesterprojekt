@@ -419,8 +419,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     switch (currentPhase) {
                         case DISTRIBUTE:
                             updateStatusPanel();
-                            if (tempSelectedCountry != null) {
+                            if (tempSelectedCountry != null && tempSelectedCountry.getOwningPlayer().equals(player)) {
                                 isClicked = true;
+                            } else {
+                                isClicked = false;
                             }
                             break;
                         case ATTACK:
@@ -932,6 +934,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                 JOptionPane.WARNING_MESSAGE);
                     }
                 }
+                isClicked = false;
                 break;
 
             case ATTACK:
