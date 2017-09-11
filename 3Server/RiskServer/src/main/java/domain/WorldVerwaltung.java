@@ -23,6 +23,7 @@ import java.util.Vector;
 
 public class WorldVerwaltung {
 
+
     public int countryCount = 42;
     private PersistenceManager pm = new FilePersistenceManager();
     private Vector<Continent> continentList = new Vector<Continent>();
@@ -79,12 +80,22 @@ public class WorldVerwaltung {
             }
 
         } while (oneCard != null);
-        pm.close();
 
         // Persistenz-Schnittstelle wieder schließen
         //Closes the interface to persistence
         pm.close();
     }
+
+
+    public void writeData() throws IOException {
+        pm.openForWriting("./cardList.txt");
+
+        for (customCard currentCard : cardList) {
+            pm.saveCard(currentCard);
+        }
+        pm.close();
+    }
+
 
     public void serializeCountries() throws IOException {
 
@@ -102,9 +113,10 @@ public class WorldVerwaltung {
 
         eraseAllCountriesAndContinents();
 
+        Country c;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("countries.ser"))) {
             while (true) {
-                Country c = (Country) ois.readObject();
+                c = (Country) ois.readObject();
                 //Following line stays the same
                 addCountry(c);
             }
@@ -114,6 +126,31 @@ public class WorldVerwaltung {
             //Following line stays the same
         }
         addCountriesListsToContinentList();
+    }
+
+    public void serializeCards() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("cards.ser"))) {
+
+            for (customCard currentCard : cardList) {
+                oos.writeObject(currentCard);
+            }
+        }
+    }
+
+
+    public void deserializeCards() throws IOException, ClassNotFoundException {
+
+        eraseAllCards();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("cards.ser"))) {
+            customCard card;
+            while (true) {
+                card = (customCard) ois.readObject();
+                cardList.add(card);
+            }
+        }catch (EOFException e){
+            System.out.println(e);
+        }
     }
 
     /**
@@ -158,11 +195,16 @@ public class WorldVerwaltung {
 
     public void eraseAllCountriesAndContinents() {
         for (Continent currentContinent : continentList) {
-            currentContinent.getContinentCountries().removeAllElements();
+            currentContinent.getContinentCountries().clear();
             currentContinent.getContinentCountries().trimToSize();
         }
-        continentList.removeAllElements();
+        continentList.clear();
         continentList.trimToSize();
+    }
+
+    public void eraseAllCards(){
+        cardList.clear();
+        cardList.trimToSize();
     }
 
     public void checkCountriesForPlayer(Vector<Player> playerList) throws IllegalStateException {
@@ -305,7 +347,7 @@ public class WorldVerwaltung {
             forcesCount += continentList.get(5).getValue();
         }
 
-        if(isCardStackFulfilled(getPlayersCardList(player))){
+        if (isCardStackFulfilled(getPlayersCardList(player))) {
             forcesCount += 3;
         }
 
@@ -359,8 +401,8 @@ public class WorldVerwaltung {
                 }
 
             }*/
-            return forcesCount;
-        }
+        return forcesCount;
+    }
 
 
     public void distributeCountries(List<Player> playerList) throws ArithmeticException {
@@ -376,7 +418,7 @@ public class WorldVerwaltung {
     }
 
     public void distributeCard(Player player) throws IllegalStateException {
-        Vector<customCard> emptyCardList = new Vector<>(cardList);
+        Vector<customCard> emptyCardList = new Vector<>();
         Random rng = new Random();
         for (customCard currentCard : cardList) {
             if (currentCard.getOwningPlayer() == null) {
@@ -386,10 +428,9 @@ public class WorldVerwaltung {
         if (emptyCardList.isEmpty()) {
             throw new IllegalStateException();
         } else {
-            int draw = rng.nextInt(emptyCardList.size() - 1);
+            int draw = rng.nextInt(emptyCardList.size());
             emptyCardList.get(draw).setOwningPlayer(player);
         }
-
     }
 
 
@@ -566,7 +607,11 @@ public class WorldVerwaltung {
     public Vector<customCard> getPlayersCardList(Player player) {
         Vector<customCard> playersCardList = new Vector<>();
         for (customCard c : cardList) {
-            if (c.getOwningPlayer().equals(player)) {
+            if (c.getOwningPlayer() == null) {
+                continue;
+            } else if (!c.getOwningPlayer().equals(player)) {
+                continue;
+            } else {
                 playersCardList.add(c);
             }
         }
@@ -624,20 +669,24 @@ public class WorldVerwaltung {
 
         for (int i = 0, index = 1; i < continentList.size(); i++) {
             for (int j = 0; j < continentList.get(i).getContinentCountries().size(); j++) {
-                if (index < 9) {
+                if (index < 10) {
                     cardList.add(new customCard(1, index, getCountryByID(index).getCountryName()));
                     index++;
                 } else if (index < 20) {
                     cardList.add(new customCard(2, index, getCountryByID(index).getCountryName()));
                     index++;
-                } else if (index < 29) {
+                } else {
                     cardList.add(new customCard(3, index, getCountryByID(index).getCountryName()));
                     index++;
-                } else {
-                    cardList.add(new customCard(4, index, "Joker"));
-                    index++;
+                    //} else {
+                    //    cardList.add(new customCard(4, index, "Joker"));
+                    //    index++;
+                    //}
                 }
             }
+        }
+        for (int i = 0, index = 30; i < 3; i++) {
+            cardList.add(new customCard(4, index++, "Joker"));
         }
     }
 

@@ -72,9 +72,15 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
         try {
             server.readData("/countryList.txt");
+            //server.createGameFile();
+            //server.writeData();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public void writeData() throws IOException {
+        worldManager.writeData();
     }
 
     @Override
@@ -88,9 +94,10 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public void saveGame(Player currentPlayer) throws IOException {
-        serializeCountries();
-        serializePlayers(currentPlayer);
-        serializeMissions();
+        worldManager.serializeCountries();
+        worldManager.serializeCards();
+        playerManager.serializePlayers(currentPlayer);
+        missionVerwaltung.serializeMissions();
         notifyPlayers(new GameControlEvent(new Turn(currentPlayer, Turn.Phase.SAVE), GameControlEventType.GAME_SAVED));
     }
 
@@ -114,6 +121,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         if (counter == currentPlayerList.size()) {
             System.out.println("Players do match... prepare to resume the game!");
             deSerializeCountries();
+            worldManager.deserializeCards();
             writeMissionsFromFile();
             setPlayerList(loadedPlayerList);
             notifyPlayers(new GameControlEvent(new Turn(getPlayerList().get(0), Turn.Phase.SAVE), GameControlEventType.GAME_LOADED));
@@ -186,7 +194,6 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
     public void readData(String file) throws IOException {
         worldManager.readData(file);
     }
-
 
     @Override
     public void serializePlayers(Player p) throws IOException, RemoteException {
