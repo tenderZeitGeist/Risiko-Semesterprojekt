@@ -362,8 +362,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
-
             }
         });
 
@@ -787,6 +785,18 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     "Loaded game.",
                                     JOptionPane.INFORMATION_MESSAGE);
                         }
+                    }
+                    break;
+
+                case GAME_SAVED:
+                    saveGameButton.setEnabled(false);
+                    int i = JOptionPane.showConfirmDialog(windowJFrame,
+                            "The current game was saved.\n" +
+                            "Do you want to quit the game?",
+                            "Game saved.",
+                            JOptionPane.YES_NO_OPTION);
+                    if(i == JOptionPane.YES_OPTION){
+                        System.exit(0);
                     }
                     break;
 
