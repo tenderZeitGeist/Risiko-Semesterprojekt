@@ -528,10 +528,11 @@ public class WorldVerwaltung {
         }
         if (attackingCountriesList.isEmpty()) {
             throw new NoEnemyCountriesNearException();
+
         }
+
+
         return attackingCountriesList;
-
-
     }
 
 

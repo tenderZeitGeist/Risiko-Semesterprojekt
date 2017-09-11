@@ -1,3 +1,4 @@
+import customUiElements.CardSelectionWindow;
 import customUiElements.JTextAreaOutputStream;
 import customUiElements.ScalingSliderDialog;
 import events.GameActionEvent;
@@ -11,6 +12,7 @@ import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
 import valueobjects.Player;
 import valueobjects.Turn;
+import valueobjects.customCard;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -39,6 +41,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     private Turn.Phase currentPhase = null;
     private int forcesLeft = 0;
+
+
+    private int bonusForces = 0;
 
     //UI
     private JFrame windowJFrame;
@@ -112,7 +117,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             initPictureFiles();
             initMainWindow();
         } else {
-            JOptionPane.showMessageDialog(null, "You can't joind this game. There are already 6 players.");
+            JOptionPane.showMessageDialog(null, "You can't join this game. There are already 6 players.");
         }
     }
 
@@ -121,7 +126,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         try {
             //IDEA: we use the code as is, but ask the player to
             //enter the name of his "alliance" (separatists, empire, rebels)
-            String name = JOptionPane.showInputDialog(windowJFrame, "Enter your alliances name:",
+            String name = JOptionPane.showInputDialog(windowJFrame, "Enter the name of your alliance:",
                     "add alliance",
                     JOptionPane.QUESTION_MESSAGE);
             player = new Player(0, name);
@@ -277,13 +282,14 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         statusPanelImage = new JLabel();
 
         statusPanelTextArea = new JTextArea("" +
-                "alliance Name:   none \n" +
-                "spare Marines:   none \n" +
-                "alliance Color:  none \n" +
-                "current Phase:   none \n" +
-                "pending Mission: none \n" +
-                "collected Cards: none \n" +
+                "Alliance:   none \n" +
+                "Marines:   none \n" +
+                "Phase:   none \n" +
+                "Planets:   none \n" +
+                "Cards: none \n" +
+                "Mission: none \n" +
                 "", 3, 18);
+        statusPanelTextArea.setLineWrap(true);
         statusPanel.add(statusPanelTextArea);
 
         scale = (int) (32 * scalingFactor);
@@ -311,10 +317,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         startGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         saveGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         loadGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
-        buttonPanel.add(nextPhaseButton, "wrap");
-        buttonPanel.add(startGameButton, "wrap");
-        buttonPanel.add(saveGameButton, "wrap");
-        buttonPanel.add(loadGameButton, "wrap");
+        buttonPanel.add(nextPhaseButton, "grow, wrap");
+        buttonPanel.add(startGameButton, "grow, wrap");
+        buttonPanel.add(saveGameButton, "grow, wrap");
+        buttonPanel.add(loadGameButton, "grow, wrap");
         if (admin) {
             startGameButton.setEnabled(true);
             loadGameButton.setEnabled(true);
@@ -339,12 +345,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     } else {
                         risiko.startGame();
                     }
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                }
-
-                try {
-                    risiko.nextPhase();
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -632,8 +632,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                     countryVector.add(tempSelectedCountry);
                                                     glass.removeAll();
                                                     paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerIcon);
-                                                    paintFlagLabel(countryVector, playerIconHighlight
-                                                    );
+                                                    paintFlagLabel(countryVector, playerIconHighlight);
                                                 }
                                             }
                                         } catch (NoAlliedCountriesNearException | RemoteException e1) {
@@ -730,7 +729,6 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                     loadGameButton.setEnabled(false);
                     startGameButton.setEnabled(false);
-                    System.out.println("GO GO GO MOTHERFUCKER");
                     System.out.println("The game has just begun... It's player " + gce.getPlayer().getPlayerName() + "'s turn.");
 
                     for (Player p : risiko.getPlayerList()) {
@@ -747,19 +745,20 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         statusPanelImage.setIcon(setFactionSymbol(playerIcon));
                     } catch (IOException e) {
                         e.printStackTrace();
-                    };
+                    }
 
-                    System.out.println("> Missions: " + risiko.getMissionPerPlayer(player).getDescription());
+
+                    System.out.println("> Mission: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
-
+                    checkCards();
                     forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
+                    forcesLeft += bonusForces;
 
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
-
+                    System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
                     if (currentPlayer.equals(player)) {
-                        System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
                         updateStatusPanel();
@@ -783,7 +782,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                 statusPanelImage.setIcon(setFactionSymbol(playerIcon));
                             } catch (IOException e) {
                                 e.printStackTrace();
-                            };
+                            }
+                            ;
                             JOptionPane.showMessageDialog(windowJFrame,
                                     "A previous instance of Star Risk has been successfully loaded.\n" +
                                             "Prepare to resume your last game.",
@@ -797,10 +797,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     saveGameButton.setEnabled(false);
                     int i = JOptionPane.showConfirmDialog(windowJFrame,
                             "The current game was saved.\n" +
-                            "Do you want to quit the game?",
+                                    "Do you want to quit the game?",
                             "Game saved.",
                             JOptionPane.YES_NO_OPTION);
-                    if(i == JOptionPane.YES_OPTION){
+                    if (i == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
                     break;
@@ -824,7 +824,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     case ATTACK:
                         updateStatusPanel();
                         JOptionPane.showMessageDialog(windowJFrame,
-                                gae.getPlayer().getPlayerName() +" attacked a country",
+                                gae.getPlayer().getPlayerName() + " attacked a country",
                                 "Attack!",
                                 JOptionPane.WARNING_MESSAGE);
                         break;
@@ -856,7 +856,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         switch (currentPhase) {
             case DISTRIBUTE:
                 glass.removeAll();
-                System.out.println("> you have " + forcesLeft + " forces this round");
+                System.out.println("> You have " + forcesLeft + " forces to distribute this round");
                 paintFlagLabel(risiko.loadOwnedCountryList(player), playerIcon);
                 paintEnemyCountries();
                 createMouseClickListener(fgPictureLabel, bgPicture);
@@ -887,10 +887,11 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 }
                 break;
             case SAVE:
+                bonusForces = 0;
                 saveGameButton.setEnabled(true);
                 glass.removeAll();
                 windowJFrame.repaint();
-                System.out.println("> you can save if you want! \n otherwise press nextPhase");
+                System.out.println("> You can save if you want! \n Otherwise press nextPhase");
                 fgPictureLabel.removeMouseListener(mcl);
                 fgPictureLabel.removeMouseMotionListener(mml);
                 break;
@@ -950,9 +951,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     int attackingForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to use for the attack?\n" +
                                     country.getCountryName() + " has " + country.getLocalForces() + " forces\n" +
-                                    "You can use a total " + (tempCountry1.getLocalForces() - 1) + " forces.\n" +
+                                    "You can use a total of " + (tempCountry1.getLocalForces() - 1) + " forces.\n" +
                                     "But you may only select up to 3 forces per roll.",
-                            "!",
+                            "Attack Phase",
                             JOptionPane.WARNING_MESSAGE));
                     if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces < tempCountry1.getLocalForces()) {
                         isConquered = risiko.battle(tempCountry1, country, attackingForces);
@@ -971,8 +972,8 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             int redistributeForces = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                                     "How many forces do you want to move from " + attackingCountry.getCountryName() + " to " + defendingCountry.getCountryName() + "?\n"
                                             + attackingCountry.getCountryName() + " has " + attackingCountry.getLocalForces() + " forces. "
-                                            + "You can move about " + (attackingCountry.getLocalForces() - 1) + ".",
-                                    "!",
+                                            + "You can move " + (attackingCountry.getLocalForces() - 1) + " in total.",
+                                    "Move Forces",
                                     JOptionPane.QUESTION_MESSAGE));
 
                             if ((redistributeForces > (attackingCountry.getLocalForces() - 1)) || (redistributeForces < 0)) {
@@ -1053,6 +1054,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 return whiteflag2;
         }
         return null;
+
     }
 
     public void updateStatusPanel() {
@@ -1113,4 +1115,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     }
 
 
+    public void checkCards() throws RemoteException {
+        Vector<customCard> ownedCards = risiko.getPlayersCardList(player);
+        Vector<customCard> deletedCards = null;
+        if (ownedCards.size() > 3) {
+            CardSelectionWindow csw = new CardSelectionWindow();
+            Vector<Integer> selectedCardsList = csw.CardSelectionWindow(ownedCards, player);
+            bonusForces += selectedCardsList.size() / 3;
+        }
+    }
 }
