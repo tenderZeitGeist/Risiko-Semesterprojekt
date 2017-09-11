@@ -11,6 +11,7 @@ import net.miginfocom.swing.MigLayout;
 import valueobjects.Country;
 import valueobjects.Player;
 import valueobjects.Turn;
+import valueobjects.customCard;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -284,6 +285,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 "Cards: none \n" +
                 "Mission: none \n" +
                 "", 3, 18);
+        statusPanelTextArea.setLineWrap(true);
         statusPanel.add(statusPanelTextArea);
 
         scale = (int) (32 * scalingFactor);
@@ -1107,5 +1109,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         return new ImageIcon(tmpflag);
     }
 
+
+    public void checkCards() throws RemoteException {
+        Vector<customCard> ownedCards = risiko.getPlayersCardList(player);
+        Vector<customCard> deletedCards = null;
+
+
+
+
+
+    }
 
 }
