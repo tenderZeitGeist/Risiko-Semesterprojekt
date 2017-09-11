@@ -51,30 +51,34 @@ public class PlayerVerwaltung {
     }
 
     public void serializePlayers(Player p) throws IOException {
-        Vector<Player> tempPlayerList = new Vector<>(playerList);
-        Vector<Player> tempPlayerList2 = new Vector<>();
-        //plist.clear();
+
+        //Vector<Player> tempPlayerList1 = new Vector<>(playerList);
+        Vector<Player> tempPlayerList = new Vector<>();
+
         int playerNumber = p.getPlayerID();
-        for (int i = 0; i < tempPlayerList.size(); i++) {
-            if (i >= playerNumber) {
-                tempPlayerList2.add(playerList.get(i));
+
+        for (int i = 0; i < playerList.size(); i++) {
+            if (i > playerNumber) {
+            //    tempPlayerList1.get(i).setPlayerID(newPlayerID++);
+                tempPlayerList.add(playerList.get(i));
             }
         }
 
-        for (int i = 0; i < tempPlayerList.size(); i++) {
-            if (i < playerNumber) {
-                tempPlayerList2.add(playerList.get(i));
+        for (int i = 0; i < playerList.size(); i++) {
+            if (i <= playerNumber) {
+            //    tempPlayerList1.get(i).setPlayerID(newPlayerID++);
+                tempPlayerList.add(playerList.get(i));
             }
         }
 
         try (FileOutputStream fos = new FileOutputStream("player.ser");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
-            for (Player pl : tempPlayerList2) {
+            for (Player pl : tempPlayerList) {
                 oos.writeObject(pl);
             }
         }
-        tempPlayerList2.clear();
+        tempPlayerList.clear();
     }
 
     public Vector<Player> deSerializePlayers() throws IOException, ClassNotFoundException {
