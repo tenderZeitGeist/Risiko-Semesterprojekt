@@ -91,6 +91,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         serializeCountries();
         serializePlayers(currentPlayer);
         serializeMissions();
+        notifyPlayers(new GameControlEvent(new Turn(currentPlayer, Turn.Phase.SAVE), GameControlEventType.GAME_SAVED));
     }
 
     @Override
