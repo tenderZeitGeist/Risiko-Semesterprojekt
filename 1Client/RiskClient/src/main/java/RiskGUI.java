@@ -704,7 +704,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             flag.setIcon(tmpIcon);
 
             Dimension size = flag.getPreferredSize();
-            flag.setBounds(x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height);
+            flag.setBounds(x - ((int) (17 * scalingFactor)), y - ((int) (16 * scalingFactor)), size.width, size.height);
             glass.add(flag);
         }
         windowJFrame.repaint();
@@ -744,7 +744,13 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     playerIconHighlight = getPlayerColor((player.getPlayerID()) + 6);
                     ImageIcon icon = new ImageIcon(playerIcon);
 
-                    statusPanelImage.setIcon(icon);
+
+                    try {
+                        statusPanelImage.setIcon(setFactionSymbol(playerIcon));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    };
+
                     System.out.println("> Missions: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
@@ -774,8 +780,12 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             player = p;
                             playerIcon = getPlayerColor(player.getPlayerID());
                             playerIconHighlight = getPlayerColor((player.getPlayerID()) + 6);
-                            ImageIcon icon2 = new ImageIcon(playerIcon);
-                            statusPanelImage.setIcon(icon2);
+
+                            try {
+                                statusPanelImage.setIcon(setFactionSymbol(playerIcon));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            };
                             JOptionPane.showMessageDialog(windowJFrame,
                                     "A previous instance of Star Risk has been successfully loaded.\n" +
                                             "Prepare to resume your last game.",
@@ -804,7 +814,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     case ATTACK:
                         updateStatusPanel();
                         JOptionPane.showMessageDialog(windowJFrame,
-                                "You are were attacked by player " + gae.getPlayer().getPlayerName() + ".",
+                                gae.getPlayer().getPlayerName() +" attacked a country",
                                 "Attack!",
                                 JOptionPane.WARNING_MESSAGE);
                         break;
@@ -1070,5 +1080,27 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             }
         }
     }
+
+
+    public ImageIcon setFactionSymbol(Image playerIcon) throws IOException {
+        Image tmpflag = null;
+        if (playerIcon.equals(redFlag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_red.png"));
+        } else if (playerIcon.equals(greenFlag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_green.png"));
+        } else if (playerIcon.equals(purpleFlag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_purple.png"));
+        } else if (playerIcon.equals(yellowFlag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_yellow.png"));
+        } else if (playerIcon.equals(whiteflag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_white.png"));
+        } else if (playerIcon.equals(blueFlag)) {
+            tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue.png"));
+        }
+
+        tmpflag = tmpflag.getScaledInstance((int) (300 * scalingFactor), (int) (300 * scalingFactor), 100);
+        return new ImageIcon(tmpflag);
+    }
+
 
 }
