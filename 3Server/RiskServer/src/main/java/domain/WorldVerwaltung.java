@@ -5,7 +5,10 @@ import domain.Persistence.PersistenceManager;
 import exceptions.CountryAlreadyExistsException;
 import exceptions.NoAlliedCountriesNearException;
 import exceptions.NoEnemyCountriesNearException;
-import valueobjects.*;
+import valueobjects.Continent;
+import valueobjects.Country;
+import valueobjects.Player;
+import valueobjects.customCard;
 
 import java.io.*;
 import java.util.Collections;
@@ -153,7 +156,7 @@ public class WorldVerwaltung {
     }*/
     }
 
-    public void eraseAllCountriesAndContinents(){
+    public void eraseAllCountriesAndContinents() {
         for (Continent currentContinent : continentList) {
             currentContinent.getContinentCountries().removeAllElements();
             currentContinent.getContinentCountries().trimToSize();
@@ -271,6 +274,7 @@ public class WorldVerwaltung {
 
         if (getNumberOfCountriesOfPlayer(player) < 9) {
             forcesCount += 3;
+            //getPlayersCardList()
         } else {
             forcesCount = getNumberOfCountriesOfPlayer(player) / 3;
         }
@@ -300,8 +304,63 @@ public class WorldVerwaltung {
             System.out.println("player owns " + continentList.get(5).getName());
             forcesCount += continentList.get(5).getValue();
         }
-        return forcesCount;
-    }
+
+        if(isCardStackFulfilled(getPlayersCardList(player))){
+            forcesCount += 3;
+        }
+
+        /*if (isCardStackFulfilled(getPlayersCardList(player))) {
+            Vector<customCard> currentCardList = worldManager.getPlayersCardList(currentPlayer), tempCardList = new Vector<>();
+            int selectedCardID;
+            boolean isFulfilled = false, checkInfantry = false, checkCavalry = false, checkArtillery = false, checkJoker = false;
+
+
+            printPlayersCardList(currentPlayer);
+            System.out.println("");
+            System.out.println("Please select up to three cards or 99 to skip this process.");
+            cardLoop:
+            while (true) {
+                do {
+                    System.out.println("#>");
+                    selectedCardID = (Integer.parseInt(readInput())) - 1;
+                    if (tempCardList.contains(currentCardList.get(selectedCardID))) {
+                        System.out.println("You have already selected this card. Please choose another one.");
+                        continue;
+                    } else {
+                        tempCardList.add(currentCardList.get(selectedCardID));
+                        System.out.println("You have selected " + currentCardList.get(selectedCardID).getCardName());
+                    }
+                } while (tempCardList.size() < 2);
+
+                if (risiko.isCardStackFulfilled(tempCardList)) {
+                    System.out.println("Input correct!");
+                    if (cardExchangeArmies < 12) {
+                        cardExchangeArmies = +2;
+                        forcesLeft += cardExchangeArmies;
+                    } else if (cardExchangeArmies < 15) {
+                        cardExchangeArmies += 3;
+                        forcesLeft += cardExchangeArmies;
+                    } else {
+                        cardExchangeArmies += 5;
+                        forcesLeft += cardExchangeArmies;
+                    }
+
+                    Vector<Card> cardList = risiko.getCardList();
+                    for (Card c : tempCardList) {
+                        cardList.remove(c);
+                    }
+
+                    break cardLoop;
+                } else {
+                    System.out.println("Input incorrect! Please choose your cards again");
+                    tempCardList.removeAllElements();
+                    tempCardList.trimToSize();
+                    continue;
+                }
+
+            }*/
+            return forcesCount;
+        }
 
 
     public void distributeCountries(List<Player> playerList) throws ArithmeticException {
@@ -514,6 +573,45 @@ public class WorldVerwaltung {
         return playersCardList;
     }
 
+    /*public int getForcesByCards(Player p) {
+        Vector<customCard> playersCardList = getPlayersCardList(p);
+        int cardIndex = 0, cardIndex1 = 0, cardIndex2 = 0, cardIndex3 = 0, cardIndex4 = 0;
+        int totalForces = 0;
+
+        for (customCard card : playersCardList) {
+            switch (card.getCardType()) {
+                case 1:
+                    cardIndex1++;
+                    break;
+                case 2:
+                    cardIndex2++;
+                    break;
+                case 3:
+                    cardIndex3++;
+                    break;
+                case 4:
+                    cardIndex4++;
+                    break;
+            }
+        }
+
+        if (cardIndex1 >= 3) {
+            totalForces += 1;
+            country -> country.getCountryName().equals(c2.getCountryName())
+
+            playersCardList.removeIf(customCard -> )
+        }
+        totalForces += 1;
+        if (cardIndex2 >= 3)
+            totalForces += 1;
+        if (cardIndex3 >= 3)
+            totalForces += 1;
+        if (cardIndex4 >= 3)
+            totalForces += 1;
+
+
+    }*/
+
     //_____________________________________________________________________________________________________________
 
 
@@ -526,13 +624,13 @@ public class WorldVerwaltung {
 
         for (int i = 0, index = 1; i < continentList.size(); i++) {
             for (int j = 0; j < continentList.get(i).getContinentCountries().size(); j++) {
-                if (index < 15) {
+                if (index < 9) {
                     cardList.add(new customCard(1, index, getCountryByID(index).getCountryName()));
                     index++;
-                } else if (index < 29) {
+                } else if (index < 20) {
                     cardList.add(new customCard(2, index, getCountryByID(index).getCountryName()));
                     index++;
-                } else if (index < 43) {
+                } else if (index < 29) {
                     cardList.add(new customCard(3, index, getCountryByID(index).getCountryName()));
                     index++;
                 } else {
@@ -577,5 +675,56 @@ public class WorldVerwaltung {
         return countryList;
     }
 
+
+    public boolean isCardStackFulfilled(Vector<customCard> playerCards) {
+        boolean isFulfilled = false, checkInfantry = false, checkCavalry = false, checkArtillery = false, checkJoker = false;
+        int infantry = 0, cavalry = 0, artillery = 0, joker = 0;
+
+        if (playerCards.size() < 3) {
+            for (customCard currentCard : playerCards) {
+                switch (currentCard.getCardType()) {
+                    case 1:
+                        infantry++;
+                        break;
+                    case 2:
+                        cavalry++;
+                        break;
+                    case 3:
+                        artillery++;
+                        break;
+                    case 4:
+                        joker++;
+                        break;
+                }
+                if (infantry > 0) {
+                    checkInfantry = true;
+                }
+                if (cavalry > 0) {
+                    checkCavalry = true;
+                }
+                if (artillery > 0) {
+                    checkArtillery = true;
+                }
+                if (joker > 0) {
+                    checkJoker = true;
+                }
+                if ((checkInfantry && checkCavalry && checkArtillery)
+                        || (checkJoker && checkInfantry && checkCavalry)
+                        || (checkJoker && checkCavalry && checkArtillery)
+                        || (checkJoker && checkInfantry && checkArtillery)
+                        || (checkJoker && (infantry > 1 || cavalry > 1 || artillery > 1))
+                        || (joker > 1 && (checkInfantry || checkCavalry || checkArtillery))) {
+
+                    return isFulfilled = true;
+                } else {
+                    return isFulfilled;
+                }
+
+            }
+        } else {
+            isFulfilled = false;
+        }
+        return isFulfilled;
+    }
 
 }

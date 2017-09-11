@@ -19,7 +19,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 
@@ -104,7 +103,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         if (currentPlayerList.size() == loadedPlayerList.size()) {
             for (Player currentPlayer : currentPlayerList) {
                 for (Player loadedPlayer : loadedPlayerList) {
-                    if (currentPlayer.getPlayerName().equals(loadedPlayer.getPlayerName())){
+                    if (currentPlayer.getPlayerName().equals(loadedPlayer.getPlayerName())) {
                         counter++;
                     }
                 }
@@ -328,7 +327,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         attackerForces -= forcesArray[0];
         defendingForces -= forcesArray[1];
         if (defendingForces < 1) {
-            //country lost
+            //ATTACKER WINS
             isConquered = true;
             setOwnerToCountry(defendingCountry, attackingCountry.getOwningPlayer());
             setForcesToCountry(defendingCountry, attackerForces);
@@ -338,10 +337,12 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
                     + attackingCountry.getOwningPlayerName() + " looses " + forcesArray[0] + " forces.\n"
                     + attackingCountry.getOwningPlayerName() + " conquers " + defendingCountry.getCountryName());
 
+
+            worldManager.distributeCard(attackingCountry.getOwningPlayer());
             GameActionEventType type = GameActionEventType.NEW_OWNER;
             notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
         } else {
-            //just subtract forces
+            //NO ONE WINS
             setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - forcesArray[0]);
             setForcesToCountry(defendingCountry, defendingCountry.getLocalForces() - forcesArray[1]);
 
@@ -391,8 +392,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public boolean isCardStackFulfilled(Vector<customCard> playersCards) throws RemoteException {
-        //return playGround.isCardStackFulfilled(playersCards);
-        return false;
+        return worldManager.isCardStackFulfilled(playersCards);
     }
 
     @Override
