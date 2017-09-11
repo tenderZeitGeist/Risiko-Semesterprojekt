@@ -1110,7 +1110,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             tmpflag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue.png"));
         }
 
-        tmpflag = tmpflag.getScaledInstance((int) (300 * scalingFactor), (int) (300 * scalingFactor), 100);
+        tmpflag = tmpflag.getScaledInstance((int) (250 * scalingFactor), (int) (250 * scalingFactor), 100);
         return new ImageIcon(tmpflag);
     }
 
