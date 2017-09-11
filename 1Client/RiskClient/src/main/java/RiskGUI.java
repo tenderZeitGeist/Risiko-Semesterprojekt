@@ -1,3 +1,4 @@
+import customUiElements.CardSelectionWindow;
 import customUiElements.JTextAreaOutputStream;
 import customUiElements.ScalingSliderDialog;
 import events.GameActionEvent;
@@ -40,6 +41,9 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     private Turn.Phase currentPhase = null;
     private int forcesLeft = 0;
+
+
+    private int bonusForces = 0;
 
     //UI
     private JFrame windowJFrame;
@@ -748,22 +752,23 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     System.out.println("> Mission: " + risiko.getMissionPerPlayer(player).getDescription());
 
                 case NEXT_TURN:
-
+                    checkCards();
                     forcesLeft = risiko.returnForcesPerRoundsPerPlayer(player);
+                    forcesLeft += bonusForces;
 
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
 
                     //if (currentPlayer.equals(player)) {
-                        System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-                        currentPhase = currentTurn.getPhase();
-                        phaseHandler();
-                        updateStatusPanel();
-                        //nextPhaseButton.setEnabled(true);
-                   // } else {
-                        saveGameButton.setEnabled(false);
-                        nextPhaseButton.setEnabled(false);
-                  //  }
+                    System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
+                    currentPhase = currentTurn.getPhase();
+                    phaseHandler();
+                    updateStatusPanel();
+                    //nextPhaseButton.setEnabled(true);
+                    // } else {
+                    saveGameButton.setEnabled(false);
+                    nextPhaseButton.setEnabled(false);
+                    //  }
                     break;
                 case GAME_LOADED:
 
@@ -794,10 +799,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     saveGameButton.setEnabled(false);
                     int i = JOptionPane.showConfirmDialog(windowJFrame,
                             "The current game was saved.\n" +
-                            "Do you want to quit the game?",
+                                    "Do you want to quit the game?",
                             "Game saved.",
                             JOptionPane.YES_NO_OPTION);
-                    if(i == JOptionPane.YES_OPTION){
+                    if (i == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
                     break;
@@ -884,6 +889,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 }
                 break;
             case SAVE:
+                bonusForces = 0;
                 saveGameButton.setEnabled(true);
                 glass.removeAll();
                 windowJFrame.repaint();
@@ -1113,11 +1119,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
     public void checkCards() throws RemoteException {
         Vector<customCard> ownedCards = risiko.getPlayersCardList(player);
         Vector<customCard> deletedCards = null;
-
-
-
-
-
+        if (ownedCards.size() > 3) {
+            CardSelectionWindow csw = new CardSelectionWindow();
+            Vector<Integer> selectedCardsList = csw.CardSelectionWindow(ownedCards, player);
+            bonusForces += selectedCardsList.size()/3;
+        }
     }
-
 }
