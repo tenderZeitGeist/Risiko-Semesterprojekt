@@ -78,6 +78,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
             e.printStackTrace();
         }
     }
+
     @Override
     public void writeData() throws IOException {
         worldManager.writeData();
@@ -323,7 +324,9 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
     @Override
     public boolean battle(Country attackingCountry, Country defendingCountry, int attackerForces) throws RemoteException {
+        Player defeatedPlayer = defendingCountry.getOwningPlayer();
         boolean isConquered = false;
+        boolean playerEliminated = false;
         int defendingForces;
 
         if (defendingCountry.getLocalForces() < 2) {
@@ -349,6 +352,8 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
             worldManager.distributeCard(attackingCountry.getOwningPlayer());
             GameActionEventType type = GameActionEventType.NEW_OWNER;
             notifyPlayers(new GameActionEvent(currentTurn.getPlayer(), type));
+            playerEliminated = worldManager.playerEliminated(defeatedPlayer);
+
         } else {
             //NO ONE WINS
             setForcesToCountry(attackingCountry, attackingCountry.getLocalForces() - forcesArray[0]);
@@ -369,6 +374,21 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
             if (missionFullfilled || annihilation) {
                 notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_OVER));
             }
+        }
+
+        if (playerEliminated) {
+            // Card from the defeated player are transferred to the attacking player
+            Vector<customCard> defeatedPlayerCards = getPlayersCardList(defeatedPlayer);
+            for (customCard currentCard : defeatedPlayerCards){
+                currentCard.setOwningPlayer(attackingCountry.getOwningPlayer());
+            }
+
+            // Notification to players about the defeat
+            notifyPlayers(new GameActionEvent(defeatedPlayer, GameActionEventType.PLAYER_DEFEATED));
+
+            // Removing the player from the data
+            getPlayerList().remove(defeatedPlayer);
+            getPlayerList().trimToSize();
         }
         return isConquered;
     }

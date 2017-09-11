@@ -691,6 +691,17 @@ public class WorldVerwaltung {
         }
     }
 
+    public boolean playerEliminated(Player p){
+        for (Continent currentContinent : continentList){
+            for (Country currentCountry : currentContinent.getContinentCountries()){
+                if(p.equals(currentCountry.getOwningPlayer())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean annihilation(Player p) {
 
         for (Continent currentContinent : continentList) {

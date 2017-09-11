@@ -9,7 +9,7 @@ public class GameActionEvent extends GameEvent implements Remote {
 
 	private static final long serialVersionUID = -2391443656175761807L;
 
-	public enum GameActionEventType { ATTACK, NEW_OWNER, BUY_ITEM };
+	public enum GameActionEventType { ATTACK, NEW_OWNER, BUY_ITEM, PLAYER_DEFEATED };
 	
 	private GameActionEventType type;
 
