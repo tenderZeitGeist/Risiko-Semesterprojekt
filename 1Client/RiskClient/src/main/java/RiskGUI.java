@@ -752,16 +752,16 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
 
-                    if (currentPlayer.equals(player)) {
+                    //if (currentPlayer.equals(player)) {
                         System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
                         currentPhase = currentTurn.getPhase();
                         phaseHandler();
                         updateStatusPanel();
                         //nextPhaseButton.setEnabled(true);
-                    } else {
+                   // } else {
                         saveGameButton.setEnabled(false);
                         nextPhaseButton.setEnabled(false);
-                    }
+                  //  }
                     break;
                 case GAME_LOADED:
 
