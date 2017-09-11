@@ -632,8 +632,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                     countryVector.add(tempSelectedCountry);
                                                     glass.removeAll();
                                                     paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerIcon);
-                                                    paintFlagLabel(countryVector, playerIconHighlight
-                                                    );
+                                                    paintFlagLabel(countryVector, playerIconHighlight);
                                                 }
                                             }
                                         } catch (NoAlliedCountriesNearException | RemoteException e1) {
@@ -747,7 +746,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    ;
+
 
                     System.out.println("> Mission: " + risiko.getMissionPerPlayer(player).getDescription());
 
@@ -758,17 +757,16 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
                     Turn currentTurn = gce.getTurn();
                     Player currentPlayer = gce.getPlayer();
-
-                    //if (currentPlayer.equals(player)) {
                     System.out.println("> Player " + currentPlayer.getPlayerName() + " in Phase " + currentTurn.getPhase());
-                    currentPhase = currentTurn.getPhase();
-                    phaseHandler();
-                    updateStatusPanel();
-                    //nextPhaseButton.setEnabled(true);
-                    // } else {
-                    saveGameButton.setEnabled(false);
-                    nextPhaseButton.setEnabled(false);
-                    //  }
+                    if (currentPlayer.equals(player)) {
+                        currentPhase = currentTurn.getPhase();
+                        phaseHandler();
+                        updateStatusPanel();
+                        //nextPhaseButton.setEnabled(true);
+                    } else {
+                        saveGameButton.setEnabled(false);
+                        nextPhaseButton.setEnabled(false);
+                    }
                     break;
                 case GAME_LOADED:
 
@@ -1056,6 +1054,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 return whiteflag2;
         }
         return null;
+
     }
 
     public void updateStatusPanel() {
@@ -1122,7 +1121,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         if (ownedCards.size() > 3) {
             CardSelectionWindow csw = new CardSelectionWindow();
             Vector<Integer> selectedCardsList = csw.CardSelectionWindow(ownedCards, player);
-            bonusForces += selectedCardsList.size()/3;
+            bonusForces += selectedCardsList.size() / 3;
         }
     }
 }
