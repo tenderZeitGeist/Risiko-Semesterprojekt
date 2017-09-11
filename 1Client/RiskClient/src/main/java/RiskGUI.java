@@ -313,10 +313,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         startGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         saveGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
         loadGameButton.setFont(new Font("Arial", Font.PLAIN, (int) (30 * scalingFactor)));
-        buttonPanel.add(nextPhaseButton, "wrap");
-        buttonPanel.add(startGameButton, "wrap");
-        buttonPanel.add(saveGameButton, "wrap");
-        buttonPanel.add(loadGameButton, "wrap");
+        buttonPanel.add(nextPhaseButton, "grow, wrap");
+        buttonPanel.add(startGameButton, "grow, wrap");
+        buttonPanel.add(saveGameButton, "grow, wrap");
+        buttonPanel.add(loadGameButton, "grow, wrap");
         if (admin) {
             startGameButton.setEnabled(true);
             loadGameButton.setEnabled(true);
