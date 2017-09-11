@@ -223,31 +223,31 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
             bgPicture = resizeBuffImg(bgPicture, (int) ((bgPicture.getWidth() * 0.5) * scalingFactor), (int) ((bgPicture.getHeight() * 0.5) * scalingFactor));
 
             redFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_red.png"));
-            redFlag = redFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            redFlag = redFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             greenFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_green.png"));
-            greenFlag = greenFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            greenFlag = greenFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             purpleFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_purple.png"));
-            purpleFlag = purpleFlag.getScaledInstance((int) (300 * scalingFactor), (int) (300 * scalingFactor), 100);
+            purpleFlag = purpleFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             yellowFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_yellow.png"));
-            yellowFlag = yellowFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            yellowFlag = yellowFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             blueFlag = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue.png"));
-            blueFlag = blueFlag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            blueFlag = blueFlag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             whiteflag = ImageIO.read(RiskGUI.class.getResourceAsStream("star_wars_flag_icons/flag_white.png"));
-            whiteflag = whiteflag.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            whiteflag = whiteflag.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
 
 
             blueFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_blue_green.png"));
-            blueFlag2 = blueFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            blueFlag2 = blueFlag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             yellowFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_yellow_green.png"));
-            yellowFlag2 = yellowFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            yellowFlag2 = yellowFlag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             purpleFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_purple_green.png"));
-            purpleFlag2 = purpleFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            purpleFlag2 = purpleFlag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             greenFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_green_green.png"));
-            greenFlag2 = greenFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            greenFlag2 = greenFlag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             redFlag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_red_green.png"));
-            redFlag2 = redFlag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            redFlag2 = redFlag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
             whiteflag2 = ImageIO.read(RiskGUI.class.getResourceAsStream("/star_wars_flag_icons/flag_white_green.png"));
-            whiteflag2 = whiteflag2.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100);
+            whiteflag2 = whiteflag2.getScaledInstance((int) (60 * scalingFactor), (int) (60 * scalingFactor), 100);
 
             fgPictureFix = ImageIO.read(RiskGUI.class.getResourceAsStream("/StarRiskBg.png"));
             fgPictureFix = resizeBuffImg(fgPictureFix, (int) ((fgPictureFix.getWidth() * 0.5) * scalingFactor), (int) ((fgPictureFix.getHeight() * 0.5) * scalingFactor));
@@ -286,7 +286,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 "", 3, 18);
         statusPanel.add(statusPanelTextArea);
 
-        scale = (int) (35 * scalingFactor);
+        scale = (int) (32 * scalingFactor);
         f = new Font("Arial", 0, scale);
         statusPanel.setForeground(Color.WHITE);
         statusPanel.setBackground(Color.BLACK);
@@ -694,18 +694,17 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
 
     public void paintFlagLabel(Vector<Country> countriesToPaint, Image tmpImage) throws RemoteException {
+        ImageIcon tmpIcon = new ImageIcon(tmpImage);
 
         for (Country currentCountry : countriesToPaint) {
             JLabel flag = new JLabel();
             int x = (int) (currentCountry.getX() * scalingFactor);
             int y = (int) (currentCountry.getY() * scalingFactor);
 
-
-            flag.setIcon(new ImageIcon(playerIcon.getScaledInstance((int) (80 * scalingFactor), (int) (80 * scalingFactor), 100)));
-
+            flag.setIcon(tmpIcon);
 
             Dimension size = flag.getPreferredSize();
-            flag.setBounds(x - ((int) (17 * scalingFactor)), y - ((int) (17 * scalingFactor)), size.width, size.height);
+            flag.setBounds(x - ((int) (6 * scalingFactor)), y - ((int) (6 * scalingFactor)), size.width, size.height);
             glass.add(flag);
         }
         windowJFrame.repaint();
