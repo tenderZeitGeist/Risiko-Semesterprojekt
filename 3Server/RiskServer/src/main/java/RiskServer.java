@@ -365,7 +365,8 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
 
         if (isConquered) {
             boolean missionFullfilled = missionFulfilled(attackingCountry.getOwningPlayer());
-            if (missionFullfilled) {
+            boolean annihilation = worldManager.annihilation(attackingCountry.getOwningPlayer());
+            if (missionFullfilled || annihilation) {
                 notifyPlayers(new GameControlEvent(currentTurn, GameControlEventType.GAME_OVER));
             }
         }
