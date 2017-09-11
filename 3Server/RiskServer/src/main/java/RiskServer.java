@@ -91,7 +91,7 @@ public class RiskServer extends UnicastRemoteObject implements RemoteRisk {
         serializeCountries();
         serializePlayers(currentPlayer);
         serializeMissions();
-        broadCastText("The Game has been saved by "+currentPlayer.getPlayerName());
+        notifyPlayers(new GameControlEvent(new Turn(currentPlayer, Turn.Phase.SAVE), GameControlEventType.GAME_SAVED));
     }
 
     @Override
