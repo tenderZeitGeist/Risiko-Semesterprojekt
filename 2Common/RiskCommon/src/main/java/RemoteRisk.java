@@ -66,6 +66,8 @@ interface RemoteRisk extends Remote {
 
     void createGameFile() throws RemoteException;
 
+    void writeData() throws IOException;
+
     int returnForcesPerRoundsPerPlayer(Player player) throws RemoteException;
 
     void setForcesToCountry(Country country, int forces) throws RemoteException;

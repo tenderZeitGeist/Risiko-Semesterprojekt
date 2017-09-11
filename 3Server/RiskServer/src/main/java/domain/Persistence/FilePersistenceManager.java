@@ -70,7 +70,7 @@ public class FilePersistenceManager implements PersistenceManager {
 
         // read country name
         name = readLine();
-        if (name == null) {
+        if (name.equals("###")) {
             // keine Daten mehr vorhanden
             return null;
         }

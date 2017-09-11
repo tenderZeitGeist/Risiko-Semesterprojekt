@@ -916,29 +916,29 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
         switch (currentPhase) {
             case DISTRIBUTE:
-                while (!t) {
+
                     int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
                             "How many forces do you want to set?\n"
                                     + "You have " + forcesLeft + " forces.",
                             "Set forces!",
                             JOptionPane.OK_CANCEL_OPTION));
-                    if (forcesSet <= forcesLeft && forcesSet > 0) {
-                        forcesLeft -= forcesSet;
-                        risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
-                        t = true;
-                        System.out.println("> You have " + forcesLeft + " forces left this round");
-                        if (forcesLeft == 0) {
-                            nextPhaseButton.setEnabled(true);
+                        if (forcesSet <= forcesLeft && forcesSet > 0) {
+                            forcesLeft -= forcesSet;
+                            risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
+
+                            System.out.println("> You have " + forcesLeft + " forces left this round");
+                            if (forcesLeft == 0) {
+                                nextPhaseButton.setEnabled(true);
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(windowJFrame,
+                                    "You did not enter a valid value",
+                                    "Wrong amount!",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
 
-                    } else {
-                        JOptionPane.showMessageDialog(windowJFrame,
-                                "You did not enter a valid value",
-                                "Wrong amount!",
-                                JOptionPane.WARNING_MESSAGE);
-                    }
-                }
                 isClicked = false;
                 break;
 
@@ -1064,7 +1064,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                     "Marines:\t" + forcesLeft + " \n" +
                     "Phase:\t" + currentPhase.toString().toLowerCase() + " \n" +
                     "Planets:\t" + risiko.loadOwnedCountryList(player).size() + " \n" +
-                    "Cards:\ttmp \n" +
+                    "Cards:\t"+ risiko.getPlayersCardList(player).size() + "\n" +
                     "Mission: \n" + risiko.getMissionPerPlayer(player).getDescription() +
                     "");
         } catch (RemoteException e) {
