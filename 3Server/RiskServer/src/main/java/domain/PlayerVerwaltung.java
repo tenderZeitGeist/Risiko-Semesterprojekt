@@ -61,7 +61,7 @@ public class PlayerVerwaltung {
             tempPlayerList.add(playerList.get(i));
         }
 
-        for (int j = 0; j > position; j++) {
+        for (int j = 0; j <= position; j++) {
             tempPlayerList.add(playerList.get(j));
         }
 
