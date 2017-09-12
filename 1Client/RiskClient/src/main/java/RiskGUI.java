@@ -476,7 +476,12 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     }
                                 }
                             } catch (NoEnemyCountriesNearException | RemoteException e1) {
-                                e1.printStackTrace();
+                                try {
+                                    paintFlagLabel(risiko.loadOwnedCountryList(player), playerIcon);
+                                } catch (RemoteException e2) {
+                                    e2.printStackTrace();
+                                    e1.printStackTrace();
+                                }
                             }
 
                             break;
@@ -513,7 +518,19 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     }
                                 }
                             } catch (NoAlliedCountriesNearException | RemoteException e1) {
-                                e1.printStackTrace();
+                                try {
+                                    paintFlagLabel(risiko.loadOwnedCountryList(player), playerIcon);
+                                } catch (RemoteException e2) {
+                                    e2.printStackTrace();
+                                    e1.printStackTrace();
+                                }
+                            } catch (NullPointerException e3) {
+                                try {
+                                    paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerIconHighlight);
+                                    paintFlagLabel(excludeCountryList(risiko.loadOwnedCountryListWithMoreThanOneForce(player), risiko.loadOwnedCountryList(player)), playerIcon);
+                                } catch (RemoteException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
                             break;
                         case SAVE:
@@ -529,7 +546,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         case ATTACK:
                             glass.removeAll();
                             try {
-                                paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
+                                paintFlagLabel(excludeCountryList(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
                                 paintFlagLabel(risiko.loadAttackingCountriesList(player), playerIconHighlight);
                             } catch (RemoteException | NoEnemyCountriesNearException e1) {
                                 e1.printStackTrace();
@@ -542,6 +559,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             glass.removeAll();
                             try {
                                 paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerIconHighlight);
+                                paintFlagLabel(excludeCountryList(risiko.loadOwnedCountryListWithMoreThanOneForce(player), risiko.loadOwnedCountryList(player)), playerIcon);
                             } catch (RemoteException e1) {
                                 e1.printStackTrace();
                             }
@@ -619,7 +637,12 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                 }
                                             }
                                         } catch (NoEnemyCountriesNearException | RemoteException e1) {
-                                            e1.printStackTrace();
+                                            try {
+                                                paintFlagLabel(risiko.loadOwnedCountryList(player), playerIcon);
+                                            } catch (RemoteException e2) {
+                                                e2.printStackTrace();
+                                                e1.printStackTrace();
+                                            }
                                         }
                                     }
                                     break;
@@ -637,7 +660,12 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                                 }
                                             }
                                         } catch (NoAlliedCountriesNearException | RemoteException e1) {
-                                            e1.printStackTrace();
+                                            try {
+                                                paintFlagLabel(risiko.loadOwnedCountryList(player), playerIcon);
+                                            } catch (RemoteException e2) {
+                                                e2.printStackTrace();
+                                                e1.printStackTrace();
+                                            }
                                         }
                                     }
                                     break;
@@ -658,7 +686,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             if (!isClicked) {
                                 try {
                                     glass.removeAll();
-                                    paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
+                                    paintFlagLabel(excludeCountryList(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
                                     paintFlagLabel(risiko.loadAttackingCountriesList(player), playerIconHighlight);
                                     paintEnemyCountries();
 
@@ -674,6 +702,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             if (!isClicked)
                                 try {
                                     paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerIconHighlight);
+                                    paintFlagLabel(excludeCountryList(risiko.loadOwnedCountryListWithMoreThanOneForce(player), risiko.loadOwnedCountryList(player)), playerIcon);
                                 } catch (RemoteException e1) {
                                     e1.printStackTrace();
                                 }
@@ -885,7 +914,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                 windowJFrame.repaint();
                 isClicked = false;
                 try {
-                    paintFlagLabel(excludeCountryListShit(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
+                    paintFlagLabel(excludeCountryList(risiko.loadAttackingCountriesList(player), risiko.loadOwnedCountryList(player)), playerIcon);
                     paintFlagLabel(risiko.loadAttackingCountriesList(player), playerIconHighlight);
                     paintEnemyCountries();
                 } catch (NoEnemyCountriesNearException e) {
@@ -934,28 +963,37 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
         switch (currentPhase) {
             case DISTRIBUTE:
 
-                int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
-                        "How many forces do you want to set?\n"
-                                + "You have " + forcesLeft + " forces.",
-                        "Set forces!",
-                        JOptionPane.WARNING_MESSAGE));
+                while (!t) {
+                    try {
+                        int forcesSet = Integer.parseInt(JOptionPane.showInputDialog(windowJFrame,
+                                "How many forces do you want to set?\n"
+                                        + "You have " + forcesLeft + " forces.",
+                                "Set forces!",
+                                JOptionPane.WARNING_MESSAGE));
 
-                if (forcesSet <= forcesLeft && forcesSet > 0) {
-                    forcesLeft -= forcesSet;
-                    risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
+                        if (forcesSet <= forcesLeft && forcesSet >= 0) {
+                            forcesLeft -= forcesSet;
+                            risiko.setForcesToCountry(country, country.getLocalForces() + forcesSet);
 
-                    System.out.println("> You have " + forcesLeft + " forces left this round");
-                    if (forcesLeft == 0) {
-                        nextPhaseButton.setEnabled(true);
+                            t = true;
+                            System.out.println("> You have " + forcesLeft + " forces left this round");
+                            if (forcesLeft == 0) {
+                                nextPhaseButton.setEnabled(true);
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(windowJFrame,
+                                    "You did not enter a valid value",
+                                    "Wrong amount!",
+                                    JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (NumberFormatException e1) {
+                        JOptionPane.showMessageDialog(windowJFrame,
+                                "You did not enter a valid value",
+                                "Wrong amount!",
+                                JOptionPane.WARNING_MESSAGE);
                     }
-
-                } else {
-                    JOptionPane.showMessageDialog(windowJFrame,
-                            "You did not enter a valid value",
-                            "Wrong amount!",
-                            JOptionPane.WARNING_MESSAGE);
                 }
-
                 isClicked = false;
                 break;
 
@@ -971,17 +1009,15 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                     "How many forces do you want to use for the attack?\n" +
                                             country.getCountryName() + " has " + country.getLocalForces() + " forces\n" +
                                             "You can use a total of " + (tempCountry1.getLocalForces() - 1) + " forces.\n" +
-                                            "But you may only select up to 3 forces per roll.\n"+"" +
+                                            "But you may only select up to 3 forces per roll.\n" + "" +
                                             "You can abort the attack by returning 0 into the dialog field.",
                                     "Attack Phase",
                                     JOptionPane.OK_CANCEL_OPTION));
 
-                            if(attackingForces == JOptionPane.CANCEL_OPTION)
-
-                            if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces < tempCountry1.getLocalForces()) {
+                            if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces <= (tempCountry1.getLocalForces() - 1)) {
                                 t = true;
                                 isConquered = risiko.battle(tempCountry1, country, attackingForces);
-                            }else if(attackingForces == 0){
+                            } else if (attackingForces == 0) {
                                 JOptionPane.showMessageDialog(windowJFrame,
                                         "You canceled your attack.",
                                         "Attack aborted",
@@ -1125,7 +1161,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
 
     }
 
-    public Vector<Country> excludeCountryListShit(Vector<Country> removeThisVector, Vector<Country> keepThisVector) {
+    public Vector<Country> excludeCountryList(Vector<Country> removeThisVector, Vector<Country> keepThisVector) {
         for (Country c2 : removeThisVector) {
             keepThisVector.removeIf(country -> country.getCountryName().equals(c2.getCountryName()));
         }
