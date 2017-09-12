@@ -491,7 +491,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             Vector<Country> countryVector = new Vector<>();
                                             countryVector.add(tempSelectedCountry);
                                             glass.removeAll();
-                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerIconHighlight);
+                                            paintFlagLabel(risiko.loadNeighbouringCountriesListForDistributionPhase(tempSelectedCountry), playerIcon);
                                             paintFlagLabel(countryVector, playerIconHighlight);
                                             isClicked = true;
                                         }
@@ -673,7 +673,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                             glass.removeAll();
                             if (!isClicked)
                                 try {
-                                    paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerIcon);
+                                    paintFlagLabel(risiko.loadOwnedCountryListWithMoreThanOneForce(player), playerIconHighlight);
                                 } catch (RemoteException e1) {
                                     e1.printStackTrace();
                                 }
@@ -938,7 +938,7 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                         "How many forces do you want to set?\n"
                                 + "You have " + forcesLeft + " forces.",
                         "Set forces!",
-                        JOptionPane.INFORMATION_MESSAGE));
+                        JOptionPane.WARNING_MESSAGE));
 
                 if (forcesSet <= forcesLeft && forcesSet > 0) {
                     forcesLeft -= forcesSet;
@@ -974,7 +974,10 @@ public class RiskGUI extends UnicastRemoteObject implements GameEventListener {
                                             "But you may only select up to 3 forces per roll.\n"+"" +
                                             "You can abort the attack by returning 0 into the dialog field.",
                                     "Attack Phase",
-                                    JOptionPane.WARNING_MESSAGE));
+                                    JOptionPane.OK_CANCEL_OPTION));
+
+                            if(attackingForces == JOptionPane.CANCEL_OPTION)
+
                             if (!(attackingForces < 1) && !(attackingForces > 3) && attackingForces < tempCountry1.getLocalForces()) {
                                 t = true;
                                 isConquered = risiko.battle(tempCountry1, country, attackingForces);
